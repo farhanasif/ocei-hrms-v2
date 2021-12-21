@@ -299,13 +299,8 @@
                                         <label for="exampleInput">Basic Salary<span
                                                 class="validateRq">*</span></label>
                                         <select name="present_increement_salary"
-                                            class="form-control present_increement_salary required select2" required>
-                                            <option value="">--- @lang('common.please_select') ---</option>
-                                            @foreach ($presentPayGradeSalary as $present_salary_value)
-                                                <option value="{{ $present_salary_value->present_pay_grade_salary }}"
-                                                    @if ($present_salary_value->present_pay_grade_salary == old('present_increemnet_salary')) {{ 'selected' }} @endif>
-                                                    {{ $present_salary_value->present_pay_grade_salary }}</option>
-                                            @endforeach
+                                            class="form-control present_increement_salary required select2" required id="presentPayGradeSalary">
+                                            <option value=''>--- @lang('common.please_select') ---</option>
                                         </select>
                                     </div>
                                 </div>
@@ -923,7 +918,7 @@
         $('#pay_grade').on("change", function() {
             var pay_grade_id = $('#pay_grade').val();
             var _token =  "<?php echo(csrf_token()); ?>" ;
-
+        $('#presentPayGradeSalary').empty();
             $.ajax({
                 url: '/employee/pay_grade_wise_salary/' + pay_grade_id,
                 type: 'get',
@@ -931,8 +926,22 @@
                 },
                 success:function(response){
                   // console.log(response);
-                  if(response.code == 200) {
-                  }
+                    if(response.code == 200) {
+                        var html = "";
+                        
+                        html += "";
+                        for(var i = 0; i < response.data.length ; i++) {
+                            html += "<option value="+response.data[i]['present_pay_grade_salary'] + ">";
+
+                            // if(response.data[i]['present_pay_grade_salary'] == old('present_increemnet_salary')){
+                            //         html += 'selected >'
+                            html += response.data[i]['present_pay_grade_salary'] ;
+                            // }
+                            html += "</option>";
+                      }
+                      console.log(html);
+                      $('#presentPayGradeSalary').append(html);
+                    }
                 },
                 error: function(error) {
                  console.log(error);
