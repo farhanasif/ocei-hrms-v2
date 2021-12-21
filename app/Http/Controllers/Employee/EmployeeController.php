@@ -125,7 +125,19 @@ class EmployeeController extends Controller
 
         return view('admin.employee.employee.addEmployee', $data);
     }
+    
+    public function payGradeWiseSalary($pay_grade_id)
+    {
+        $pay_grade_salary = DB::table('present_pay_grade_salary')->where('pay_grade_id',$pay_grade_id)->get();
+        $code = 404;
+        $msg = 'No Data Found';
+        if($pay_grade_salary != null) {
+            $code = 200;
+            $msg = 'Success';
+        }
 
+        return response()->json(['code' => $code,'msg'=> $msg,'data'=> $pay_grade_salary]);
+    }
 
     public function store(EmployeeRequest $request)
     {
