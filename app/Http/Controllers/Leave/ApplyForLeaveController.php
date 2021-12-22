@@ -49,9 +49,9 @@ class ApplyForLeaveController extends Controller
     {
         $leaveTypeList      = $this->commonRepository->leaveTypeList();
         $getEmployeeInfo    = $this->commonRepository->getEmployeeInfo(Auth::user()->user_id);
-        return view('admin.leave.applyForLeave.leave_application_form', ['leaveTypeList' => $leaveTypeList, 'getEmployeeInfo' => $getEmployeeInfo]);
+        $religionList = [''=>' <>----  Select Religion  ----<> ','Islam'=>'Islam','Hinduism'=>'Hinduism','Buddhism'=>'Buddhism','Christianity'=>'Christianity','Others'=>'Others'];
+        return view('admin.leave.applyForLeave.leave_application_form', ['leaveTypeList' => $leaveTypeList, 'getEmployeeInfo' => $getEmployeeInfo,'religionList'=>$religionList]);
     }
-
 
     public function getEmployeeLeaveBalance(Request $request)
     {

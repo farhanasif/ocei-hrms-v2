@@ -78,8 +78,8 @@ Route::group(['middleware' => ['preventbackbutton','auth']], function(){
     Route::get('optionalLeaveSetup',['as' => 'optional.leave.setup.index', 'uses'=>'Leave\OptionalLeaveSetupController@index']);
     Route::get('optionalLeaveSetup/create',['as' => 'optional.leave.setup.create', 'uses'=>'Leave\OptionalLeaveSetupController@create']);
     Route::post('optionalLeaveSetup/store',['as' => 'optional.leave.setup.store', 'uses'=>'Leave\OptionalLeaveSetupController@store']);
-    // Route::get('optionalLeaveSetup/edit/{optional_leave_id}',['as' => 'optional.leave.setup.edit', 'uses'=>'Leave\OptionalLeaveSetupController@edit']);
-    // Route::put('optionalLeaveSetup/update/{optional_leave_id}',['as' => 'optional.leave.setup.update', 'uses'=>'Leave\OptionalLeaveSetupController@update']);
-
+    Route::get('optionalLeaveSetup/edit/{id}',['as' => 'optional.leave.setup.edit', 'uses'=>'Leave\OptionalLeaveSetupController@edit']);
+    Route::any('optionalLeaveSetup/update/{optional_leave_id}','Leave\OptionalLeaveSetupController@update');
+    Route::any('optionalLeaveSetup/delete/{optional_leave_id}','Leave\OptionalLeaveSetupController@destroy');
 });
 

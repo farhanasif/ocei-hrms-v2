@@ -62,10 +62,18 @@
                             <div class="row">
                                 <div class="col-md-8">
                                     <div class="form-group">
-                                        <label class="control-label col-md-4">Leave Name<span
+                                        <label class="control-label col-md-4">Religion Name<span
                                                 class="validateRq">*</span></label>
                                         <div class="col-md-8">
-                                            <input type="text" class="form-control" name="leave_name" placeholder="Leave Name" class="close" value="{{old('leave_name')}}">
+                                            <select class="form-control" id="religion_name" name="religion_name" required>
+                                                <option value="">>--- Select Religion ---<</option>
+                                                <option value="Islam">Islam</option>
+                                                <option value="Hinduism">Hinduism</option>
+                                                <option value="Buddhism">Buddhism</option>
+                                                <option value="Christianity">Christianity</option>
+                                                <option value="Others">Others</option>
+                                            </select>
+                                            <!-- <input type="text" class="form-control" name="religion_name" placeholder="Religion Name" class="close" value="{{old('religion_name')}}"> -->
                                   </div>
                                     </div>
                                 </div>
@@ -84,13 +92,22 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-8">
-                                    <div class="form-group">
-                                        <label class="control-label col-md-4">Leave Date<span
-                                                class="validateRq">*</span></label>
-                                        <div class="col-md-8">
-                                            <input type="text" class="form-control dateField" name="leave_date" placeholder="Leave Date" required value="{{old('leave_date')}}" >
+                                <div class="input_date_wrap">
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4">Leave Date & Name<span
+                                                    class="validateRq">*</span></label>
+                                               <!-- <div><input type="text" name="mytext[]"></div> -->
+                                            <div class="col-md-4">
+                                                <input type="text" class="form-control dateField" name="leave_date[]" placeholder="First Leave Date" required value="{{old('leave_date')}}" >
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input type="text" class="form-control" name="leave_name[]" placeholder="First Leave Name" required value="{{old('leave_name')}}" >
+                                            </div>
                                         </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="add_date_button" style="color:#7ace4c;height:38px;border: 0.5px solid #7ace4c;"><i class="fa fa-plus" aria-hidden="true"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -114,4 +131,30 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('page_scripts')
+<script>
+    $(document).ready(function() {
+        var max_fields      = 6; //maximum input boxes allowed
+        var wrapper         = $(".input_date_wrap"); //Fields wrapper
+        var add_button      = $(".add_date_button"); //Add button ID
+
+        var x = 1; //initlal text box count
+        var leave_date = ['First','Second', 'Third', 'Four', 'Five', 'Six'];
+        $(add_button).click(function(e){ //on add input button click
+            e.preventDefault();
+            if(x < max_fields){ //max input box allowed
+                x++; //text box increment
+                $(wrapper).append('<div class="input_date_wrap"><div class="col-md-8"><div class="form-group"><label class="control-label col-md-4">Leave Date<span class="validateRq">*</span></label><div class="col-md-4"><input type="text" class="form-control dateField" name="leave_date[]" placeholder="'+leave_date[x-1]+' Leave Date" required></div><div class="col-md-4"><input type="text" class="form-control" name="leave_name[]" placeholder="'+leave_date[x-1]+' Leave Name" required></div></div></div><div class="col-md-4"><button class="remove_date" style="color:red;height:38px;border: 0.5px solid red;"><i class="fa fa-minus" aria-hidden="true"></i></button></div></div>'); //add input box
+            }
+        });
+
+        $(wrapper).on("click",".remove_date", function(e){ //user click on remove text
+            // e.preventDefault(); $(this).parent('div').remove(); 
+            $(this).closest('.input_date_wrap').remove();
+            x--;
+        })
+    });
+</script>
 @endsection

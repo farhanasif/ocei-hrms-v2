@@ -117,6 +117,13 @@
                                 </div>
                             </div>
                             <div class="row">
+                                <div class="col-md-4"  id="religionWiseLeave">
+                                    <div class="form-group">
+                                        <label for="exampleInput">Religion Wise Leave Date's<span
+                                                class="validateRq">*</span></label>
+                                        {{ Form::select('religion_name', $religionList, Input::old('religion_name'), ['class' => 'form-control religion_name select2 required']) }}
+                                    </div>
+                                </div>
                                 <div class="col-md-4">
                                     <label for="exampleInput">Attachment</label>
                                     <div class="input-group">
