@@ -91,10 +91,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row" id="optionalLeaveType_no">
                                 <div class="col-md-4">
                                     <label for="exampleInput">@lang('common.from_date')<span
-                                            class="validateRq">*</span></label>
+                                             id="from_date_span">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                         {!! Form::text('application_from_date', Input::old('application_from_date'), $attributes = ['class' => 'form-control application_from_date', 'readonly' => 'readonly', 'placeholder' => __('common.from_date')]) !!}
@@ -102,7 +102,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label for="exampleInput">@lang('common.to_date')<span
-                                            class="validateRq">*</span></label>
+                                             id="to_date_span">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                         {!! Form::text('application_to_date', Input::old('application_to_date'), $attributes = ['class' => 'form-control application_to_date', 'readonly' => 'readonly', 'placeholder' => __('common.to_date')]) !!}
@@ -111,15 +111,16 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="exampleInput">@lang('leave.number_of_day')<span
-                                                class="validateRq">*</span></label>
+                                                 id="number_of_day_span">*</span></label>
                                         {!! Form::text('number_of_day', '', $attributes = ['class' => 'form-control number_of_day', 'readonly' => 'readonly', 'placeholder' => __('leave.number_of_day')]) !!}
                                     </div>
                                 </div>
                             </div>
+                            
                             <div class="row">
                                 <div class="col-md-4"  id="religionWiseLeave">
                                     <div class="form-group">
-                                        <label for="exampleInput">Religion Wise Leave Date's<span
+                                        <label for="exampleInput">Religion Name<span
                                                 class="validateRq">*</span></label>
                                         {{ Form::select('religion_name', $religionList, Input::old('religion_name'), ['class' => 'form-control religion_name select2 required']) }}
                                     </div>
@@ -141,6 +142,9 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="row" id="optionalLeaveList">
+                            </div>
                         </div>
                         <div class="form-actions">
                             <div class="row">
@@ -161,7 +165,10 @@
 @section('page_scripts')
 <script>
     jQuery(function() {
-
+        $('#religionWiseLeave').hide();
+        $('#optionalLeaveList').hide();
+        $('#optionalLeaveType_no').show();
+        var leave_type_id = '';
         $(document).on("focus", ".application_from_date", function() {
             $(this).datepicker({
                 format: 'dd/mm/yyyy',
@@ -266,10 +273,50 @@
                 $('body').find('#formSubmit').attr('disabled', true);
             }
         });
-
+        $('.religion_name').on('change',function(){
+            var religion_name = $('.religion_name').val();
+            $('#optionalLeaveList').empty();
+                $.ajax({
+                    url: "{{ URL::to('applyForLeave/religion_wise_leave_list') }}/" + religion_name,
+                    type: 'get',
+                    complete: function(){
+                    },
+                    success:function(response){
+                      console.log(response);
+                        if(response.code == 200) {
+                            var html = '<div class="col-md-8"><div class="form-group"><label for="exampleInput">Religion Wise Leave Date\'s<span class="validateRq">*</span></label>';
+                            for(var i = 0; i < response.datelist.length ; i++) {
+                                html += '<div class="form-check" style="font-size: 18px;padding-left: 20px"><input class="form-check-input" type="checkbox" value="'+ response.datelist[i]['leave_date']+'" id="flexCheckDefault_'+i+'"/><label class="form-check-label" for="flexCheckDefault" style="padding-left: 10px"></label>'+ response.datelist[i]['leave_date']+'     '+ response.datelist[i]['leave_name']+'</div>'
+                          }
+                          html += '</div></div>';
+                          console.log(html);
+                          $('#optionalLeaveList').append(html);
+                        }
+                    },
+                    error: function(error) {
+                     console.log(error);
+                    }
+                });
+            })
         $(document).on("change", ".leave_type_id  ", function() {
             var leave_type_id = $('.leave_type_id ').val();
             var employee_id = $('.employee_id ').val();
+            if(leave_type_id == 23) {
+                $('#religionWiseLeave').show();
+                $('#optionalLeaveList').show();
+                $('#optionalLeaveType_no').hide();
+                $('#from_date_span').removeClass("validateRq");
+                $('#to_date_span').removeClass("validateRq");
+                $('#number_of_day_span').removeClass("validateRq");
+            }else{
+                $('#religionWiseLeave').hide();
+                $('#optionalLeaveList').hide();
+                $('#optionalLeaveType_no').show();
+                $('#from_date_span').addClass("validateRq");
+                $('#to_date_span').addClass("validateRq");
+                $('#number_of_day_span').addClass("validateRq");
+            }
+
             if (leave_type_id != '' && employee_id != '') {
                 var action = "{{ URL::to('applyForLeave/getEmployeeLeaveBalance') }}";
                 $.ajax({

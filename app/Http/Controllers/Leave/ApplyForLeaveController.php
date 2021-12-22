@@ -53,6 +53,13 @@ class ApplyForLeaveController extends Controller
         return view('admin.leave.applyForLeave.leave_application_form', ['leaveTypeList' => $leaveTypeList, 'getEmployeeInfo' => $getEmployeeInfo,'religionList'=>$religionList]);
     }
 
+
+    public function religionWiseLeave($religion_name)
+    {
+        $optionalLeave = DB::table('optional_Leave')->where('religion_name',$religion_name)->get();
+        return response()->json(['code'=>200,'datelist'=>$optionalLeave]);
+    }
+
     public function getEmployeeLeaveBalance(Request $request)
     {
         $leave_type_id = $request->leave_type_id;
@@ -77,6 +84,7 @@ class ApplyForLeaveController extends Controller
     public function store(ApplyForLeaveRequest $request)
     {
         $input = $request->all();
+        dd($input);
         $input['application_from_date'] = dateConvertFormtoDB($request->application_from_date);
         $input['application_to_date']   = dateConvertFormtoDB($request->application_to_date);
         $input['application_date']      =  date('Y-m-d');
@@ -95,6 +103,7 @@ class ApplyForLeaveController extends Controller
             LeaveApplication::create($input);
             $bug = 0;
         } catch (\Exception $e) {
+            dd($e);
             $bug = $e->errorInfo[1];
         }
 

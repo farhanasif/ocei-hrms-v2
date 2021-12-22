@@ -45,6 +45,7 @@ Route::group(['middleware' => ['preventbackbutton','auth']], function(){
         Route::post('getEmployeeLeaveBalance','Leave\ApplyForLeaveController@getEmployeeLeaveBalance');
         Route::post('applyForTotalNumberOfDays','Leave\ApplyForLeaveController@applyForTotalNumberOfDays');
         Route::get('/{applyForLeave}',['as'=>'applyForLeave.show','uses'=>'Leave\ApplyForLeaveController\applyForTotalNumberOfDays@show']);
+        Route::any('religion_wise_leave_list/{religion_name}','Leave\ApplyForLeaveController@religionWiseLeave');
     });
 
     Route::group(['prefix' => 'earnLeaveConfigure'], function () {
