@@ -171,7 +171,7 @@ $front_setting = getFrontData();
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-5 col-md-4">
-                    <img src="{{ asset('uploads/front/'.$front_setting->about_us_image) }}" class="img-fluid rounded shadow" alt="">
+                    <img src="{{ asset('uploads/front/'.$front_setting->about_us_image) }}" class="img-fluid rounded shadow" alt="404">
                 </div>
 
                 <div class="col-lg-7 col-md-8">

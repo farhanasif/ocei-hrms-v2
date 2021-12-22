@@ -209,7 +209,7 @@ $front_setting = getFrontData();
     <script src="{{ asset('front-assets/js/plugins.js') }}"></script>
 
     <!-- selectize js -->
-    <script src="{{ asset('front-assets/js/jquery.nice-select.min.js') }}j"></script>
+    <script src="{{ asset('front-assets/js/jquery.nice-select.min.js') }}"></script>
     <script src="{{ asset('front-assets/js/jquery.nice-select.min.js') }}"></script>
 
     <script src="{{ asset('front-assets/js/owl.carousel.min.js') }}"></script>

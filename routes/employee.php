@@ -41,6 +41,8 @@ Route::group(['middleware' => ['preventbackbutton','auth']], function(){
         Route::get('/{employee}',['as'=>'employee.show','uses'=>'Employee\EmployeeController@show']);
         Route::put('/{employee}',['as' => 'employee.update', 'uses'=>'Employee\EmployeeController@update']);
         Route::delete('/{employee}/delete',['as'=>'employee.delete','uses'=>'Employee\EmployeeController@destroy']);
+        /*#####################   Pay Grade wise Salary scale #####################*/
+        Route::get('/pay_grade_wise_salary/{pay_grade_id}','Employee\EmployeeController@payGradeWiseSalary');
     });
 
     Route::group(['prefix' => 'warning'], function () {

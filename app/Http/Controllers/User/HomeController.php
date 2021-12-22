@@ -179,8 +179,7 @@ class HomeController extends Controller
             return view('admin.generalUserHome', $data);
         }
 
-
-        $hasSupervisorWiseEmployee       = $this->employee->select('employee_id')->where('supervisor_id', session('logged_session_data.employee_id'))->get()->toArray();
+        $hasSupervisorWiseEmployee = $this->employee->select('employee_id')->where('supervisor_id', session('logged_session_data.employee_id'))->get()->toArray();
         if (count($hasSupervisorWiseEmployee) == 0) {
             $leaveApplication = [];
         } else {
