@@ -13,7 +13,7 @@ class LeaveApplication extends Model
     protected $primaryKey = 'leave_application_id';
 
     protected $fillable = [
-        'leave_application_id', 'employee_id','leave_type_id','application_from_date','application_to_date','application_date',
+        'leave_application_id', 'employee_id','leave_type_id','application_from_date','application_to_date','leave_date_list','application_date',
         'number_of_day','approve_date','approve_by','reject_date','reject_by','purpose','remarks','status','attachment'
     ];
 

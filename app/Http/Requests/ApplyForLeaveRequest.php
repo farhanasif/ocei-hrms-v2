@@ -25,10 +25,6 @@ class ApplyForLeaveRequest extends FormRequest
     {
         return [
             'leave_type_id' => 'required',
-            'application_from_date' => 'required',
-            'application_to_date' => 'required',
-            'number_of_day' => 'required|numeric',
-            'purpose' => 'required',
         ];
     }
 

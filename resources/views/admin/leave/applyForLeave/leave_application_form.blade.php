@@ -93,7 +93,7 @@
                             </div>
                             <div class="row" id="optionalLeaveType_no">
                                 <div class="col-md-4">
-                                    <label for="exampleInput">@lang('common.from_date')<span
+                                    <label for="exampleInput">@lang('common.from_date')<span class="validateRq" 
                                              id="from_date_span">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -101,7 +101,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="exampleInput">@lang('common.to_date')<span
+                                    <label for="exampleInput">@lang('common.to_date')<span class="validateRq"
                                              id="to_date_span">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -112,7 +112,7 @@
                                     <div class="form-group">
                                         <label for="exampleInput">@lang('leave.number_of_day')<span
                                                  id="number_of_day_span">*</span></label>
-                                        {!! Form::text('number_of_day', '', $attributes = ['class' => 'form-control number_of_day', 'readonly' => 'readonly', 'placeholder' => __('leave.number_of_day')]) !!}
+                                        {!! Form::text('number_of_day', '', $attributes = ['class' => 'form-control number_of_day', 'readonly' => 'readonly','required'=>'required', 'placeholder' => __('leave.number_of_day')]) !!}
                                     </div>
                                 </div>
                             </div>
@@ -286,7 +286,7 @@
                         if(response.code == 200) {
                             var html = '<div class="col-md-8"><div class="form-group"><label for="exampleInput">Religion Wise Leave Date\'s<span class="validateRq">*</span></label>';
                             for(var i = 0; i < response.datelist.length ; i++) {
-                                html += '<div class="form-check" style="font-size: 18px;padding-left: 20px"><input class="form-check-input" type="checkbox" value="'+ response.datelist[i]['leave_date']+'" id="flexCheckDefault_'+i+'"/><label class="form-check-label" for="flexCheckDefault" style="padding-left: 10px"></label>'+ response.datelist[i]['leave_date']+'     '+ response.datelist[i]['leave_name']+'</div>'
+                                html += '<div class="form-check" style="font-size: 18px;padding-left: 20px"><input class="form-check-input" type="checkbox" value="'+ response.datelist[i]['leave_date']+'" id="flexCheckDefault_'+i+'" name="leave_date[]"/><label class="form-check-label" for="flexCheckDefault" style="padding-left: 10px"></label>'+ response.datelist[i]['leave_date']+'     '+ response.datelist[i]['leave_name']+'</div>'
                           }
                           html += '</div></div>';
                           console.log(html);
