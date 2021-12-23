@@ -76,9 +76,11 @@ class HomeController extends Controller
         $ip_attendance_status = 0;
         $ip_check_status = 0;
         $login_employee = employeeInfo();
+        // dd(date('Y-m-d 00:00:00'));
+        $totalAttendance  = EmployeeAttendance::whereDate('in_out_time', '>=', date('Y-m-d 00:00:00'))->whereDate('in_out_time', '<', date('Y-m-d 23:59:59'))->groupBy('finger_print_id')->get();
 
-        $count_user_login_today = EmployeeAttendance::where('finger_print_id', '=', $login_employee[0]->finger_id)->whereDate('in_out_time', '=', date('Y-m-d'))->count();
-
+        $count_user_login_today = EmployeeAttendance::where('finger_print_id', '=', $login_employee[0]->finger_id)->whereDate('in_out_time', '=', date('Y-m-d'))->where('is_active',1)->count();
+        
         if ($ip_setting) {
 
             // if 0 then attendance will not take 
@@ -250,8 +252,8 @@ class HomeController extends Controller
             'attendanceData'    => $attendanceData,
             'totalEmployee'     => $totalEmployee,
             'totalDepartment'   => $totalDepartment,
-            'totalAttendance'   => count($attendanceData),
-            'totalAbsent'       => $totalEmployee - count($attendanceData),
+            'totalAttendance'   => count($totalAttendance),
+            'totalAbsent'       => $totalEmployee - count($totalAttendance),
             'employeePerformance'  => $employeePerformance,
             'employeeAward'     => $employeeAward,
             'notice'            =>  $notice,

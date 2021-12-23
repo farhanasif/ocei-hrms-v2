@@ -175,7 +175,7 @@
             <div class="white-box">
                 <h3 class="box-title">Hey {!!   $logged_user[0]->user_name !!} please Check in/out your attendance</h3>
                 <hr>
-                <div class="noticeBord">
+                <div class="">
                       @if(session()->has('success'))
                             <div class="alert alert-success alert-dismissable">
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
@@ -190,7 +190,7 @@
                         @endif
 
 
-                   <form action="{{ route('ip.attendance') }}" method="POST">
+                   <form action="{{ URL::to('ip-attendance') }}" method="POST">
                     {{ csrf_field() }}
                        <p>Your IP is   {{ \Request::ip() }}</p>
                        <input type="hidden" name="employee_id" value="{{ $logged_user[0]->user_name }}">  
@@ -222,7 +222,7 @@
             <div class="white-box">
                 <h3 class="box-title">@lang('dashboard.notice_board')</h3>
                 <hr>
-                <div class="noticeBord">
+                <div class="">
                     @foreach($notice as $row)
                     @php
                     $noticeDate=strtotime($row->publish_date);
@@ -231,8 +231,6 @@
                         <div class="comment-body">
 
                             <div class="user-img"><i style="font-size: 31px" class="fa fa-flag-checkered text-info"></i></div>
-
-
 
                             <div class="mail-contnet">
                                 <h5 class="text-danger">{{ substr($row->title,0,70)}}..</h5><span class="time">Published Date: {{date(" d M Y ", $noticeDate)}}</span>

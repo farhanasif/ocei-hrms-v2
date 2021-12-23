@@ -27,7 +27,7 @@
                 <div class="panel-heading"><i class="mdi mdi-clipboard-text fa-fw"></i>@yield('title')</div>
                 <div class="panel-wrapper collapse in" aria-expanded="true">
                     <div class="panel-body">
-                            <form action="{{route('optional.leave.setup.store')}}" method="POST" class="form-horizontal">
+                            <form action="{{url('optionalLeaveSetup/store')}}" method="POST" class="form-horizontal">
                                 {{ csrf_field() }}
                                  <div class="form-body">
                             <div class="row">

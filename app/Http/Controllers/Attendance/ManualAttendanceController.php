@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Attendance;
 use App\Http\Controllers\Controller;
 
 use App\Model\EmployeeAttendance;
+use App\Model\WebAttendance;
 
 use Illuminate\Support\Facades\DB;
 
@@ -17,7 +18,7 @@ use App\Model\IpSetting;
 use App\Model\WhiteListedIp;
 
 use Carbon\Carbon;
-
+use DateTime;
 
 class ManualAttendanceController extends Controller
 {
@@ -116,51 +117,63 @@ class ManualAttendanceController extends Controller
 
     public function ipAttendance(Request $request)
     {
-        // dd($request->all());
 
       try{
-
-       $finger_id = $request->finger_id;
-       $ip_check_status = $request->ip_check_status;
-       $user_ip = \Request::ip();
-
-       if($ip_check_status == 0) 
-       {
-            $att = new EmployeeAttendance;
-            $att->finger_print_id = $finger_id;
-            $att->in_out_time = date("Y-m-d H:i:s");
-            $att->save();  
-
-            return redirect()->back()->with('success', 'Attendance updated.');
-       }
-       else
-       {
-        $check_white_listed = WhiteListedIp::where('white_listed_ip','=',$user_ip)->count();
-         
-         if ($check_white_listed > 0) 
+         $finger_id = $request->finger_id;
+         $ip_check_status = $request->ip_check_status;
+         $user_ip = \Request::ip();
+         $pre_d = EmployeeAttendance::where('finger_print_id', '=', $finger_id)->whereDate('in_out_time', '=', date('Y-m-d'))->where('is_active',1)->first();
+         // return $pre_d;
+         // if($ip_check_status == 0) 
+         if($pre_d == null)
          {
+              $att = new EmployeeAttendance;
+              $att->finger_print_id = $finger_id;
+              $att->in_out_time = date("Y-m-d H:i:s");
+              $att->is_active = 1;
+              $att->save();  
 
-            $att = new EmployeeAttendance;
-            $att->finger_print_id = $finger_id;
-            $att->in_out_time = date("Y-m-d H:i:s");
-            $att->save();  
+              $view_employee_in_out_data = DB::table('view_employee_in_out_data')->where('finger_print_id',$finger_id)->first();
+              
+              if($view_employee_in_out_data == null) {
+                $data['employee_attendance_id'] = $att->employee_attendance_id;
+                $data['finger_print_id'] = $finger_id;
+                $data['in_time'] = $att->in_out_time;
+                $data['out_time'] = null;
+                $data['date'] = date('Y-m-d');
+                $data['working_time'] = '09:00:00';
 
-            return redirect()->back()->with('success', 'Attendance updated.');
+                $current_time = new DateTime();
+                $work_time =  new DateTime('09:00:00');
+                $interval = $current_time->diff($work_time);
+                $late = $interval->format('%h').':'.$interval->format('%m').':'.$interval->format('%s');
+                $data['late_time'] = $late;
+                WebAttendance::create($data);
+              }
+                // $data['late_time'] = ;
+              return redirect()->back()->with('success', 'Attendanced updated.');
+         }else{
+          $check_white_listed = WhiteListedIp::where('white_listed_ip','=',$user_ip)->count();
+           
+           if ($check_white_listed > 0) 
+           {
+              EmployeeAttendance::where('finger_print_id', '=', $finger_id)->whereDate('in_out_time', '=', date('Y-m-d'))->where('is_active',1)->update(['is_active' => 0]);
+
+              $att = new EmployeeAttendance;
+              $att->finger_print_id = $finger_id;
+              $att->in_out_time = date("Y-m-d H:i:s");
+              $att->is_active = 0;
+              $att->save();  
+              
+              return redirect()->back()->with('success', 'Attendanced updated.');
+           }else{
+            return redirect()->back()->with('error', 'Invalid Ip Address.');
+           }
+
          }
-
-         else
-         {
-          return redirect()->back()->with('error', 'Invalid Ip Address.');
-         }
-
-       }
-       }
-       catch(\Exception $e)
-       {
+       }catch(\Exception $e){
            return $e;
        }
-
-
     }
 
     // get to attendance ip setting page 
