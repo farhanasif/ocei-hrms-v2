@@ -114,7 +114,7 @@
                         </thead>
                         <tbody>
                             @if(count($attendanceData) > 0)
-                            {{$dailyAttendanceSl =null }}
+                            {{$dailyAttendanceSl = null }}
                             @foreach($attendanceData as $dailyAttendance)
                             <tr>
                                 <td class="text-center">{{ ++$dailyAttendanceSl }}</td>
@@ -125,8 +125,8 @@
                                     <img style=" width: 70px; " src="{!! asset('admin_assets/img/default.png') !!}" alt="user-img" class="img-circle">
                                     @endif
                                 </td>
-                                <td>{{$dailyAttendance->fullName}}
-                                    <br /><span class="text-muted">{{$dailyAttendance->department_name}}</span>
+                                <td>{{$dailyAttendance->first_name}}
+                                    <br /><span class="text-muted">{{$dailyAttendance->last_name}}</span>
                                 </td>
                                 <td>{{$dailyAttendance->in_time}} </td>
                                 <td>
@@ -141,8 +141,8 @@
 
                                 <td>
                                     <?php
-                                    if (date('H:i', strtotime($dailyAttendance->totalLateTime)) != '00:00') {
-                                        echo "<b style='color: red;'>" . date('H:i', strtotime($dailyAttendance->totalLateTime)) . "</b>";
+                                    if (date('H:i', strtotime($dailyAttendance->late_time)) != '00:00:00') {
+                                        echo "<b style='color: red;'>" . date('H:i', strtotime($dailyAttendance->late_time)) . "</b>";
                                     } else {
                                         echo "<b style='color: green'><i class='cr-icon glyphicon glyphicon-ok'></i></b>";
                                     }

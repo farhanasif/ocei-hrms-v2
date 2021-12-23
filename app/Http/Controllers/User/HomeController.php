@@ -192,7 +192,17 @@ class HomeController extends Controller
         }
 
         $date            = date('Y-m-d');
-        $attendanceData  = DB::select("call `SP_DailyAttendance`('" . $date . "')");
+        $attendanceData  = DB::table('employee_attendance')
+                            ->addSelect('employee_attendance.*','employee.first_name','employee.last_name','employee.photo','veiod.in_time','veiod.out_time','veiod.late_time')
+                            ->join('employee', 'employee.finger_id','=','employee_attendance.finger_print_id')
+                            ->join('view_employee_in_out_data as veiod','veiod.employee_attendance_id','=','employee_attendance.employee_attendance_id')
+                            ->where('employee_attendance.finger_print_id', '=', $login_employee[0]->finger_id)
+                            ->whereDate('employee_attendance.in_out_time', '=', date('Y-m-d'))
+                            ->get();
+
+        // dd($attendanceData);
+        //DB::select("call `SP_DailyAttendance`('" . $date . "')");
+        
         $totalEmployee   = $this->employee->where('status', 1)->count();
         $totalDepartment = $this->department->count();
 
