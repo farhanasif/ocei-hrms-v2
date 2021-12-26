@@ -14,7 +14,31 @@
     td {
         color: black !important;
     }
+    .tip-box {
+        color: #2e5014;
+        background: #e7dfa5;
+    }
 
+    .note-box, .warning-box, .tip-box {
+        padding: 15px 15px 2.5px 27.5px;
+    }
+    .tip-icon {
+    background: #92CD59;
+    }
+
+    .info-tab {
+        width: 40px;
+        height: 40px;
+        display: inline-block;
+        position: absolute;
+        top: 16px;
+        left: 0;
+    }
+    .shadow {
+        background: #F7F8F9;
+        padding: 3px;
+        margin: 15px 0 20px;
+    }
 </style>
 
 <div class="container-fluid">
@@ -112,11 +136,19 @@
                                     <div class="form-group">
                                         <label for="exampleInput">@lang('leave.number_of_day')<span
                                                  id="number_of_day_span">*</span></label>
-                                        {!! Form::text('number_of_day', '', $attributes = ['class' => 'form-control number_of_day', 'readonly' => 'readonly','required'=>'required', 'placeholder' => __('leave.number_of_day')]) !!}
+                                        {!! Form::text('number_of_day', '', $attributes = ['class' => 'form-control number_of_day','id' => 'number_of_day', 'readonly' => 'readonly','required'=>'required', 'placeholder' => __('leave.number_of_day')]) !!}
                                     </div>
                                 </div>
                             </div>
-                            
+                            <div class="row" id="casual_leave_cause">
+                                <div class="color-box space">
+                                    <div class="shadow">
+                                        <div class="tip-box">
+                                            <p style="font-size: 16px;"><strong style="color:#ff5a5a;">Warning:</strong> Only <code>3 days</code>allow for<code> casual leave</code>but special purpose <code> maximum 10 days.</code> Please mention your special purpose to "purpose" field then apply.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-md-4"  id="religionWiseLeave">
                                     <div class="form-group">
@@ -168,6 +200,7 @@
         $('#religionWiseLeave').hide();
         $('#optionalLeaveList').hide();
         $('#optionalLeaveType_no').show();
+        $('#casual_leave_cause').hide();
         var leave_type_id = '';
         $(document).on("focus", ".application_from_date", function() {
             $(this).datepicker({
@@ -197,8 +230,6 @@
             var application_to_date = $('.application_to_date ').val();
             var leave_type_id = $('.leave_type_id ').val();
 
-            // alert(leave_type_id)
-
             if (application_from_date != '' && application_to_date != '') {
                 var action = "{{ URL::to('applyForLeave/applyForTotalNumberOfDays') }}";
                 $.ajax({
@@ -218,55 +249,48 @@
                         // var leave_type_id = $('.leave_type_id ').val();
 
                         if (data[1] == 24 && data[0] > 3) {
-                            // $.toast({
-                            //     heading: 'Warning',
-                            //     text: 'You have to apply ' + $(
-                            //             '.current_balance')
-                            //         .val() + ' days!',
-                            //     position: 'top-right',
-                            //     loaderBg: '#ff6849',
-                            //     icon: 'warning',
-                            //     hideAfter: 3000,
-                            //     stack: 6
-                            // });
-                            alert(
-                                'Only 3 days allow for casual leave but special purpose maximum 10 days. Please mention your special purpose to purpose field then apply.'
-                            );
-
-                            // $('body').find('#formSubmit').attr('disabled', true);
-                            // $('.number_of_day').val('');
-                        } else {
-                            if (data[0] > currentBalance) {
-                                $.toast({
-                                    heading: 'Warning',
-                                    text: 'You have to apply ' + $(
-                                            '.current_balance')
-                                        .val() + ' days!',
-                                    position: 'top-right',
-                                    loaderBg: '#ff6849',
-                                    icon: 'warning',
-                                    hideAfter: 3000,
-                                    stack: 6
-                                });
-                                $('body').find('#formSubmit').attr('disabled', true);
-                                $('.number_of_day').val('');
-                            } else if (data[0] == 0) {
-                                $.toast({
-                                    heading: 'Warning',
-                                    text: 'You can not apply for leave !',
-                                    position: 'top-right',
-                                    loaderBg: '#ff6849',
-                                    icon: 'warning',
-                                    hideAfter: 3000,
-                                    stack: 6
-                                });
-                                $('body').find('#formSubmit').attr('disabled', true);
-                                $('.number_of_day').val('');
-                            } else {
-                                $('.number_of_day').val(data[0]);
-                                $('body').find('#formSubmit').attr('disabled', false);
+                            if(leave_type_id == 24) {
+                                $('#casual_leave_cause').show();
+                                $('#number_of_day').val(data[0]);
                             }
                         }
+                        
+                        if (data[1] == 24 && data[0] > 10) {
+                            alert('The requested leave date range more than 10 days! Sorry! Maximum 10 days causal leave request are accepteable.');
+                            return;
+                        }
+
+                        if (data[0] > currentBalance) {
+                            $.toast({
+                                heading: 'Warning',
+                                text: 'You have to apply ' + $(
+                                        '.current_balance')
+                                    .val() + ' days!',
+                                position: 'top-right',
+                                loaderBg: '#ff6849',
+                                icon: 'warning',
+                                hideAfter: 3000,
+                                stack: 6
+                            });
+                            $('body').find('#formSubmit').attr('disabled', true);
+                            $('.number_of_day').val('');
+                        } else if (data[0] == 0) {
+                            $.toast({
+                                heading: 'Warning',
+                                text: 'You can not apply for leave !',
+                                position: 'top-right',
+                                loaderBg: '#ff6849',
+                                icon: 'warning',
+                                hideAfter: 3000,
+                                stack: 6
+                            });
+                            $('body').find('#formSubmit').attr('disabled', true);
+                            $('.number_of_day').val('');
+                        } else {
+                            $('.number_of_day').val(data[0]);
+                            $('body').find('#formSubmit').attr('disabled', false);
+                        }
+
                     }
                 });
             } else {

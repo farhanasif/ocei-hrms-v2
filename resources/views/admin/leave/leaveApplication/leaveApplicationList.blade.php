@@ -39,7 +39,7 @@
                                         <th>@lang('common.serial')</th>
                                         <th>@lang('common.employee_name')</th>
                                         <th>@lang('leave.leave_type')</th>
-                                        <th>@lang('leave.request_duration')</th>
+                                        <th style="width:180px;">@lang('leave.request_duration')</th>
                                         <th>@lang('leave.request_date')</th>
                                         <th>@lang('leave.number_of_day')</th>
                                         <th style="width: 300px;word-wrap: break-word;">@lang('leave.purpose')</th>
@@ -52,13 +52,22 @@
                                     {!! $sl = null !!}
                                         @foreach($results AS $value)
                                             <tr>
-                                                <td style="width: 100px;">{!! ++$sl !!}</td>
+                                                <td>{!! ++$sl !!}</td>
                                                 <td>
                                                     @if(isset($value->employee->first_name)) {!! $value->employee->first_name !!} @endif
                                                     @if(isset($value->employee->last_name)) {!! $value->employee->last_name !!} @endif
                                                 </td>
                                                 <td>@if(isset($value->leaveType->leave_type_name)) {!! $value->leaveType->leave_type_name !!} @endif</td>
-                                                <td>{!! dateConvertDBtoForm($value->application_from_date) !!} <b>to</b> {!! dateConvertDBtoForm($value->application_to_date) !!}</td>
+                                                <td style="width:180px;">
+                                                @if($value->leave_type_id == 23 and $value-> optional_leave_date_name_list != null)
+                                                    @foreach($value-> optional_leave_date_name_list as $l_k => $val)
+                                                        {!! $val !!}
+                                                    @endforeach
+                                                    
+                                                @else
+                                                    {!! dateConvertDBtoForm($value->application_from_date) !!} <b>to</b> {!! dateConvertDBtoForm($value->application_to_date) !!}
+                                                @endif
+                                                </td>
                                                 <td>{!! dateConvertDBtoForm($value->application_date) !!}</td>
                                                 <td>{!! $value->number_of_day !!}</td>
                                                 <td>{!! $value->purpose !!}</td>
@@ -77,11 +86,11 @@
                                                 @endif
 
                                                 <td>
-                                                    @if($value->status == 1)
+                                                    <!-- @if($value->status == 1) -->
                                                         <a href="{!! route('requestedApplication.viewDetails',$value->leave_application_id ) !!}" title="View leave details!" class="btn btn-success btn-md btnColor">
                                                             <i class="fa fa-arrow-circle-right"></i>
                                                         </a>
-                                                    @endif
+                                                    <!-- @endif -->
                                                 </td>
                                             </tr>
                                         @endforeach

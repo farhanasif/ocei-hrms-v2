@@ -53,7 +53,7 @@
 										{!! $sl=null !!}
 										@foreach($results AS $value)
 											<tr>
-												<td style="width: 100px;">{!! ++$sl !!}</td>
+												<td>{!! ++$sl !!}</td>
 												<td>
 													@if(isset($value->employee->first_name)) {!! $value->employee->first_name !!} @endif
 													@if(isset($value->employee->last_name)) {!! $value->employee->last_name !!} @endif
