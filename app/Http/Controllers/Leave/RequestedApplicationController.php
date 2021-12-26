@@ -91,15 +91,19 @@ class RequestedApplicationController extends Controller
 
         $data = LeaveApplication::findOrFail($request->leave_application_id);
         $input = $request->all();
-
+        // dd($input);
         if($request->status == 2) {
             $input['approve_date']     = date('Y-m-d');
             $input['approve_by']       = session('logged_session_data.employee_id');
+            $pre_date_list = unserialize($data['leave_date_list']);
+            $input['request_leave_date_list'] = serialize($pre_date_list);
+            $input['leave_date_list'] = serialize($request->optional_date_list);
         }else{
             $input['reject_date']      = date('Y-m-d');
             $input['reject_by']        = session('logged_session_data.employee_id');
         }
-
+        
+        // dd($input);
         try{
             $data->update($input);
             $bug = 0;

@@ -133,21 +133,22 @@ class ManualAttendanceController extends Controller
               $att->is_active = 1;
               $att->save();  
 
-              $view_employee_in_out_data = DB::table('view_employee_in_out_data')->where('finger_print_id',$finger_id)->first();
-              
+              $view_employee_in_out_data = DB::table('view_employee_in_out_data')->where('finger_print_id',$finger_id)->whereDate('in_time', '=', date('Y-m-d'))->first();
+
               if($view_employee_in_out_data == null) {
                 $data['employee_attendance_id'] = $att->employee_attendance_id;
                 $data['finger_print_id'] = $finger_id;
                 $data['in_time'] = $att->in_out_time;
                 $data['out_time'] = null;
                 $data['date'] = date('Y-m-d');
-                $data['working_time'] = '09:00:00';
+                $data['working_time'] = '00:00:00';
 
                 $current_time = new DateTime();
                 $work_time =  new DateTime('09:00:00');
                 $interval = $current_time->diff($work_time);
-                $late = $interval->format('%h').':'.$interval->format('%m').':'.$interval->format('%s');
+                $late = $interval->format('%h').':'.$interval->format('%i').':'.$interval->format('%s');
                 $data['late_time'] = $late;
+
                 WebAttendance::create($data);
               }
                 // $data['late_time'] = ;
@@ -163,8 +164,18 @@ class ManualAttendanceController extends Controller
               $att->finger_print_id = $finger_id;
               $att->in_out_time = date("Y-m-d H:i:s");
               $att->is_active = 0;
-              $att->save();  
-              
+              $att->save();
+
+              $view_employee_in_out_data = DB::table('view_employee_in_out_data')->where('finger_print_id',$finger_id)->whereDate('in_time', '=', date('Y-m-d'))->where('out_time','=',null)->first();
+
+              if($view_employee_in_out_data != null) {
+                $current_time = new DateTime();
+                $in_time =  new DateTime($view_employee_in_out_data->in_time);
+                $work_hours = $current_time->diff($in_time);
+                $total_work_hours = $work_hours->format('%h').':'.$work_hours->format('%i').':'.$work_hours->format('%s');
+
+                WebAttendance::where('employee_attendance_id',$view_employee_in_out_data->employee_attendance_id)->update(['out_time' => $current_time,'working_time'=>$total_work_hours]);
+              }
               return redirect()->back()->with('success', 'Attendanced updated.');
            }else{
             return redirect()->back()->with('error', 'Invalid Ip Address.');

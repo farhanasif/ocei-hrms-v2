@@ -194,13 +194,31 @@ class HomeController extends Controller
         }
 
         $date            = date('Y-m-d');
-        $attendanceData  = DB::table('employee_attendance')
-                            ->addSelect('employee_attendance.*','employee.first_name','employee.last_name','employee.photo','veiod.in_time','veiod.out_time','veiod.late_time')
-                            ->join('employee', 'employee.finger_id','=','employee_attendance.finger_print_id')
-                            ->join('view_employee_in_out_data as veiod','veiod.employee_attendance_id','=','employee_attendance.employee_attendance_id')
-                            ->where('employee_attendance.finger_print_id', '=', $login_employee[0]->finger_id)
-                            ->whereDate('employee_attendance.in_out_time', '=', date('Y-m-d'))
-                            ->get();
+
+         if (session('logged_session_data.role_id') == 1) {
+            $attendanceData  = DB::table('employee_attendance')
+                    ->addSelect('employee_attendance.*','employee.first_name','employee.last_name','employee.photo','veiod.in_time','veiod.out_time','veiod.late_time','veiod.working_time')
+                    ->join('employee', 'employee.finger_id','=','employee_attendance.finger_print_id')
+                    ->join('view_employee_in_out_data as veiod','veiod.employee_attendance_id','=','employee_attendance.employee_attendance_id')
+                    ->whereDate('employee_attendance.in_out_time', '=', date('Y-m-d'))
+                    ->get();
+         }else{
+            $attendanceData  = DB::table('employee_attendance')
+                    ->addSelect('employee_attendance.*','employee.first_name','employee.last_name','employee.photo','veiod.in_time','veiod.out_time','veiod.late_time','veiod.working_time')
+                    ->join('employee', 'employee.finger_id','=','employee_attendance.finger_print_id')
+                    ->join('view_employee_in_out_data as veiod','veiod.employee_attendance_id','=','employee_attendance.employee_attendance_id')
+                    ->where('employee_attendance.finger_print_id', '=', $login_employee[0]->finger_id)
+                    ->whereDate('employee_attendance.in_out_time', '=', date('Y-m-d'))
+                    ->get();
+         }
+
+        // $attendanceData  = DB::table('employee_attendance')
+        //                     ->addSelect('employee_attendance.*','employee.first_name','employee.last_name','employee.photo','veiod.in_time','veiod.out_time','veiod.late_time')
+        //                     ->join('employee', 'employee.finger_id','=','employee_attendance.finger_print_id')
+        //                     ->join('view_employee_in_out_data as veiod','veiod.employee_attendance_id','=','employee_attendance.employee_attendance_id')
+        //                     ->where('employee_attendance.finger_print_id', '=', $login_employee[0]->finger_id)
+        //                     ->whereDate('employee_attendance.in_out_time', '=', date('Y-m-d'))
+        //                     ->get();
 
         // dd($attendanceData);
         //DB::select("call `SP_DailyAttendance`('" . $date . "')");
@@ -248,6 +266,22 @@ class HomeController extends Controller
             ->where('training_info.status', 0)
             ->get();
 
+        foreach ($leaveApplication as $key => $value) {
+            $leave_date_name_list = [];
+            if($value->leave_date_list){
+                $value->leave_date_list = unserialize($value->leave_date_list);
+                foreach ($value->leave_date_list as $key2 => $val) {
+                    $current_year = date('Y-m');
+                    $leave_name = DB::table('optional_Leave')->select('leave_name')->where('leave_year',$current_year)->where('leave_date',$val)->first();
+                    
+                    $leave_date_name_list[] = $val.'<b><span style="color: green; font-size: 16px;">( '.$leave_name->leave_name. ' ) </span></b>';
+                }
+            }
+            $value->optional_leave_date_name_list = $leave_date_name_list;
+        }
+
+        // dd($leaveApplication);
+
         $data = [
             'attendanceData'    => $attendanceData,
             'totalEmployee'     => $totalEmployee,
@@ -266,7 +300,7 @@ class HomeController extends Controller
 
         ];
 
-
+        // dd($leaveApplication);
         return view('admin.adminhome', $data);
     }
 

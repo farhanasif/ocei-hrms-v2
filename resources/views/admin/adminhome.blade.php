@@ -110,6 +110,7 @@
                                 <th>@lang('dashboard.in_time')</th>
                                 <th>@lang('dashboard.out_time')</th>
                                 <th>@lang('dashboard.late')</th>
+                                <th>Total Working</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -141,13 +142,26 @@
 
                                 <td>
                                     <?php
-                                    if (date('H:i', strtotime($dailyAttendance->late_time)) != '00:00:00') {
-                                        echo "<b style='color: red;'>" . date('H:i', strtotime($dailyAttendance->late_time)) . "</b>";
-                                    } else {
-                                        echo "<b style='color: green'><i class='cr-icon glyphicon glyphicon-ok'></i></b>";
-                                    }
+                                        if (date('H:i', strtotime($dailyAttendance->late_time)) != '00:00:00') {
+                                            echo "<b style='color: red;'>" . date('H:i', strtotime($dailyAttendance->late_time)) . "</b>";
+                                        } else {
+                                            echo "<b style='color: green'><i class='cr-icon glyphicon glyphicon-ok'></i></b>";
+                                        }
                                     ?>
 
+                                </td>
+                                <td>
+                                    <?php
+                                        if($dailyAttendance->out_time != null){
+                                            if (date('H:i', strtotime($dailyAttendance->working_time)) < '09:00:00') {
+                                                echo "<b style='color: red;'>" . date('H:i', strtotime($dailyAttendance->working_time)) . "</b>";
+                                            } else {
+                                                echo "<b style='color: green'><i class='cr-icon glyphicon glyphicon-ok'></i>" . date('H:i', strtotime($dailyAttendance->working_time)) ."</b>";
+                                            }
+                                        }else{
+                                            echo "--:--:--";
+                                        }
+                                    ?>
                                 </td>
 
                             </tr>
@@ -345,7 +359,7 @@
         @endif
 
         @if(count($leaveApplication) > 0)
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="white-box">
                 <h3 class="box-title">@lang('dashboard.recent_leave_application')</h3>
                 <hr>
@@ -365,7 +379,20 @@
                                 <h5>{{$leaveApplication->employee->first_name}} {{$leaveApplication->employee->last_name}}</h5><span class="time">{{date(" d M Y h:i: a", $d)}}</span> <span class="label label-rouded label-info">PENDING</span>
                                 <br /><span class="mail-desc" style="max-height: none">
                                     @lang('leave.leave_type') : {{$leaveApplication->leaveType->leave_type_name}}<br>
-                                    @lang('leave.request_duration') : {{dateConvertDBtoForm($leaveApplication->application_from_date)}} To {{dateConvertDBtoForm($leaveApplication->application_to_date)}}<br>
+                                    @lang('leave.request_duration') :
+                                    @if($leaveApplication->leave_type_id == 23)
+                                        @foreach($leaveApplication->optional_leave_date_name_list as $l_k => $listDate)
+                                            <input class="form-check-input leave_dt_name" type="checkbox" value="{{$leaveApplication->leave_date_list[$l_k]}}" id="flexCheckDefault_{{$l_k}}'" name="leave_date"/><label class="form-check-label" for="flexCheckDefault" style="padding-left: 2px"></label>{!! $listDate !!}
+                                            @if($l_k == count($leaveApplication->leave_date_list) - 2) 
+                                                and
+                                            @elseif($l_k < count($leaveApplication->leave_date_list) - 2)
+                                                ,
+                                            @endif
+                                        @endforeach
+                                    @else
+                                     {{dateConvertDBtoForm($leaveApplication->application_from_date)}} To {{dateConvertDBtoForm($leaveApplication->application_to_date)}}
+                                    @endif
+                                     <br>
                                     @lang('leave.number_of_day') : {{$leaveApplication->number_of_day}} <br>
                                     @lang('leave.purpose') : {{$leaveApplication->purpose}}
                                 </span>
@@ -410,7 +437,17 @@
         var actionTo = "{{ URL::to('approveOrRejectLeaveApplication') }}";
         var leave_application_id = $(this).attr('data-leave_application_id');
         var status = $(this).attr('data-status');
-
+        console.log(status);
+        var leave_dt = [];
+        var i = 0;
+        var arr = [];
+        // $('.remarksForLeave').click(function () {
+            // arr = [];
+               $('.leave_dt_name:checked').each(function () {
+                   arr[i++] = $(this).val();
+               });
+        // });
+        console.log(arr);
         if (status == 2) {
             var statusText = "Are you want to approve leave application?";
             var btnColor = "#2cabe3";
@@ -437,6 +474,7 @@
                         data: {
                             leave_application_id: leave_application_id,
                             status: status,
+                            optional_date_list: arr,
                             _token: token
                         },
                         success: function(data) {
