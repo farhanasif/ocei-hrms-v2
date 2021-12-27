@@ -52,6 +52,7 @@ class PerformanceReportController extends Controller
             'payGrade'          => $payGrade,
             'performanceCategory'   => $performanceCategory,
         ];
+        // dd($data);
         return view('admin.performance.report.summaryReport', $data);
     }
 
@@ -121,7 +122,7 @@ class PerformanceReportController extends Controller
             $criteriaDataFormat[$value->first_name . " ". $value->last_name.",".$value->designation_name][] = $value;
         }
 
-        // dd($data);
+        dd($data);
 
         return view('admin.performance.report.pdf.nisPerformanceReport', ['criteriaDataFormat' => $criteriaDataFormat, 'data' => $data]);
     }

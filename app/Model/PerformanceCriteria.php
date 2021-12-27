@@ -10,7 +10,7 @@ class PerformanceCriteria extends Model
     protected $primaryKey = 'performance_criteria_id';
 
     protected $fillable = [
-        'performance_criteria_id', 'performance_category_id','performance_criteria_name'
+        'performance_criteria_id', 'performance_category_id','performance_criteria_name','performance_criteria_name_bn'
     ];
 
     public function category(){

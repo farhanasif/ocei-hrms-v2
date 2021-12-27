@@ -40,7 +40,8 @@
 									 <tr class="tr_header">
                                         <th>@lang('common.serial')</th>
                                         <th>@lang('performance.performance_category_name')</th>
-                                        <th>@lang('performance.performance_criteria_name')</th>
+                                        <th>@lang('performance.performance_criteria_name') English</th>
+                                        <th> Performance Criteria Name Bangla</th>
                                         <th style="text-align: center;">@lang('common.action')</th>
                                     </tr>
 								</thead>
@@ -51,6 +52,7 @@
 										<td style="width: 100px;">{!! ++$sl !!}</td>
 										<td>@if(isset($value->category->performance_category_name )) {{ $value->category->performance_category_name }} @endif</td>
 										<td>{!! $value->performance_criteria_name !!}</td>
+										<td>{!! $value->performance_criteria_name_bn !!}</td>
 										<td style="width: 100px;">
 											<a href="{!! route('performanceCriteria.edit',$value->performance_criteria_id) !!}"  class="btn btn-success btn-xs btnColor">
 												<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
