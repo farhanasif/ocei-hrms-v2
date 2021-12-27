@@ -20,6 +20,8 @@ use App\Model\PerformanceCategory;
 
 class PerformanceReportController extends Controller
 {
+    protected $bn = ["১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯", "০"];
+    protected $en = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
 
     public function performanceSummaryReport(Request $request)
     {
@@ -94,13 +96,17 @@ class PerformanceReportController extends Controller
         $data =  DB::table('employee_performance')->select(
             'employee.first_name as first_name',
             'employee.last_name as last_name',
+            'employee.bangla_first_name as bangla_first_name',
+            'employee.bangla_last_name as bangla_last_name',
             'employee.employee_id',
             'employee.designation_id as designation_id',
             'designation.designation_id as designation_id',
             'designation.designation_name  as designation_name',
+            'designation.designation_name_bn  as designation_name_bn',
             'employee_performance.month as month',
             'employee_performance.remarks as remarks',
-            'pay_grade.pay_grade_name as pay_grade_name'
+            'pay_grade.pay_grade_name as pay_grade_name',
+            'employee_performance.employee_performance_id'
         )
             ->join('employee', 'employee.employee_id', '=', 'employee_performance.employee_id')
             ->join('pay_grade','pay_grade.pay_grade_id','=','employee.pay_grade_id')
@@ -121,11 +127,31 @@ class PerformanceReportController extends Controller
         // dd($data);
         $criteriaDataFormat = [];
         foreach ($data  as $value) {
-            $criteriaDataFormat[$value->first_name . " ". $value->last_name.",".$value->designation_name][] = $value;
+            $parpormance = DB::table('employee_performance_details as epd')
+                             ->select('epd.*')
+                             ->join('employee_performance as ep','ep.employee_performance_id','=','epd.employee_performance_id')
+                             ->join('performance_criteria', 'performance_criteria.performance_criteria_id', '=', 'epd.performance_criteria_id')
+                             ->where('ep.employee_id','=',$value->employee_id)
+                             ->where('ep.employee_performance_id',$value->employee_performance_id)
+                             ->get();
+            $value->parpormance = $parpormance;
+        }
+        $bangla_number = [];
+        for($i = 0; $i<= 100; $i++)
+        {
+            $bangla_number[] = $this->en2bn($i);
         }
 
-        dd($data);
+        return view('admin.performance.report.pdf.nisPerformanceReport', ['performance_criteria_name' => $performance_criteria_name, 'data' => $data,'bangla_number'=>$bangla_number]);
+    }
 
-        return view('admin.performance.report.pdf.nisPerformanceReport', ['criteriaDataFormat' => $criteriaDataFormat, 'data' => $data]);
+    public function bn2en($number)
+    {
+        return str_replace($this->$bn, $this->$en, $number);
+    }
+
+    public function en2bn($number)
+    {
+        return str_replace($this->en, $this->bn, $number);
     }
 }

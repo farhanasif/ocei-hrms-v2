@@ -58,43 +58,44 @@
                                 <thead>
                                     @php
                                         $total_rating = 0;
+                                        $most_rating = 0;
                                     @endphp
-                                    @foreach ($criteriaDataFormat as $key => $value)
                                         <tr>
-                                            <th>S/L</th>
-                                            <th> Name Designation Pay Grade </th>
-                                            @foreach ($value as $item)
-                                                <td>{{ $item->performance_criteria }}</td>
+                                            <th></th>
+                                            <th> নাম ও পদবী ও বেতন গ্রেড </th>
+                                            @foreach ($performance_criteria_name as $key => $value)
+                                                <th>{{ $value->performance_criteria_name_bn }}</th>
                                             @endforeach
-                                            <th>Total</th>
-                                            <th>Comments</th>
+                                                <th>মোট</th>
+                                                <th>মন্তব্য</th>
                                         </tr>
 
                                         <tr>
-                                            <th> </th>
-                                            <th> </th>
-                                            @foreach ($value as $item)
-                                                <td>5</td>
+                                            <td> </td>
+                                            <td> </td>
+                                            @foreach ($performance_criteria_name as $item)
+                                                <?php $most_rating += 5; ?>
+                                                <td>{{ $bangla_number[5] }}</td>
                                             @endforeach
-                                            <td>100</td>
+                                            <td>{{ $bangla_number[$most_rating]}}</td>
                                             <td> </td>
                                         </tr>
 
                                         <tr>
-                                            <th>{{ $loop->iteration }}</th>
-                                            <td>{{ $value[0]->first_name . ' ' . $value[0]->last_name }}</td>
-                                            @foreach ($value as $item)
-                                                @php
-                                                    $total_rating += $item->rating;
-                                                @endphp
-                                                <td>{{ $item->rating }}</td>
+                                            @foreach($data as $key => $value)
+                                                <td>{{ $key + 1 }}</td>
+                                                <td>{{ $value->bangla_first_name }} {{ $value->bangla_last_name }}</td>
+                                                @foreach($value->parpormance as $key => $val)
+                                                    <?php $total_rating += $val->rating; ?>
+                                                    <td>{{ $bangla_number[$val->rating]}}</td>
+                                                @endforeach
+                                                @for($i = 0; $i < count($performance_criteria_name) - count($value->parpormance); $i++)
+                                                    <td> </td>
+                                                @endfor
                                             @endforeach
-                                            <td>{{ $total_rating }}</td>
-                                            {{-- <td></td> --}}
-                                            {{-- <td></td> --}}
+                                            <td> {{ $bangla_number[$total_rating]}}</td>
+                                            <td> </td>
                                         </tr>
-
-                                    @endforeach
                                 </thead>
 
                             </table>

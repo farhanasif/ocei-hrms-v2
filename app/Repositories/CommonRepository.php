@@ -101,7 +101,7 @@ class CommonRepository
 
 
     public function leaveTypeList(){
-        $results = DB::table('leave_type')->get();
+        $results = DB::table('leave_type')->orderBy('leave_type_id','desc')->get();
         $options = [''=>'---- Please select ----'];
         foreach ($results as $key => $value) {
             $options [$value->leave_type_id] = $value->leave_type_name;
