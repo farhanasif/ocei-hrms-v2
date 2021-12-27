@@ -10,7 +10,7 @@ class Designation extends Model
     protected $primaryKey = 'designation_id';
 
     protected $fillable = [
-        'designation_id', 'designation_name','total_vacant','position_no'
+        'designation_id', 'designation_name','total_vacant','position_no','designation_name_bn'
     ];
 
     // public function saveQuietly()

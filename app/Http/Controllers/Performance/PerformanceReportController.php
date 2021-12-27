@@ -59,7 +59,6 @@ class PerformanceReportController extends Controller
 
     public function downloadPerformanceSummaryReport(Request $request)
     {
-
         $results = EmployeePerformance::select('employee_performance.*', 'employee.first_name', 'employee.last_name', 'department.department_name', DB::raw('AVG(rating) as avgRating'))
             ->leftJoin('employee_performance_details', 'employee_performance_details.employee_performance_id', '=', 'employee_performance.employee_performance_id')
             ->join('employee', 'employee.employee_id', '=', 'employee_performance.employee_id')
@@ -89,6 +88,9 @@ class PerformanceReportController extends Controller
     public function performance_nisperformance_category(Request $request)
     {
         // dd($request->all());
+
+        $performance_criteria_name = DB::table('performance_criteria')->where('performance_category_id',4)->get();
+
         $data =  DB::table('employee_performance')->select(
             'employee.first_name as first_name',
             'employee.last_name as last_name',
@@ -98,19 +100,19 @@ class PerformanceReportController extends Controller
             'designation.designation_name  as designation_name',
             'employee_performance.month as month',
             'employee_performance.remarks as remarks',
-            'employee_performance.pay_grade_name as pay_grade_name',
-            'employee_performance_details.rating as rating',
-            'employee_performance_details.comments as comments',
-            'performance_criteria.performance_criteria_name as performance_criteria'
+            'pay_grade.pay_grade_name as pay_grade_name'
         )
-            ->leftJoin('employee', 'employee.employee_id', '=', 'employee_performance.employee_id')
-            ->leftJoin('designation', 'designation.designation_id', '=', 'employee.designation_id')
-            ->leftJoin('employee_performance_details', 'employee_performance_details.employee_performance_id', '=', 'employee_performance.employee_performance_id')
-            ->leftJoin('performance_criteria', 'performance_criteria.performance_criteria_id', '=', 'employee_performance_details.performance_criteria_id')
-            // ->whereBetween('pay_grade_name', [$request->from_pay_grade_name, $request->to_pay_grade_name])
-            ->whereBetween('month', [$request->from_month, $request->to_month])
-            ->where('employee_performance.type', 'nis')
-            ->get()->toArray();
+            ->join('employee', 'employee.employee_id', '=', 'employee_performance.employee_id')
+            ->join('pay_grade','pay_grade.pay_grade_id','=','employee.pay_grade_id')
+            ->join('designation', 'designation.designation_id', '=', 'employee.designation_id')
+            // ->join('employee_performance_details', 'employee_performance_details.employee_performance_id', '=', 'employee_performance.employee_performance_id')
+            // ->join('performance_criteria', 'performance_criteria.performance_criteria_id', '=', 'employee_performance_details.performance_criteria_id')
+            ->whereBetween('pay_grade.pay_grade_id', [$request->from_pay_grade_name, $request->to_pay_grade_name])
+            ->whereBetween('employee_performance.month', [$request->from_month, $request->to_month])
+            ->where('employee_performance.status',1)
+            // ->where('performance_criteria.performance_category_id', 4)
+            // ->groupBy('employee_performance_details.employee_performance_id')
+            ->get();
         // $data1 =  DB::table('employee_performance')
         //     ->whereBetween('pay_grade_name', [$request->from_pay_grade_name, $request->to_pay_grade_name])
         //     ->whereBetween('month', [$request->from_month, $request->to_month])

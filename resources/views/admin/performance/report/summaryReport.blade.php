@@ -70,8 +70,8 @@
                                         class="form-control from_pay_grade_name required select2">
                                         <option value="">--- @lang('common.please_select') ---</option>
                                         @foreach ($payGrade as $payGradeValue)
-                                            <option value="{{ $payGradeValue->pay_grade_name }}"
-                                                @if ($payGradeValue->pay_grade_name == old('pay_grade_name')) {{ 'selected' }} @endif>
+                                            <option value="{{ $payGradeValue->pay_grade_id }}"
+                                                @if ($payGradeValue->pay_grade_id == old('pay_grade_id')) {{ 'selected' }} @endif>
                                                 {{ $payGradeValue->pay_grade_name }}
                                             </option>
                                         @endforeach
@@ -87,8 +87,8 @@
                                         class="form-control to_pay_grade_name required select2">
                                         <option value="">--- @lang('common.please_select') ---</option>
                                         @foreach ($payGrade as $toPayGradeValue)
-                                            <option value="{{ $toPayGradeValue->pay_grade_name }}"
-                                                @if ($toPayGradeValue->pay_grade_name == old('pay_grade_name')) {{ 'selected' }} @endif>
+                                            <option value="{{ $toPayGradeValue->pay_grade_id }}"
+                                                @if ($toPayGradeValue->pay_grade_id == old('pay_grade_id')) {{ 'selected' }} @endif>
                                                 {{ $toPayGradeValue->pay_grade_name }}
                                             </option>
                                         @endforeach
