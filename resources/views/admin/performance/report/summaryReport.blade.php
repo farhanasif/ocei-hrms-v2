@@ -41,7 +41,7 @@
                 <div class="panel-heading"><i class="mdi mdi-table fa-fw"></i>@yield('title')</div>
                 <div class="panel-wrapper collapse in" aria-expanded="true">
                     <div class="panel-body">
-                        <h3>For NIS Performance Category</h3>
+                        <h3>Performance Category - NIS </h3>
                         {{ Form::open(['route' => 'performance_nisperformance_category', 'id' => 'performance_nisperformance_category']) }}
 
                         <div class="row">
@@ -130,7 +130,7 @@
                         </div>
                         {{ Form::close() }}
 
-                        <h3>For ACR Performance Category</h3>
+                        <h3>Performance Category - ACR </h3>
                         <div class="row">
                             <div id="searchBox">
                                 {{ Form::open(['route' => 'performanceSummaryReport.performanceSummaryReport', 'id' => 'performanceSummaryReport']) }}
@@ -192,57 +192,52 @@
                                 </div>
                             </div>
                         @endif
-                        @if ($results)
+                        @if($results)
                             <div class="table-responsive">
+                            @foreach($results as $lk => $val)
                                 <table id="" class="table table-bordered">
                                     <thead class="tr_header">
                                         <tr>
-                                            <th style="width:100px;">@lang('common.serial')</th>
-                                            <th>@lang('common.month')</th>
-                                            <th style="width: 500px">@lang('performance.rating')
-                                                (@lang('performance.out_of_ten'))</th>
+                                            <th colspan="4" style="text-align: center;">{{$val->first_name }} {{$val->last_name }} <br /> <span>{{$val->designation_name  }}</span></th>
+                                        </tr>
+                                        <tr>
+                                            <th style="">@lang('common.serial')</th>
+                                            <th style="width: 500px">Performance Type Name</th>
+                                            <th> Performance Rating </th>
+                                            <th> Remark</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (count($results) > 0)
+                                        @if(count($val->parpormance) > 0)
                                             @php
                                                 $serial = 0;
                                                 $totalRating = 0;
                                                 $item = 0;
                                             @endphp
-                                            @foreach ($results as $value)
+                                            @foreach($val->parpormance as $key => $value)
                                                 @php
                                                     $item++;
-                                                    $totalRating += round($value->avgRating, 2);
+                                                    $totalRating += $value->rating;
                                                 @endphp
                                                 <tr>
-                                                    <td style="width:100px;">{{ ++$serial }}</td>
-                                                    <td>{{ convartMonthAndYearToWord($value->month) }}</td>
-                                                    <td>{{ round($value->avgRating, 2) }}</td>
+                                                    <td style="">{{++$serial}}</td>
+                                                    <td>{{ $value->performance_criteria_name }}</td>
+                                                    <td class="text-center">{{ $value->rating }}</td>
+                                                    <td>{{ $value->comments }}</td>
                                                 </tr>
                                             @endforeach
                                             <tr>
-                                                <td colspan="1"></td>
-                                                <td class="text-right"><b>@lang('common.employee_name'): &nbsp;</b>
-                                                </td>
-                                                <td><b></b> {{ $value->first_name }} {{ $value->last_name }}
-                                                    ({{ $value->department_name }})</td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="1"></td>
-                                                <td class="text-right"><b>@lang('performance.total_rating'):
+                                                <td colspan="2" class="text-right"><b>@lang('performance.total_rating'):
                                                         &nbsp;</b></td>
-                                                <td><b></b> {{ $totalRating }} </td>
+                                                <td ><b></b> {{ $totalRating }} </td>
                                             </tr>
                                             <tr>
-                                                <td colspan="1"></td>
-                                                <td class="text-right"><b>@lang('performance.average_rating'):
+                                                <td colspan="2" class="text-right"><b>@lang('performance.average_rating'):
                                                         &nbsp;</b></td>
-                                                <td><b></b> {{ $totalRating / $item }} </td>
+                                                <td><b></b> {{ number_format(($totalRating / $item),2) }} </td>
                                             </tr>
                                             <tr>
-                                                <td colspan="1"></td>
-                                                <td class="text-right"><b>@lang('performance.star_rating'):
+                                                <td colspan="2" class="text-right"><b>@lang('performance.star_rating'):
                                                         &nbsp;</b></td>
                                                 <td>
                                                     <span class="PerformanceRating"></span>
@@ -253,7 +248,7 @@
                                                 $(function() {
                                                     var rating;
                                                     $(".PerformanceRating").rateYo({
-                                                        rating: <?php echo $totalRating / $item / 2; ?>,
+                                                        rating: <?php echo number_format(($totalRating / $item),2); ?>,
                                                         ratedFill: "#FF4500"
                                                     }).on("rateyo.set", function(e, data) {
 
@@ -267,6 +262,7 @@
                                         @endif
                                     </tbody>
                                 </table>
+                            @endforeach
                             </div>
                         @endif
                     </div>

@@ -81,21 +81,25 @@
                                             <td> </td>
                                         </tr>
 
-                                        <tr>
-                                            @foreach($data as $key => $value)
+                                        @foreach($data as $key => $value)
+                                            @php
+                                                $total_rating = 0;
+                                            @endphp
+                                            <tr>
                                                 <td>{{ $key + 1 }}</td>
                                                 <td>{{ $value->bangla_first_name }} {{ $value->bangla_last_name }}</td>
-                                                @foreach($value->parpormance as $key => $val)
+                                                @foreach($value->parpormance as $key_v => $val)
                                                     <?php $total_rating += $val->rating; ?>
-                                                    <td>{{ $bangla_number[$val->rating]}}</td>
+                                                    <td>{{ $bangla_number[$val->rating] }}</td>
                                                 @endforeach
                                                 @for($i = 0; $i < count($performance_criteria_name) - count($value->parpormance); $i++)
                                                     <td> </td>
                                                 @endfor
-                                            @endforeach
-                                            <td> {{ $bangla_number[$total_rating]}}</td>
-                                            <td> </td>
-                                        </tr>
+                                                <td> {{ $bangla_number[$total_rating]}}</td>
+                                                <td> </td>
+                                            </tr>
+                                        @endforeach
+                                        
                                 </thead>
 
                             </table>
