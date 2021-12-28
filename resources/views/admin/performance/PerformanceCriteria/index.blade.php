@@ -34,40 +34,112 @@
 								<i class="glyphicon glyphicon-remove"></i>&nbsp;<strong>{{ session()->get('error') }}</strong>
 							</div>
 						@endif
-						<div class="table-responsive">
-							<table id="myTable" class="table table-bordered">
-								<thead>
-									 <tr class="tr_header">
-                                        <th>@lang('common.serial')</th>
-                                        <th>@lang('performance.performance_category_name')</th>
-                                        <th>@lang('performance.performance_criteria_name') English</th>
-                                        <th> Performance Criteria Name Bangla</th>
-                                        <th style="text-align: center;">@lang('common.action')</th>
-                                    </tr>
-								</thead>
-								<tbody>
-								{!! $sl=null !!}
-								@foreach($results AS $value)
-									<tr class="{!! $value->performance_criteria_id !!}">
-										<td style="width: 100px;">{!! ++$sl !!}</td>
-										<td>@if(isset($value->category->performance_category_name )) {{ $value->category->performance_category_name }} @endif</td>
-										<td>{!! $value->performance_criteria_name !!}</td>
-										<td>{!! $value->performance_criteria_name_bn !!}</td>
-										<td style="width: 100px;">
-											<a href="{!! route('performanceCriteria.edit',$value->performance_criteria_id) !!}"  class="btn btn-success btn-xs btnColor">
-												<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-											</a>
-											<a href="{!!route('performanceCriteria.delete',$value->performance_criteria_id )!!}" data-token="{!! csrf_token() !!}" data-id="{!! $value->performance_criteria_id !!}" class="delete btn btn-danger btn-xs deleteBtn btnColor"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
-										</td>
-									</tr>
-								@endforeach
-								</tbody>
-							</table>
-						</div>
+						<div class="tabbable">
+							<ul class="nav nav-tabs" id="acr_nis">
+								<li class="@if(count($results['acr'])) active @endif">
+									<a data-toggle="tab" href="#acr">
+										<i class="blue ace-icon fa fa-tasks bigger-120"></i>
+										ACR 
+									</a>
+								</li>
+
+								<li class="@if(!count($results['acr']) && count($apps['nis'])) active @endif">
+									<a data-toggle="tab" href="#nis">
+										<i class="blue ace-icon fa fa-tasks bigger-120"></i>
+										NIS
+									</a>
+								</li>
+							</ul>
+							<div class="tab-content" style="padding-bottom: 20px;">
+								<div class="table-responsive tab-pane fade in @if(count($results['acr'])) active @endif" id="acr">
+									<table id="myTable" class="table table-bordered">
+										<thead>
+											 <tr class="tr_header">
+		                                        <th>@lang('common.serial')</th>
+		                                        <th>@lang('performance.performance_category_name')</th>
+		                                        <th>@lang('performance.performance_criteria_name') English</th>
+		                                        <th> Performance Criteria Name Bangla</th>
+		                                        <th style="text-align: center;">@lang('common.action')</th>
+		                                    </tr>
+										</thead>
+										<tbody>
+										{!! $sl=null !!}
+										@foreach($results['acr'] AS $value)
+											<tr class="{!! $value->performance_criteria_id !!}">
+												<td style="">{!! ++$sl !!}</td>
+												<td>@if(isset($value->category->performance_category_name )) {{ $value->category->performance_category_name }} @endif</td>
+												<td>{!! $value->performance_criteria_name !!}</td>
+												<td>{!! $value->performance_criteria_name_bn !!}</td>
+												<td style="width: 100px;">
+													<a href="{!! route('performanceCriteria.edit',$value->performance_criteria_id) !!}"  class="btn btn-success btn-xs btnColor">
+														<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+													</a>
+													<a href="{!!route('performanceCriteria.delete',$value->performance_criteria_id )!!}" data-token="{!! csrf_token() !!}" data-id="{!! $value->performance_criteria_id !!}" class="delete btn btn-danger btn-xs deleteBtn btnColor"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+												</td>
+											</tr>
+										@endforeach
+										</tbody>
+									</table>
+							    </div>
+							    <div class="table-responsive tab-pane fade in @if(!count($results['acr']) && count($apps['nis'])) active @endif" id="nis">
+									<table id="myTable1" class="table table-bordered">
+										<thead>
+											 <tr class="tr_header">
+		                                        <th>@lang('common.serial')</th>
+		                                        <th>@lang('performance.performance_category_name')</th>
+		                                        <th>@lang('performance.performance_criteria_name') English</th>
+		                                        <th> Performance Criteria Name Bangla</th>
+		                                        <th style="text-align: center;">@lang('common.action')</th>
+		                                    </tr>
+										</thead>
+										<tbody>
+										{!! $sl=null !!}
+										@foreach($results['nis'] AS $value)
+											<tr class="{!! $value->performance_criteria_id !!}">
+												<td style="">{!! ++$sl !!}</td>
+												<td>@if(isset($value->category->performance_category_name )) {{ $value->category->performance_category_name }} @endif</td>
+												<td>{!! $value->performance_criteria_name !!}</td>
+												<td>{!! $value->performance_criteria_name_bn !!}</td>
+												<td style="width: 100px;">
+													<a href="{!! route('performanceCriteria.edit',$value->performance_criteria_id) !!}"  class="btn btn-success btn-xs btnColor">
+														<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+													</a>
+													<a href="{!!route('performanceCriteria.delete',$value->performance_criteria_id )!!}" data-token="{!! csrf_token() !!}" data-id="{!! $value->performance_criteria_id !!}" class="delete btn btn-danger btn-xs deleteBtn btnColor"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+												</td>
+											</tr>
+										@endforeach
+										</tbody>
+									</table>
+							    </div>
+							</div>
+					    </div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
+@endsection
+
+@section('page_scripts')
+<script>
+  $(function () {
+    $('#acr_nis li:first-child a').tab('show');
+    $('#myTable1').DataTable({
+                "ordering": false,
+    });
+  })
+	// $(function () {
+	// 	$('#nis').hide();
+	// 	  $('#acr').on('click',function(){
+	// 	  	$('#acr').show();
+	// 	  	$('#nis').hide();
+	// 	  })
+	// 	  $('#nis').on('click',function(){
+	// 	  	console.log('nis');
+	// 	  	$('#acr').hide();
+	// 	  	$('#nis').show();
+	// 	  })
+	// });
+</script>
 @endsection
