@@ -70,9 +70,19 @@
 								<div class="row">
 									<div class="col-md-8">
 										<div class="form-group">
-											<label class="control-label col-md-4">@lang('performance.criteria_name')<span class="validateRq">*</span></label>
+											<label class="control-label col-md-4">@lang('performance.criteria_name') (English)<span class="validateRq">*</span></label>
 											<div class="col-md-8">
-												{!! Form::text('performance_criteria_name',Input::old('performance_criteria_name'), $attributes = array('class'=>'form-control required performance_criteria_name','id'=>'performance_criteria_name','placeholder'=>__('performance.criteria_name'))) !!}
+												{!! Form::text('performance_criteria_name',Input::old('performance_criteria_name'), $attributes = array('class'=>'form-control required performance_criteria_name','id'=>'performance_criteria_name','placeholder'=>__('Criteria Name (English)'))) !!}
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-8">
+										<div class="form-group">
+											<label class="control-label col-md-4">Criteria Name (বাংলা)<span class="validateRq">*</span></label>
+											<div class="col-md-8">
+												{!! Form::text('performance_criteria_name_bn',Input::old('performance_criteria_name_bn'), $attributes = array('class'=>'form-control required performance_criteria_name','id'=>'performance_criteria_name_bn','placeholder'=>__('Criteria Name (বাংলা)'))) !!}
 											</div>
 										</div>
 									</div>

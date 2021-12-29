@@ -121,7 +121,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="exampleInput">Father Name (বাংলা)<span
+                                        <label for="exampleInput">Father’s Name (বাংলা)<span
                                                 class="validateRq">*</span></label>
                                         <input class="form-control required bangla_father_name" required
                                             id="bangla_father_name" placeholder="Father Name" name="bangla_father_name"
@@ -130,7 +130,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="exampleInput">Mother Name (বাংলা)<span
+                                        <label for="exampleInput">Mother’s Name (বাংলা)<span
                                                 class="validateRq">*</span></label>
                                         <input class="form-control required bangla_mother_name" required
                                             id="bangla_mother_name" placeholder="Mother Name" name="bangla_mother_name"
@@ -198,13 +198,14 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="exampleInput">@lang('department.department_name')<span
+                                        <label for="exampleInput">@lang('branch.branch_name')<span
                                                 class="validateRq">*</span></label>
-                                        <select name="department_id" class="form-control department_id  select2">
+                                        <select name="branch_id" class="form-control branch_id  select2"
+                                            required>
                                             <option value="">--- @lang('common.please_select') ---</option>
-                                            @foreach ($departmentList as $value)
-                                                <option value="{{ $value->department_id }}" @if ($value->department_id == $editModeData->department_id) {{ 'selected' }} @endif>
-                                                    {{ $value->department_name }}</option>
+                                            @foreach ($branchList as $value)
+                                                <option value="{{ $value->branch_id }}" @if($value->branch_id == $editModeData->branch_id) selected  @endif>
+                                                    {{ $value->branch_name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -225,7 +226,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="exampleInput">Father Name</label>
+                                        <label for="exampleInput">Father’s Name</label>
                                         <input class="form-control father_name" id="father_name"
                                             placeholder="Father Name" name="father_name" type="text"
                                             value="{{ $editModeData->father_name }}">
@@ -233,7 +234,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="exampleInput">Mother Name</label>
+                                        <label for="exampleInput">Mother’s Name</label>
                                         <input class="form-control mother_name" id="mother_name"
                                             placeholder="Mother Name" name="mother_name" type="text"
                                             value="{{ $editModeData->mother_name }}">
@@ -267,9 +268,9 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="exampleInput">@lang('employee.paygrade')<span
-                                                class="validateRq">*</span></label>
-                                        <select name="pay_grade_id" class="form-control pay_grade_id required select2">
+                                        <label for="exampleInput">@lang('employee.paygrade')<span class="validateRq">*</span></label>
+                                        <select name="pay_grade_id" class="form-control pay_grade_id required select2"
+                                            required id="pay_grade">
                                             <option value="">--- @lang('common.please_select') ---</option>
                                             @foreach ($payGradeList as $value)
                                                 <option value="{{ $value->pay_grade_id }}" @if ($value->pay_grade_id == $editModeData->pay_grade_id) {{ 'selected' }} @endif>
@@ -281,14 +282,14 @@
 
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="exampleInput">Present Increemnet Salary<span
+                                        <label for="exampleInput">Basic Salary<span
                                                 class="validateRq">*</span></label>
                                         <select name="present_increement_salary"
-                                            class="form-control present_increement_salary required select2" required>
-                                            <option value="">--- @lang('common.please_select') ---</option>
-                                            @foreach ($presentPayGradeSalary as $present_salary_value)
-                                                <option value="{{ $present_salary_value->present_pay_grade_salary }}" @if ($present_salary_value->present_pay_grade_salary == $editModeData->present_increement_salary) {{ 'selected' }} @endif>
-                                                    {{ $present_salary_value->present_pay_grade_salary }}</option>
+                                            class="form-control present_increement_salary required select2" required id="presentPayGradeSalary">
+                                            <option value=''>--- @lang('common.please_select') ---</option>
+                                            @foreach ($presentPayGradeSalary as $value)
+                                                <option value="{{ $value->present_pay_grade_salary_id }}" @if ($value->pay_grade_id == $editModeData->present_pay_grade_salary_id) {{ 'selected' }} @endif>
+                                                    {{ $value->present_pay_grade_salary }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -1225,6 +1226,39 @@
 @section('page_scripts')
 <script>
     $(document).ready(function() {
+        $('#pay_grade').on("change", function() {
+            var pay_grade_id = $('#pay_grade').val();
+            var _token =  "<?php echo(csrf_token()); ?>" ;
+            $('#presentPayGradeSalary').empty();
+                $.ajax({
+                    url: '/employee/pay_grade_wise_salary/' + pay_grade_id,
+                    type: 'get',
+                    complete: function(){
+                    },
+                    success:function(response){
+                      // console.log(response);
+                        if(response.code == 200) {
+                            var html = "";
+                            
+                            html += "";
+                            for(var i = 0; i < response.data.length ; i++) {
+                                html += "<option value="+response.data[i]['present_pay_grade_salary'] + ">";
+
+                                // if(response.data[i]['present_pay_grade_salary'] == old('present_increemnet_salary')){
+                                //         html += 'selected >'
+                                html += response.data[i]['present_pay_grade_salary'] ;
+                                // }
+                                html += "</option>";
+                          }
+                          console.log(html);
+                          $('#presentPayGradeSalary').append(html);
+                        }
+                    },
+                    error: function(error) {
+                     console.log(error);
+                    }
+            })
+        });
 
         $('#addLogisticInformation').click(function() {
             $('.logistic_information_append_div').append(

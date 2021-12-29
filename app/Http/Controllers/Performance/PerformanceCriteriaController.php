@@ -30,7 +30,9 @@ class PerformanceCriteriaController extends Controller
 
     public function index()
     {
-        $results = PerformanceCriteria::with('category')->get();
+        $results['acr'] = PerformanceCriteria::with('category')->where('performance_category_id',3)->get();
+        $results['nis'] = PerformanceCriteria::with('category')->where('performance_category_id',4)->get();
+        // dd(count($results['acr']));
         return view('admin.performance.PerformanceCriteria.index',['results' => $results]);
     }
 

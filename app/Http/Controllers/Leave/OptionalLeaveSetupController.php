@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
-
 class OptionalLeaveSetupController extends Controller
 {
 	
@@ -21,11 +20,17 @@ class OptionalLeaveSetupController extends Controller
 
 
     public function store(Request $request){
-        $input = $request->all();
-        $input['leave_date'] = dateConvertFormtoDB($request->leave_date);
+        $inputs = $request->all();
+        // dd($inputs);
         try{
-           $optional_Leave = DB::table('optional_Leave')->insert($input);
-            $bug = 0;
+           $input= $inputs;
+           foreach ($inputs['leave_date'] as $key => $value) {
+               $input['leave_date'] = dateConvertFormtoDB($value);
+               $input['leave_name'] = $inputs['leave_name'][$key];
+               $optional_Leave = DB::table('optional_Leave')->insert($input);
+           }
+           
+           $bug = 0;
         }
         catch(\Exception $e){
             dd($e);
@@ -40,20 +45,24 @@ class OptionalLeaveSetupController extends Controller
     }
 
 
-    // public function edit($id){
-    //     $editModeData = LeaveType::findOrFail($id);
-    //     return view('admin.leave.optionalLeaveSetup.form',['editModeData' => $editModeData]);
-    // }
+    public function edit($id){
+        $editModeData = DB::table('optional_Leave')->where('optional_Leave_id',$id)->first();
+        // dd($editModeData->leave_date);
+        $editModeData->leave_date = date("d/m/Y",strtotime($editModeData->leave_date));
+
+        return view('admin.leave.optionalLeaveSetup.edit_form',['editModeData' => $editModeData]);
+    }
 
 
     public function update(Request $request,$id) {
-        $data   = LeaveType::findOrFail($id);
         $input  = $request->all();
         try{
-            $data->update($input);
+            $input['leave_date'] = dateConvertFormtoDB($request->leave_date);
+            $data = DB::table('optional_Leave')->where('optional_Leave_id',$id)->update($input);
             $bug = 0;
         }
         catch(\Exception $e){
+            dd($e);
             $bug = $e->errorInfo[1];
         }
 
@@ -65,17 +74,9 @@ class OptionalLeaveSetupController extends Controller
     }
 
 
-    public function destroy($id){
-           
-     $count = LeaveApplication::where('leave_type_id','=',$id)->count();
-
-        if ($count>0) {
-          return "hasForeignKey";
-        }
-
+    public function destroy($id){    
         try{
-            $data = LeaveType::findOrFail($id);
-            $data->delete();
+            $data = DB::table('optional_Leave')->where('optional_Leave_id',$id)->delete();
             $bug = 0;
         }
         catch(\Exception $e){
@@ -83,11 +84,9 @@ class OptionalLeaveSetupController extends Controller
         }
 
         if($bug==0){
-            echo "success";
-        }elseif ($bug == 1451) {
-            echo 'hasForeignKey';
-        } else {
-            echo 'error';
+            return redirect()->back()->with('success', 'Optional leave successfully Deleted.');
+        }else {
+            return redirect()->back()->with('error', 'Something Error Found !, Please try again.');
         }
     }
 	

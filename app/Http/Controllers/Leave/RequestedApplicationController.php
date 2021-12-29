@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 
 use App\Model\Employee;
 
-
+use DB;
 class RequestedApplicationController extends Controller
 {
 	
@@ -35,13 +35,28 @@ class RequestedApplicationController extends Controller
                         ->orderBy('status','asc')
                         ->orderBy('leave_application_id','desc')
                         ->get();
+
+            foreach($results as $key => $value) {
+                $leave_date_name_list = [];
+                if($value->leave_date_list){
+                    $value->leave_date_list = unserialize($value->leave_date_list);
+                    foreach ($value->leave_date_list as $key2 => $val) {
+                        $current_year = date('Y-m');
+                        $leave_name = DB::table('optional_Leave')->select('leave_name')->where('leave_year',$current_year)->where('leave_date',$val)->first();
+                        
+                        $leave_date_name_list[] = $val.'<b><span style="color: green;"> : '.$leave_name->leave_name. '</span></b><br />';
+                    }
+                }
+                $value->optional_leave_date_name_list = $leave_date_name_list;
+            }
+            // dd($results);
         }
         return view('admin.leave.leaveApplication.leaveApplicationList',['results'=>$results]);
     }
 
 
     public function viewDetails($id){
-        dd('ok');
+        // dd('ok');
         $leaveApplicationData  = LeaveApplication::with(['employee'=>function($q){
             $q->with(['designation']);
         }])->with('leaveType')->where('leave_application_id',$id)->where('status',1)->first();
@@ -91,15 +106,23 @@ class RequestedApplicationController extends Controller
 
         $data = LeaveApplication::findOrFail($request->leave_application_id);
         $input = $request->all();
-
+        // dd($input);
         if($request->status == 2) {
+            if($data->leave_type_id == 23){
+                $pre_date_list = unserialize($data['leave_date_list']);
+                $input['request_leave_date_list'] = serialize($pre_date_list);
+                $input['leave_date_list'] = serialize($request->optional_date_list);
+                $input['number_of_day'] = count($request->optional_date_list);
+            }
             $input['approve_date']     = date('Y-m-d');
             $input['approve_by']       = session('logged_session_data.employee_id');
+
         }else{
             $input['reject_date']      = date('Y-m-d');
             $input['reject_by']        = session('logged_session_data.employee_id');
         }
-
+        
+        // dd($input);
         try{
             $data->update($input);
             $bug = 0;

@@ -48,8 +48,9 @@
                                 <thead class="tr_header">
                                     <tr>
                                         <th> @lang('common.serial') </th>
-                                        <th>  Name </th>
+                                        <th> Religion Name </th>
                                         <th> Year </th>
+                                        <th> Leave Name</th>
                                         <th> Leave Date </th>
                                         <th style="text-align: center;">@lang('common.action')</th>
                                     </tr>
@@ -59,15 +60,16 @@
                                     @foreach ($optional_Leave as $value)
                                         <tr>
                                             <td>{!! ++$sl !!}</td>
-                                            <td>{!! $value->leave_name !!}</td>
+                                            <td>{!! $value->religion_name !!}</td>
                                             <td>{!! $value->leave_year !!}</td>
+                                            <td>{!! $value->leave_name !!}</td>
                                             <td>{!! dateConvertDBtoForm($value->leave_date) !!}</td>
                                             <td style="width: 100px;">
-                                                <a href=""
+                                                <a href="{{ url('optionalLeaveSetup/edit/'.$value->optional_Leave_id )}}"
                                                     class="btn btn-success btn-xs btnColor">
                                                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                                 </a>
-                                                <a href="" 
+                                                <a href="{{ url('optionalLeaveSetup/delete/'.$value->optional_Leave_id )}}" 
                                                     class=" btn btn-danger btn-xs deleteBtn btnColor"><i
                                                         class="fa fa-trash-o" aria-hidden="true"></i></a>
                                             </td>

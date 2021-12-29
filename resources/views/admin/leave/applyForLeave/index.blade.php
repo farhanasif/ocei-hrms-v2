@@ -53,7 +53,7 @@
 										{!! $sl=null !!}
 										@foreach($results AS $value)
 											<tr>
-												<td style="width: 100px;">{!! ++$sl !!}</td>
+												<td>{!! ++$sl !!}</td>
 												<td>
 													@if(isset($value->employee->first_name)) {!! $value->employee->first_name !!} @endif
 													@if(isset($value->employee->last_name)) {!! $value->employee->last_name !!} @endif
@@ -62,7 +62,18 @@
 													@if(isset($value->leaveType->leave_type_name)) {!! $value->leaveType->leave_type_name !!} @endif
 												</td>
 												<td>
-													{!! dateConvertDBtoForm($value->application_from_date) !!} <b>to</b> {!! dateConvertDBtoForm($value->application_to_date) !!}
+												    @if($value->leave_date_list)
+												    	@foreach($value->leave_date_list as $l_k => $listDate)
+												    		{!! dateConvertDBtoForm($listDate) !!}
+												    		@if($l_k == count($value->leave_date_list) - 2)
+												    		 and
+												    		@elseif($l_k < count($value->leave_date_list) - 2)
+												    			,
+												    		@endif
+												    	@endforeach
+												    @else
+														{!! dateConvertDBtoForm($value->application_from_date) !!} <b>to</b> {!! dateConvertDBtoForm($value->application_to_date) !!}
+													@endif
 													<br/><span class="text-muted">Application Date : {!! dateConvertDBtoForm($value->application_date) !!}</span>
 													<br/><span class="text-muted">@lang('leave.number_of_day') : {!! $value->number_of_day !!}</span>
 												</td>

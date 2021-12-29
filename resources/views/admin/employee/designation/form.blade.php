@@ -66,9 +66,18 @@
 									<div class="row">
 										<div class="col-md-8">
 											<div class="form-group">
-												<label class="control-label col-md-4">@lang('designation.designation_name')<span class="validateRq">*</span></label>
+												<label class="control-label col-md-4">@lang('designation.designation_name') Name (English)<span class="validateRq">*</span></label>
 												<div class="col-md-8">
-													{!! Form::text('designation_name',Input::old('designation_name'), $attributes = array('class'=>'form-control required designation_name','id'=>'designation_name','placeholder'=>__('designation.designation_name'))) !!}
+													{!! Form::text('designation_name',Input::old('designation_name'), $attributes = array('class'=>'form-control required designation_name','id'=>'designation_name','placeholder'=>__('Designation Name (English)'))) !!}
+												</div>
+											</div>
+										</div>
+										<div class="row">
+										<div class="col-md-8">
+											<div class="form-group">
+												<label class="control-label col-md-4">Designation Name (বাংলা)<span class="validateRq">*</span></label>
+												<div class="col-md-8">
+													{!! Form::text('designation_name_bn',Input::old('designation_name_bn'), $attributes = array('class'=>'form-control required designation_name','id'=>'designation_name_bn','placeholder'=>__('Designation Name (Bangla)'))) !!}
 												</div>
 											</div>
 										</div>

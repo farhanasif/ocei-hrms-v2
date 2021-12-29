@@ -14,7 +14,31 @@
     td {
         color: black !important;
     }
+    .tip-box {
+        color: #2e5014;
+        background: #e7dfa5;
+    }
 
+    .note-box, .warning-box, .tip-box {
+        padding: 15px 15px 2.5px 27.5px;
+    }
+    .tip-icon {
+    background: #92CD59;
+    }
+
+    .info-tab {
+        width: 40px;
+        height: 40px;
+        display: inline-block;
+        position: absolute;
+        top: 16px;
+        left: 0;
+    }
+    .shadow {
+        background: #F7F8F9;
+        padding: 3px;
+        margin: 15px 0 20px;
+    }
 </style>
 
 <div class="container-fluid">
@@ -91,18 +115,18 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row" id="optionalLeaveType_no">
                                 <div class="col-md-4">
-                                    <label for="exampleInput">@lang('common.from_date')<span
-                                            class="validateRq">*</span></label>
+                                    <label for="exampleInput">@lang('common.from_date')<span class="validateRq" 
+                                             id="from_date_span">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                         {!! Form::text('application_from_date', Input::old('application_from_date'), $attributes = ['class' => 'form-control application_from_date', 'readonly' => 'readonly', 'placeholder' => __('common.from_date')]) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="exampleInput">@lang('common.to_date')<span
-                                            class="validateRq">*</span></label>
+                                    <label for="exampleInput">@lang('common.to_date')<span class="validateRq"
+                                             id="to_date_span">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                         {!! Form::text('application_to_date', Input::old('application_to_date'), $attributes = ['class' => 'form-control application_to_date', 'readonly' => 'readonly', 'placeholder' => __('common.to_date')]) !!}
@@ -111,12 +135,28 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="exampleInput">@lang('leave.number_of_day')<span
-                                                class="validateRq">*</span></label>
-                                        {!! Form::text('number_of_day', '', $attributes = ['class' => 'form-control number_of_day', 'readonly' => 'readonly', 'placeholder' => __('leave.number_of_day')]) !!}
+                                                 id="number_of_day_span">*</span></label>
+                                        {!! Form::text('number_of_day', '', $attributes = ['class' => 'form-control number_of_day','id' => 'number_of_day', 'readonly' => 'readonly','required'=>'required', 'placeholder' => __('leave.number_of_day')]) !!}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" id="casual_leave_cause">
+                                <div class="color-box space">
+                                    <div class="shadow">
+                                        <div class="tip-box">
+                                            <p style="font-size: 16px;"><strong style="color:#ff5a5a;">Warning:</strong> Only <code>3 days</code>allow for<code> casual leave</code>but special purpose <code> maximum 10 days.</code> Please mention your special purpose to "purpose" field then apply.</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
+                                <div class="col-md-4"  id="religionWiseLeave">
+                                    <div class="form-group">
+                                        <label for="exampleInput">Religion Name<span
+                                                class="validateRq">*</span></label>
+                                        {{ Form::select('religion_name', $religionList, Input::old('religion_name'), ['class' => 'form-control religion_name select2 required']) }}
+                                    </div>
+                                </div>
                                 <div class="col-md-4">
                                     <label for="exampleInput">Attachment</label>
                                     <div class="input-group">
@@ -133,6 +173,9 @@
                                         {!! Form::textarea('purpose', Input::old('purpose'), $attributes = ['class' => 'form-control purpose', 'id' => 'purpose', 'placeholder' => __('leave.purpose'), 'cols' => '30', 'rows' => '3']) !!}
                                     </div>
                                 </div>
+                            </div>
+
+                            <div class="row" id="optionalLeaveList">
                             </div>
                         </div>
                         <div class="form-actions">
@@ -154,7 +197,11 @@
 @section('page_scripts')
 <script>
     jQuery(function() {
-
+        $('#religionWiseLeave').hide();
+        $('#optionalLeaveList').hide();
+        $('#optionalLeaveType_no').show();
+        $('#casual_leave_cause').hide();
+        var leave_type_id = '';
         $(document).on("focus", ".application_from_date", function() {
             $(this).datepicker({
                 format: 'dd/mm/yyyy',
@@ -183,8 +230,6 @@
             var application_to_date = $('.application_to_date ').val();
             var leave_type_id = $('.leave_type_id ').val();
 
-            // alert(leave_type_id)
-
             if (application_from_date != '' && application_to_date != '') {
                 var action = "{{ URL::to('applyForLeave/applyForTotalNumberOfDays') }}";
                 $.ajax({
@@ -204,65 +249,98 @@
                         // var leave_type_id = $('.leave_type_id ').val();
 
                         if (data[1] == 24 && data[0] > 3) {
-                            // $.toast({
-                            //     heading: 'Warning',
-                            //     text: 'You have to apply ' + $(
-                            //             '.current_balance')
-                            //         .val() + ' days!',
-                            //     position: 'top-right',
-                            //     loaderBg: '#ff6849',
-                            //     icon: 'warning',
-                            //     hideAfter: 3000,
-                            //     stack: 6
-                            // });
-                            alert(
-                                'Only 3 days allow for casual leave but special purpose maximum 10 days. Please mention your special purpose to purpose field then apply.'
-                            );
-
-                            // $('body').find('#formSubmit').attr('disabled', true);
-                            // $('.number_of_day').val('');
-                        } else {
-                            if (data[0] > currentBalance) {
-                                $.toast({
-                                    heading: 'Warning',
-                                    text: 'You have to apply ' + $(
-                                            '.current_balance')
-                                        .val() + ' days!',
-                                    position: 'top-right',
-                                    loaderBg: '#ff6849',
-                                    icon: 'warning',
-                                    hideAfter: 3000,
-                                    stack: 6
-                                });
-                                $('body').find('#formSubmit').attr('disabled', true);
-                                $('.number_of_day').val('');
-                            } else if (data[0] == 0) {
-                                $.toast({
-                                    heading: 'Warning',
-                                    text: 'You can not apply for leave !',
-                                    position: 'top-right',
-                                    loaderBg: '#ff6849',
-                                    icon: 'warning',
-                                    hideAfter: 3000,
-                                    stack: 6
-                                });
-                                $('body').find('#formSubmit').attr('disabled', true);
-                                $('.number_of_day').val('');
-                            } else {
-                                $('.number_of_day').val(data[0]);
-                                $('body').find('#formSubmit').attr('disabled', false);
+                            if(leave_type_id == 24) {
+                                $('#casual_leave_cause').show();
+                                $('#number_of_day').val(data[0]);
                             }
                         }
+                        
+                        if (data[1] == 24 && data[0] > 10) {
+                            alert('The requested leave date range more than 10 days! Sorry! Maximum 10 days causal leave request are accepteable.');
+                            return;
+                        }
+
+                        if (data[0] > currentBalance) {
+                            $.toast({
+                                heading: 'Warning',
+                                text: 'You have to apply ' + $(
+                                        '.current_balance')
+                                    .val() + ' days!',
+                                position: 'top-right',
+                                loaderBg: '#ff6849',
+                                icon: 'warning',
+                                hideAfter: 3000,
+                                stack: 6
+                            });
+                            $('body').find('#formSubmit').attr('disabled', true);
+                            $('.number_of_day').val('');
+                        } else if (data[0] == 0) {
+                            $.toast({
+                                heading: 'Warning',
+                                text: 'You can not apply for leave !',
+                                position: 'top-right',
+                                loaderBg: '#ff6849',
+                                icon: 'warning',
+                                hideAfter: 3000,
+                                stack: 6
+                            });
+                            $('body').find('#formSubmit').attr('disabled', true);
+                            $('.number_of_day').val('');
+                        } else {
+                            $('.number_of_day').val(data[0]);
+                            $('body').find('#formSubmit').attr('disabled', false);
+                        }
+
                     }
                 });
             } else {
                 $('body').find('#formSubmit').attr('disabled', true);
             }
         });
-
+        $('.religion_name').on('change',function(){
+            var religion_name = $('.religion_name').val();
+            $('#optionalLeaveList').empty();
+                $.ajax({
+                    url: "{{ URL::to('applyForLeave/religion_wise_leave_list') }}/" + religion_name,
+                    type: 'get',
+                    complete: function(){
+                    },
+                    success:function(response){
+                      console.log(response);
+                        if(response.code == 200) {
+                            var html = '<div class="col-md-8"><div class="form-group"><label for="exampleInput">Religion Wise Leave Date\'s<span class="validateRq">*</span></label>';
+                            for(var i = 0; i < response.datelist.length ; i++) {
+                                html += '<div class="form-check" style="font-size: 18px;padding-left: 20px"><input class="form-check-input" type="checkbox" value="'+ response.datelist[i]['leave_date']+'" id="flexCheckDefault_'+i+'" name="leave_date[]"/><label class="form-check-label" for="flexCheckDefault" style="padding-left: 10px"></label>'+ response.datelist[i]['leave_date']+'     '+ response.datelist[i]['leave_name']+'</div>'
+                          }
+                          html += '</div></div>';
+                          console.log(html);
+                          $('#optionalLeaveList').append(html);
+                        }
+                    },
+                    error: function(error) {
+                     console.log(error);
+                    }
+                });
+            })
         $(document).on("change", ".leave_type_id  ", function() {
             var leave_type_id = $('.leave_type_id ').val();
             var employee_id = $('.employee_id ').val();
+            if(leave_type_id == 23) {
+                $('#religionWiseLeave').show();
+                $('#optionalLeaveList').show();
+                $('#optionalLeaveType_no').hide();
+                $('#from_date_span').removeClass("validateRq");
+                $('#to_date_span').removeClass("validateRq");
+                $('#number_of_day_span').removeClass("validateRq");
+            }else{
+                $('#religionWiseLeave').hide();
+                $('#optionalLeaveList').hide();
+                $('#optionalLeaveType_no').show();
+                $('#from_date_span').addClass("validateRq");
+                $('#to_date_span').addClass("validateRq");
+                $('#number_of_day_span').addClass("validateRq");
+            }
+
             if (leave_type_id != '' && employee_id != '') {
                 var action = "{{ URL::to('applyForLeave/getEmployeeLeaveBalance') }}";
                 $.ajax({

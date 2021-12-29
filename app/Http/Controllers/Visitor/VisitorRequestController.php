@@ -10,14 +10,24 @@ class VisitorRequestController extends Controller
 {
     public function index()
     {
-        $visitorRequests = DB::table('visitor_registration')
-            ->select('visitor_registration.*', 'appointment.*', 'appointment.id as appointment_id')
-            ->leftJoin('appointment', 'visitor_registration.id', '=', 'appointment.visitor_id')
-            ->where('appointment.employee_id', session('logged_session_data.employee_id'))
-            ->orderBy('visitor_registration.id', 'desc')
-            ->get();
+            // ->where('appointment.employee_id', session('logged_session_data.employee_id')
 
-        // dd($visitorRequests);
+        $visitorRequests['pending'] = DB::table('visitor_registration') 
+                                          ->select('visitor_registration.*', 'appointment.*', 'appointment.id as appointment_id')
+                                          ->join('appointment', 'visitor_registration.id', '=', 'appointment.visitor_id')
+                                          ->orderBy('visitor_registration.id', 'desc')
+                                          ->where('appointment.approval_of',3)->get();
+
+        $visitorRequests['approve'] = DB::table('visitor_registration') 
+                  ->select('visitor_registration.*', 'appointment.*', 'appointment.id as appointment_id')
+                  ->join('appointment', 'visitor_registration.id', '=', 'appointment.visitor_id')
+                  ->orderBy('visitor_registration.id', 'desc')->where('appointment.approval_of',1)->get();
+
+        $visitorRequests['reject'] = DB::table('visitor_registration') 
+                  ->select('visitor_registration.*', 'appointment.*', 'appointment.id as appointment_id')
+                  ->join('appointment', 'visitor_registration.id', '=', 'appointment.visitor_id')
+                  ->orderBy('visitor_registration.id', 'desc')->whereNotIn('appointment.approval_of',[1,3])->get();
+
 
         return view('admin.visitorRequest.index', compact('visitorRequests'));
     }

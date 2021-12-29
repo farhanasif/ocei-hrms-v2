@@ -243,7 +243,7 @@ class EmployeeController extends Controller
         $workShiftList          = WorkShift::get();
         $payGradeList           = PayGrade::all();
         $hourlyPayGradeList     = HourlySalary::all();
-        $presentPayGradeSalary  = DB::table('present_pay_grade_salary')->get();
+        $presentPayGradeSalary  = DB::table('present_pay_grade_salary')->where('pay_grade_id',$editModeData->pay_grade_id)->get();
 
         $employeeAccountEditModeData        = User::where('user_id', $editModeData->user_id)->first();
         $educationQualificationEditModeData = EmployeeEducationQualification::where('employee_id', $id)->get();

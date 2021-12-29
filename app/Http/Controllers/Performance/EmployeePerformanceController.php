@@ -114,6 +114,7 @@ class EmployeePerformanceController extends Controller
         if ($request->type == 'acr') {
 
             $acrInput = $request->all();
+            $acrInput['status'] = 1;
             $acrInput['type'] = 'acr';
             $acrInput['created_by'] = Auth::user()->user_id;
             $acrInput['updated_by'] = Auth::user()->user_id;
@@ -146,6 +147,7 @@ class EmployeePerformanceController extends Controller
             $nisInput = $request->all();
             // dd($nisInput);
             $nisInput['type'] = 'nis';
+            $nisInput['status'] = 1;
             $nisInput['created_by'] = Auth::user()->user_id;
             $nisInput['updated_by'] = Auth::user()->user_id;
 
