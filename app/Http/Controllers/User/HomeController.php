@@ -33,7 +33,7 @@ use App\Model\Warning;
 
 use App\Model\Notice;
 use App\Model\IpSetting;
-
+use Barryvdh\DomPDF\Facade as PDF;
 use Mail;
 
 
@@ -321,6 +321,11 @@ class HomeController extends Controller
             ->where('employee.employee_id', session('logged_session_data.employee_id'))
             ->first();
 
+        $data['present_salary'] = DB::table('employee')->select('prg.*')
+                                    ->join('present_pay_grade_salary as prg','prg.present_pay_grade_salary_id','=','employee.present_increement_salary')
+                                    ->where('employee.employee_id', session('logged_session_data.employee_id'))
+                                    ->first();
+
         $data['traningInfo'] = DB::table('training_info')
             ->select('training_info.*', 'training_type.training_type_name as training_type_name')
             ->leftjoin('training_type', 'training_info.training_type_id', '=', 'training_type.training_type_id')
@@ -348,6 +353,7 @@ class HomeController extends Controller
             ->join('performance_category', 'performance_category.performance_category_id', '=', 'performance_criteria.performance_category_id')
             ->join('department', 'department.department_id', '=', 'employee.department_id')
             ->where('employee.employee_id', session('logged_session_data.employee_id'))
+            ->where('performance_criteria.performance_category_id',3)
             ->get()->toArray();
 
         $data['employeeAward'] = DB::table('employee_award')->where('employee_id', session('logged_session_data.employee_id'))->first();
@@ -363,8 +369,8 @@ class HomeController extends Controller
             ->where('pay_grade_to_allowance.pay_grade_id', $pay_grade_id_from_employee)
             ->get();
 
-        // dd($data['totalSalaryWithAllowance']);
-
+       //  // dd($data['totalSalaryWithAllowance']);
+       // dd($data);
         return view('admin.user.user.profile', $data);
     }
 
@@ -382,5 +388,72 @@ class HomeController extends Controller
         });
 
         return "Your email has been sent successfully";
+    }
+
+
+    public function employeeProfilePdfDownload(Request $request)
+    {
+        $data['employeeInfo']           = Employee::where('employee.employee_id', session('logged_session_data.employee_id'))->first();
+        $data['employeeExperience']     = EmployeeExperience::where('employee_id', session('logged_session_data.employee_id'))->get();
+        $data['employeeEducation']      = EmployeeEducationQualification::where('employee_id', session('logged_session_data.employee_id'))->get();
+        $data['employeeChildData']      = EmployeeChildInformation::where('employee_id', session('logged_session_data.employee_id'))->get();
+        $data['employeeLogisticData']   = EmployeeLogisticInformation::where('employee_id', session('logged_session_data.employee_id'))->get();
+
+        $data['othersInfo'] = DB::table('employee')
+            ->select('employee.*', 'department.department_name as department_name', 'designation.designation_name as designation_name', 'pay_grade.*')
+            ->leftjoin('department', 'employee.department_id', '=', 'department.department_id')
+            ->leftjoin('designation', 'employee.designation_id', '=', 'designation.designation_id')
+            ->leftjoin('pay_grade', 'employee.pay_grade_id', '=', 'pay_grade.pay_grade_id')
+            ->where('employee.employee_id', session('logged_session_data.employee_id'))
+            ->first();
+
+        $data['traningInfo'] = DB::table('training_info')
+            ->select('training_info.*', 'training_type.training_type_name as training_type_name')
+            ->leftjoin('training_type', 'training_info.training_type_id', '=', 'training_type.training_type_id')
+            ->where('training_info.employee_id', session('logged_session_data.employee_id'))
+            ->get();
+
+        $data['criteriaDataFormat'] = EmployeePerformance::select(
+            'employee_performance.employee_id',
+            'employee_performance.month',
+            'employee_performance.employee_performance_id',
+            'employee_performance_details.performance_criteria_id',
+            'employee_performance_details.rating',
+            'employee_performance_details.judgement',
+            'employee_performance_details.comments',
+            'employee.first_name',
+            'employee.last_name',
+            'performance_criteria.performance_criteria_name',
+            'performance_criteria.performance_category_id',
+            'performance_category.performance_category_name',
+            'department.department_name'
+        )
+            ->join('employee_performance_details', 'employee_performance_details.employee_performance_id', '=', 'employee_performance.employee_performance_id')
+            ->join('employee', 'employee.employee_id', '=', 'employee_performance.employee_id')
+            ->join('performance_criteria', 'performance_criteria.performance_criteria_id', '=', 'employee_performance_details.performance_criteria_id')
+            ->join('performance_category', 'performance_category.performance_category_id', '=', 'performance_criteria.performance_category_id')
+            ->join('department', 'department.department_id', '=', 'employee.department_id')
+            ->where('employee.employee_id', session('logged_session_data.employee_id'))
+            ->where('performance_criteria.performance_category_id',3)
+            ->get()->toArray();
+
+        $data['employeeAward'] = DB::table('employee_award')->where('employee_id', session('logged_session_data.employee_id'))->first();
+        $data['promotionInfo'] = DB::table('promotion')->where('employee_id', session('logged_session_data.employee_id'))->first();
+
+        $pay_grade_id_from_employee = $data['employeeInfo']->pay_grade_id;
+
+        $data['house_rent_from_pay_grade'] =  DB::table('pay_grade')->where('pay_grade_id', $pay_grade_id_from_employee)->first()->house_rent_of_basic_salary;
+
+        $data['totalSalaryWithAllowance'] = DB::table('allowance')
+            ->select('allowance.*')
+            ->leftjoin('pay_grade_to_allowance', 'allowance.allowance_id', '=', 'pay_grade_to_allowance.allowance_id')
+            ->where('pay_grade_to_allowance.pay_grade_id', $pay_grade_id_from_employee)
+            ->get();
+        
+        $pdf = PDF::loadView('admin.user.user.employee_profile_pdf', $data);
+
+        $pdf->setPaper('A4', 'landscape');
+        $pageName = ".employee-profile.pdf";
+        return $pdf->download($pageName);
     }
 }

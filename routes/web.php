@@ -40,12 +40,14 @@ Route::group(['middleware' => ['preventbackbutton','auth']], function(){
     Route::get('dashboard', 'User\HomeController@index');
     Route::get('profile', 'User\HomeController@profile');
     Route::get('logout', 'User\LoginController@logout');
+    Route::get('downloadEmployeeProfilePdf','User\HomeController@employeeProfilePdfDownload');
     Route::resource('user','User\UserController',['parameters'=> ['user'=>'user_id']]);
     Route::resource('userRole','User\RoleController',['parameters'=> ['userRole'=>'role_id']]);
     Route::resource('rolePermission','User\RolePermissionController',['parameters'=> ['rolePermission'=>'id']]);
     Route::post('rolePermission/get_all_menu', 'User\RolePermissionController@getAllMenu');
     Route::resource('changePassword','User\ChangePasswordController',['parameters'=> ['changePassword'=>'id']]);
 
+   
 
 });
 
