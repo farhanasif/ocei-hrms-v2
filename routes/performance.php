@@ -46,8 +46,10 @@ Route::group(['middleware' => ['preventbackbutton','auth']], function(){
     Route::post('performanceSummaryReport',['as' => 'performanceSummaryReport.performanceSummaryReport', 'uses'=>'Performance\PerformanceReportController@performanceSummaryReport']);
 
     Route::get('downloadPerformanceSummaryReport','Performance\PerformanceReportController@downloadPerformanceSummaryReport');
+
     Route::post('performance_nisperformance_category','Performance\PerformanceReportController@performance_nisperformance_category')->name('performance_nisperformance_category');
 
+    Route::get('downloadNisPerformanceSummaryReport','Performance\PerformanceReportController@downloadNisPerformanceSummaryReport');
 
     Route::get('performancePerformanceSelectData','Performance\EmployeePerformanceController@performancePerformanceSelectData');
 
