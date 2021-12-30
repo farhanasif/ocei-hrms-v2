@@ -448,6 +448,11 @@ class EmployeeController extends Controller
             ->where('employee.employee_id', $id)
             ->first();
 
+        $data['present_salary'] = DB::table('employee')->select('prg.*')
+                                    ->join('present_pay_grade_salary as prg','prg.present_pay_grade_salary_id','=','employee.present_increement_salary')
+                                    ->where('employee.employee_id', session('logged_session_data.employee_id'))
+                                    ->first();
+                                    
         $data['traningInfo'] = DB::table('training_info')
             ->select('training_info.*', 'training_type.training_type_name as training_type_name')
             ->leftjoin('training_type', 'training_info.training_type_id', '=', 'training_type.training_type_id')
