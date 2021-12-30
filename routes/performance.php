@@ -51,6 +51,8 @@ Route::group(['middleware' => ['preventbackbutton','auth']], function(){
 
     Route::get('downloadNisPerformanceSummaryReport','Performance\PerformanceReportController@downloadNisPerformanceSummaryReport');
 
+    Route::get('downloadNisPerformanceSummaryReportBn','Performance\PerformanceReportController@downloadNisPerformanceSummaryReportBn');
+    
     Route::get('performancePerformanceSelectData','Performance\EmployeePerformanceController@performancePerformanceSelectData');
 
 

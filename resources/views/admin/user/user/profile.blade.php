@@ -30,12 +30,12 @@
     </div>
 
     <div class="row">
-        <div style="float:right; padding-bottom: 20px;padding-right: 15px;">
+<!--         <div style="float:right; padding-bottom: 20px;padding-right: 15px;">
             <a class="btn btn-success" style="color:#fff;text-decoration:none"
                     href="{{ URL('downloadEmployeeProfilePdf/?employee_id=' .  $employeeInfo->employee_id ) }}"><i
                         class="fa fa-download fa-lg" aria-hidden="true"></i>
                     @lang('common.download') PDF</a>
-        </div>
+        </div> -->
         <div class="col-sm-12">
             <div class="panel panel-success">
                 <div class="panel-heading"><i class="mdi mdi-table fa-fw"></i>

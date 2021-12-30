@@ -58,8 +58,9 @@
                                 </li>
                             </ul>
                         <div class="tab-content" style="padding-bottom: 20px;">
-                            @if(count($visitorRequests['pending']))
+                            
                                 <div class="table-responsive tab-pane fade in @if(count($visitorRequests['pending'])) active @endif" id="pending">
+                                @if(count($visitorRequests['pending']))
                                     <table id="" class="table table-bordered datatable">
                                         <thead>
                                             <tr class="tr_header">
@@ -101,17 +102,18 @@
                                             @endforeach
                                         </tbody>
                                     </table>
-                                </div>
-                            @else
-                                <div class="tab-pane fade in active" id="pending">
-                                    <div class="tabbable">
-                                        <h4>No Pending task are Available Right Now</h4>
+                                @else
+                                    <div class="tab-pane fade in active" id="pending">
+                                        <div class="tabbable">
+                                            <h4>No Pending task are Available Right Now</h4>
+                                        </div>
                                     </div>
+                                @endif
                                 </div>
-                            @endif
 
-                            @if(count($visitorRequests['approve']))
+                            
                                 <div class="table-responsive tab-pane fade in @if(!count($visitorRequests['pending']) && count($visitorRequests['approve'])) active @endif" id="approve">
+                                @if(count($visitorRequests['approve']))
                                     <table id="" class="table table-bordered datatable">
                                         <thead>
                                             <tr class="tr_header">
@@ -142,14 +144,14 @@
                                             @endforeach
                                         </tbody>
                                     </table>
-                                </div>
-                            @else
-                                <div class="tab-pane fade in active" id="pending">
-                                    <div class="tabbable">
-                                        <h4>No Data are Available Right Now</h4>
+                                @else
+                                    <div class="tab-pane fade in active" id="pending">
+                                        <div class="tabbable">
+                                            <h4>No Data are Available Right Now</h4>
+                                        </div>
                                     </div>
+                                @endif
                                 </div>
-                            @endif
 
                             @if(count($visitorRequests['reject']))
                                 <div class="table-responsive tab-pane fade in @if(!count($visitorRequests['pending']) && !count($visitorRequests['approve']) && count($visitorRequests['reject'])) active @endif" id="reject">

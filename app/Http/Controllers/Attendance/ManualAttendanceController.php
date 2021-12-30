@@ -145,9 +145,14 @@ class ManualAttendanceController extends Controller
 
                 $current_time = new DateTime();
                 $work_time =  new DateTime('09:00:00');
-                $interval = $current_time->diff($work_time);
-                $late = $interval->format('%h').':'.$interval->format('%i').':'.$interval->format('%s');
-                $data['late_time'] = $late;
+                if($current_time > $work_time){
+                    $interval = $current_time->diff($work_time);
+                    $late = $interval->format('%h').':'.$interval->format('%i').':'.$interval->format('%s');
+                    $data['late_time'] = $late;
+                  }else{
+                    $data['late_time'] = "00:00:00";
+                  }
+                
 
                 WebAttendance::create($data);
               }

@@ -27,15 +27,6 @@
 		th{
 			padding: 5px;
 		}
-		@font-face {
-		    font-family: "Nikosh";
-		    font-style: normal;
-		    font-weight: normal;
-		    src: url('{!! asset('fonts/Nikosh.ttf') !!}');
-		}
-/*		body {
-		    font-family: "Nikosh";
-		}*/
 	</style>
 	<body>
 		<div class="printHead">
@@ -59,55 +50,55 @@
 		        </div>
 			</div>
 			<div class="table-responsive" style="padding-top: 20px;">
-	                            <table>
-	                                <thead>
-	                                    @php
-	                                        $total_rating = 0;
-	                                        $most_rating = 0;
-	                                    @endphp
-	                                        <tr>
-	                                            <th></th>
-	                                            <th> নাম ও পদবী ও বেতন গ্রেড </th>
-	                                            @foreach ($performance_criteria_name as $key => $value)
-	                                                <th>{{ $value->performance_criteria_name_bn }}</th>
-	                                            @endforeach
-	                                                <th>মোট</th>
-	                                                <th>মন্তব্য</th>
-	                                        </tr>
+	        <table>
+	            <thead>
+	                @php
+	                    $total_rating = 0;
+	                    $most_rating = 0;
+	                @endphp
+	                    <tr>
+	                        <th></th>
+	                        <th> Name </th>
+	                        @foreach ($performance_criteria_name as $key => $value)
+	                            <th>{{ $value->performance_criteria_name }}</th>
+	                        @endforeach
+	                            <th>Total</th>
+	                            <th>Comments</th>
+	                    </tr>
 
-	                                        <tr>
-	                                            <td> </td>
-	                                            <td> </td>
-	                                            @foreach ($performance_criteria_name as $item)
-	                                                <?php $most_rating += 5; ?>
-	                                                <td>{{ $bangla_number[5] }}</td>
-	                                            @endforeach
-	                                            <td>{{ $bangla_number[$most_rating]}}</td>
-	                                            <td> </td>
-	                                        </tr>
+	                    <tr>
+	                        <td> </td>
+	                        <td> </td>
+	                        @foreach ($performance_criteria_name as $item)
+	                            <?php $most_rating += 5; ?>
+	                            <td>5</td>
+	                        @endforeach
+	                        <td>{{ $most_rating }}</td>
+	                        <td> </td>
+	                    </tr>
 
-	                                        @foreach($results as $key => $value)
-	                                            @php
-	                                                $total_rating = 0;
-	                                            @endphp
-	                                            <tr>
-	                                                <td>{{ $key + 1 }}</td>
-	                                                <td>{{ $value->bangla_first_name }} {{ $value->bangla_last_name }}</td>
-	                                                @foreach($value->parpormance as $key_v => $val)
-	                                                    <?php $total_rating += $val->rating; ?>
-	                                                    <td>{{ $bangla_number[$val->rating] }}</td>
-	                                                @endforeach
-	                                                @for($i = 0; $i < count($performance_criteria_name) - count($value->parpormance); $i++)
-	                                                    <td> </td>
-	                                                @endfor
-	                                                <td> {{ $bangla_number[$total_rating]}}</td>
-	                                                <td> </td>
-	                                            </tr>
-	                                        @endforeach
-	                                        
-	                                </thead>
+	                    @foreach($results as $key => $value)
+	                        @php
+	                            $total_rating = 0;
+	                        @endphp
+	                        <tr>
+	                            <td>{{ $key + 1 }}</td>
+	                            <td style="width: 150px;">{{ $value->first_name }} {{ $value->last_name }} <br /> {{ $value->designation_name }}</td>
+	                            @foreach($value->parpormance as $key_v => $val)
+	                                <?php $total_rating += $val->rating; ?>
+	                                <td>{{ $val->rating }}</td>
+	                            @endforeach
+	                            @for($i = 0; $i < count($performance_criteria_name) - count($value->parpormance); $i++)
+	                                <td> </td>
+	                            @endfor
+	                            <td> {{ $total_rating }}</td>
+	                            <td> </td>
+	                        </tr>
+	                    @endforeach
+	                    
+	            </thead>
 
-	                            </table>
+	        </table>
 			</div>
 		</div>
 	</body>
