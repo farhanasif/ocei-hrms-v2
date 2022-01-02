@@ -366,7 +366,7 @@ $front_setting = getFrontData();
                     <?php
                     $sideMenu = showMenu();
                     $menuItem = '';
-                    
+                    // dd($sideMenu);
                     foreach ($sideMenu as $key => $value) {
                         $menuItem .=
                             '<li class="treeview waves-effect">

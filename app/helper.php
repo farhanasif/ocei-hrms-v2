@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\DB;
             ->orderBy('menus.id','ASC')
             ->get()->toJson(),true);
 
-
+        // dd($menus);
         $sideMenu = [];
         if($menus){
             foreach ($menus as $menu){
