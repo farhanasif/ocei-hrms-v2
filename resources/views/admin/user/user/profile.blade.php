@@ -30,6 +30,12 @@
     </div>
 
     <div class="row">
+<!--         <div style="float:right; padding-bottom: 20px;padding-right: 15px;">
+            <a class="btn btn-success" style="color:#fff;text-decoration:none"
+                    href="{{ URL('downloadEmployeeProfilePdf/?employee_id=' .  $employeeInfo->employee_id ) }}"><i
+                        class="fa fa-download fa-lg" aria-hidden="true"></i>
+                    @lang('common.download') PDF</a>
+        </div> -->
         <div class="col-sm-12">
             <div class="panel panel-success">
                 <div class="panel-heading"><i class="mdi mdi-table fa-fw"></i>
@@ -74,7 +80,7 @@
                                     <br>
                                 </div>
 
-                                <!-------------personal info --------->
+                               <!-- Personoal Information: -->
 
                                 <div class="personal_info">
                                     <div class="row">
@@ -228,7 +234,7 @@
                                             <div class="col-xs-2 col-sm-2 col-md-3">@lang('employee.name')</div>
                                             <div class="col-xs-10 col-sm-10 col-md-9">
                                                 :&nbsp;&nbsp;&nbsp;&nbsp;{{ $employeeInfo->bangla_first_name }}
-                                                {{ $employeeInfo->bangla_first_name }}</div>
+                                                {{ $employeeInfo->bangla_last_name }}</div>
                                         </div>
                                         <div class="item">
                                             <div class="col-xs-2 col-sm-2 col-md-3">Father Name</div>
@@ -251,9 +257,7 @@
                                     </div>
                                 </div>
                                 <br>
-                                <!----------------------
-                                'ACADEMIC QUALIFICATION:
-                                ------------------------>
+                                <!-- 'ACADEMIC QUALIFICATION: -->
                                 <div class="education_qualification">
                                     <section class="content">
                                         <div class="row">
@@ -481,7 +485,7 @@
                                     <br>
                                 </div>
 
-                                <!-------------paygrade info --------->
+                                <!--paygrade info -->
 
                                 <br>
                                 <div class="personal_info">
@@ -512,7 +516,7 @@
                                                 <div class="col-xs-2 col-sm-2 col-md-3"> Basic Salary
                                                 </div>
                                                 <div class="col-xs-10 col-sm-10 col-md-9">
-                                                    :&nbsp;&nbsp;&nbsp;&nbsp;{{ $employeeInfo->present_increement_salary }}
+                                                    :&nbsp;&nbsp;&nbsp;&nbsp;{{ $present_salary->present_pay_grade_salary }}
                                                 </div>
                                             </div>
                                             <div class="item">
@@ -520,7 +524,7 @@
                                                 </div>
                                                 @php
                                                     $totalSalary = 0;
-                                                    $houseRentAmount = ($employeeInfo->present_increement_salary * $house_rent_from_pay_grade) / 100;
+                                                    $houseRentAmount = ($present_salary->present_pay_grade_salary * $house_rent_from_pay_grade) / 100;
                                                 @endphp
                                                 @foreach ($totalSalaryWithAllowance as $value)
                                                     @php
@@ -529,8 +533,8 @@
                                                 @endforeach
                                                 <div class="col-xs-10 col-sm-10 col-md-9">
                                                     :&nbsp;&nbsp;&nbsp;&nbsp;
-                                                    @if (isset($employeeInfo->present_increement_salary))
-                                                        {{ isset($totalSalary) ? $totalSalary + $employeeInfo->present_increement_salary + $houseRentAmount : null }}
+                                                    @if (isset($present_salary->present_pay_grade_salary))
+                                                        {{ isset($totalSalary) ? $totalSalary + $present_salary->present_pay_grade_salary + $houseRentAmount : null }}
                                                     @else
                                                         {{ isset($totalSalary) ? $totalSalary + $othersInfo->basic_salary + $houseRentAmount : null }}
                                                     @endif
@@ -620,7 +624,7 @@
                                     <br>
                                 </div>
 
-                                <!-------------Employee Award info --------->
+                                <!-- Employee Award info -->
 
                                 <br>
                                 <div class="personal_info">
@@ -652,7 +656,7 @@
                                     </div>
                                 </div>
 
-                                <!-------------Employee Training info --------->
+                                <!-- Employee Training info -->
 
                                 <br>
 
@@ -684,7 +688,7 @@
                                                                         <tr>
                                                                             <td>{{ $traningInfoData->training_type_name }}
                                                                             </td>
-                                                                            <td>{{ $traningInfoData->subject }}
+                                                                            <td style="width:60px;">{{ $traningInfoData->subject }}
                                                                             </td>
                                                                             <td>
                                                                                 {{ $traningInfoData->organization_name }}
@@ -708,7 +712,7 @@
                                                                                     Hour
                                                                                 @endif
                                                                             </td>
-                                                                            <td>{{ $traningInfoData->description }}
+                                                                            <td style="max-width: 300px; overflow: overlay;">{{ $traningInfoData->description }}
                                                                             </td>
                                                                         </tr>
                                                                     @endforeach

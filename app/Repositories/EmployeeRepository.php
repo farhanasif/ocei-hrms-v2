@@ -29,8 +29,8 @@ class EmployeeRepository
         $employeeData['last_name']                      = $data['last_name'];
         $employeeData['finger_id']                      = $data['finger_id'];
         $employeeData['department_id']                  = $data['department_id'];
-        $employeeData['designation_id']                 = $data['designation_id'];
-        // $employeeData['branch_id']                   = $data['branch_id'];  // this field remove as per as client requirement 
+        // $employeeData['designation_id']                 = $data['designation_id'];
+        $employeeData['branch_id']                   = $data['branch_id'];  // this field remove as per as client requirement 
         $employeeData['supervisor_id']                  = $data['supervisor_id']; // this is reporting or superior 
         // $employeeData['work_shift_id']               = $data['work_shift_id'];
         $employeeData['pay_grade_id']                   = $data['pay_grade_id']; //this is pay grade name

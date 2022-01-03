@@ -1,3 +1,11 @@
+<?php
+
+$from_month = $request['from_month'];
+$to_month = $request['to_month'];
+$from_pay_grade_name = $request['from_pay_grade_name'];
+$to_pay_grade_name = $request['to_pay_grade_name'];
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,6 +42,19 @@
         padding: 5px;
     }
 
+    .button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 22px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 15%;
+    }
 </style>
 
 <body>
@@ -46,6 +67,30 @@
         <a href="https://ocei.portal.gov.bd/">www.ocei.gov.bd</a>
         <br>
         <br>
+    </div>
+    <div>
+        <div style="float:left;width: 50%;">
+            <h4 style="float: left; padding-right: 30px;">
+            <button class="button">
+                <a class="btn btn-success" style="color:#fff;text-decoration:none"
+                    href="{{ URL('downloadNisPerformanceSummaryReportBn/?from_month=' . $from_month . '&to_month=' . $to_month . '&from_pay_grade=' .$from_pay_grade_name . '&to_pay_grade=' . $to_pay_grade_name) }}"><i
+                        class="fa fa-download fa-lg" aria-hidden="true"></i>
+                    @lang('common.download') Bn PDF</a>
+            </button>
+  
+            </h4>
+        </div>
+        <div style="float:right;width: 50%;">                                    
+            <h4 style="float: right; padding-right: 30px;">
+            <button class="button">
+                <a class="btn btn-success" style="color:#fff;text-decoration:none"
+                    href="{{ URL('downloadNisPerformanceSummaryReport/?from_month=' . $from_month . '&to_month=' . $to_month . '&from_pay_grade=' .$from_pay_grade_name . '&to_pay_grade=' . $to_pay_grade_name) }}"><i
+                        class="fa fa-download fa-lg" aria-hidden="true"></i>
+                    @lang('common.download') En PDF</a>
+            </button>
+  
+            </h4>
+        </div>
     </div>
     <div class="container">
         <div class="row">
@@ -87,7 +132,7 @@
                                             @endphp
                                             <tr>
                                                 <td>{{ $key + 1 }}</td>
-                                                <td>{{ $value->bangla_first_name }} {{ $value->bangla_last_name }}</td>
+                                                <td style="width: 160px;">{{ $value->bangla_first_name }} {{ $value->bangla_last_name }} <br /> {{ $value->designation_name_bn }}</td>
                                                 @foreach($value->parpormance as $key_v => $val)
                                                     <?php $total_rating += $val->rating; ?>
                                                     <td>{{ $bangla_number[$val->rating] }}</td>
