@@ -10,6 +10,7 @@ return [
   'role' => 'Role',
   'search_by_employee_name' => 'Search By Employee Name',
   'select_department' => 'Select Department',
+  'select_branch' => 'Select Branch',
   'select_designation' => 'Select Designation',
   'select_role' => 'Select Role',
   'photo' => 'Photo',

@@ -675,12 +675,12 @@
 
         <div class="col-md-3">
             <div class="form-group">
-                <label for="exampleInput">Logistic Type</label>
+                <label for="exampleInput">@lang('logistic.logistic_type')</label>
                 <select name="logistic_type[]" id="" class="form-control">
-                    <option>----please select----</option>
-                    <option value="Laptop">Laptop</option>
-                    <option value="Mobile">Mobile</option>
-                    <option value="Vehicle">Vehicle</option>
+                <option>@lang('logistic.select_logistic')</option>
+                    @foreach($logisticList as $key => $val)
+                        <option value="{{ $val->logistic_type }}">{{ $val->logistic_type }}</option>
+                    @endforeach
                 </select>
             </div>
         </div>

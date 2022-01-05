@@ -1,7 +1,7 @@
 @extends('admin.master')
 @section('content')
 @section('title')
- @lang('branch.branch_list')
+ @lang('logistic.logistic_list')
 @endsection
 <div class="container-fluid">
 	<div class="row bg-title">
@@ -12,7 +12,7 @@
 			</ol>
 		</div>	
 		<div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
-			<a href="{{ route('branch.create') }}"  class="btn btn-success pull-right m-l-20 hidden-xs hidden-sm waves-effect waves-light"> <i class="fa fa-plus-circle" aria-hidden="true"></i> @lang('branch.add_branch')</a>
+			<a href="{{ route('logistic.create') }}"  class="btn btn-success pull-right m-l-20 hidden-xs hidden-sm waves-effect waves-light"> <i class="fa fa-plus-circle" aria-hidden="true"></i> @lang('logistic.add_logistic')</a>
 		</div>	
 	</div>
                 
@@ -39,21 +39,21 @@
 								<thead>
 									 <tr class="tr_header">
                                         <th>@lang('common.serial')</th>
-                                        <th>@lang('branch.branch_name')</th>
+                                        <th>@lang('logistic.logistic_type')</th>
                                         <th style="text-align: center;">@lang('common.action')</th>
                                     </tr>
 								</thead>
 								<tbody>
 									{!! $sl=null !!}
 									@foreach($results AS $value)
-										<tr class="{!! $value->branch_id !!}">
+										<tr class="{!! $value->logistic_id !!}">
 											<td style="width: 100px;">{!! ++$sl !!}</td>
-											<td>{!! $value->branch_name !!}</td>
+											<td>{!! $value->logistic_type !!}</td>
 											<td style="width: 100px;">
-												<a href="{!! route('branch.edit',$value->branch_id) !!}"  class="btn btn-success btn-xs btnColor">
+												<a href="{!! route('logistic.edit',$value->logistic_id) !!}"  class="btn btn-success btn-xs btnColor">
 													<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
 												</a>
-												<a href="{!!route('branch.delete',$value->branch_id )!!}" data-token="{!! csrf_token() !!}" data-id="{!! $value->branch_id!!}" class="delete btn btn-danger btn-xs deleteBtn btnColor"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+												<a href="{!!route('logistic.delete',$value->logistic_id )!!}" data-token="{!! csrf_token() !!}" data-id="{!! $value->logistic_id!!}" class="delete btn btn-danger btn-xs deleteBtn btnColor"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
 											</td>
 										</tr>
 									@endforeach
