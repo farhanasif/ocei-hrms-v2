@@ -288,7 +288,7 @@
                                             class="form-control present_increement_salary required select2" required id="presentPayGradeSalary">
                                             <option value=''>--- @lang('common.please_select') ---</option>
                                             @foreach ($presentPayGradeSalary as $value)
-                                                <option value="{{ $value->present_pay_grade_salary_id }}" @if ($value->pay_grade_id == $editModeData->present_pay_grade_salary_id) {{ 'selected' }} @endif>
+                                                <option value="{{ $value->present_pay_grade_salary }}" @if($value->present_pay_grade_salary == $editModeData->present_increement_salary) selected  @endif>
                                                     {{ $value->present_pay_grade_salary }}</option>
                                             @endforeach
                                         </select>

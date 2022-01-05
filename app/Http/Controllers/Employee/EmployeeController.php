@@ -277,7 +277,7 @@ class EmployeeController extends Controller
             'logisticEditModeData'                  => $logisticEditModeData,
             'presentPayGradeSalary'                 => $presentPayGradeSalary,
         ];
-
+        // dd($data);
         return view('admin.employee.employee.editEmployee', $data);
     }
 
