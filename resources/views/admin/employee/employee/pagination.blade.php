@@ -5,7 +5,7 @@
 				<th>#</th>
 				<th>@lang('employee.photo')</th>
 				<th>@lang('employee.name')</th>
-				<th>@lang('employee.department')</th>
+				<th>@lang('employee.branch')</th>
 				<th>@lang('employee.phone')</th>
 				<th>@lang('employee.employee_id_number')</th>
 				{{-- <th>@lang('paygrade.pay_grade_name')</th> --}}
@@ -43,7 +43,7 @@
                 </td>
                 <td>
 					<span class="font-medium">
-						@if (isset($value->department->department_name)) {!! $value->department->department_name !!} @endif
+						@if (isset($value->branch->branch_name)) {!! $value->branch->branch_name !!} @endif
 					</span>
                     <br/><span class="text-muted">@lang('employee.designation') :
                         @if (isset($value->designation->designation_name)) {!! $value->designation->designation_name!!} @endif

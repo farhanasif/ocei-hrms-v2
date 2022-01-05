@@ -5,6 +5,7 @@ return [
   'employee_list' => 'Employee List',
   'name' => 'Name',
   'department' => 'Department',
+  'branch' => 'Branch',
   'designation' => 'Designation',
   'role' => 'Role',
   'search_by_employee_name' => 'Search By Employee Name',

@@ -53,6 +53,7 @@ class EmployeeController extends Controller
     public function index(Request $request)
     {
         $departmentList     = Department::get();
+        $branchList         = Branch::get();
         $designationList    = Designation::get();
         $roleList           = Role::get();
 
@@ -81,6 +82,10 @@ class EmployeeController extends Controller
                 $results->where('designation_id', $request->designation_id);
             }
 
+            if($request->branch_id != '') {
+                $results->where('branch_id', $request->branch_id);
+            }
+            
             if ($request->employee_name != '') {
                 $results->where(function ($query) use ($request) {
                     $query->where('first_name', 'like', '%' . $request->employee_name . '%')
@@ -92,7 +97,7 @@ class EmployeeController extends Controller
             return   View('admin.employee.employee.pagination', ['results' => $results])->render();
         }
 
-        return view('admin.employee.employee.index', ['results' => $results, 'departmentList' => $departmentList, 'designationList' => $designationList, 'roleList' => $roleList]);
+        return view('admin.employee.employee.index', ['results' => $results, 'departmentList' => $departmentList, 'designationList' => $designationList, 'roleList' => $roleList, 'branchList' => $branchList]);
     }
 
 

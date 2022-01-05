@@ -77,7 +77,7 @@
                                         <select name="role_id" class="form-control user_id required select2" required>
                                             <option value="">--- @lang('common.please_select') ---</option>
                                             @foreach ($roleList as $value)
-                                                <option value="{{ $value->role_id }}" @if ($value->role_id == $employeeAccountEditModeData->role_id) {{ 'selected' }} @endif>
+                                                <option value="{{ $value->role_id }}" @if ($employeeAccountEditModeData && $value->role_id == $employeeAccountEditModeData->role_id) {{ 'selected' }} @endif>
                                                     {{ $value->role_name }}</option>
                                             @endforeach
                                         </select>
@@ -90,7 +90,7 @@
                                         <div class="input-group-addon"><i class="ti-user"></i></div>
                                         <input class="form-control required user_name" required id="user_name"
                                             placeholder="@lang('employee.user_name')" name="user_name" type="text"
-                                            value="{{ $employeeAccountEditModeData->user_name }}">
+                                            value="@if($employeeAccountEditModeData) {{ $employeeAccountEditModeData->user_name }} @endif">
                                     </div>
                                 </div>
                             </div>
