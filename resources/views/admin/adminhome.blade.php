@@ -97,7 +97,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12 col-lg-12 col-sm-12">
+        <div class="col-md-8 col-lg-8 col-sm-8">
             <div class="panel">
                 <div class="panel-heading"> @lang('dashboard.today_attendance') </div>
                 <div class="table-responsive">
@@ -176,10 +176,7 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="row">
-        
         @if($ip_attendance_status == 1)
         <!-- employe attendance  -->
         @php
@@ -227,12 +224,14 @@
                 </div>
             </div>
         </div>
-
         <!-- end attendance  -->
         @endif
+    </div>
+
+    <div class="row">
       
         @if(count($notice) > 0)
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="white-box">
                 <h3 class="box-title">@lang('dashboard.notice_board')</h3>
                 <hr>
@@ -246,11 +245,12 @@
 
                             <div class="user-img"><i style="font-size: 31px" class="fa fa-flag-checkered text-info"></i></div>
 
-                            <div class="mail-contnet">
+                            <div class="mail-contnet" >
                                 <h5 class="text-danger">{{ substr($row->title,0,70)}}..</h5><span class="time">Published Date: {{date(" d M Y ", $noticeDate)}}</span>
                                 <br /><span class="mail-desc">
                                     @lang('notice.published_by'): {{$row->createdBy->first_name}} {{$row->createdBy->last_name}}<br>
-                                    @lang('notice.description'): {!! substr($row->description,0,80)!!}..
+                                    @lang('notice.description'): {!! $row->description !!}
+                                   <!--  {!! substr($row->description,0,80)!!}.. -->
                                 </span>
                                 <a href="{{url('notice/'.$row->notice_id)}}" class="btn m-r-5 btn-rounded btn-outline btn-info">@lang('common.read_more')</a>
                             </div>
@@ -263,7 +263,7 @@
         @endif
 
         @if(count($upcoming_training) > 0)
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="white-box">
                 <h3 class="box-title">Upcoming Training</h3>
                 <hr>
@@ -282,7 +282,7 @@
                             <div class="mail-contnet">
                             <h5>{{ $training->first_name }} {{$training->last_name}}</h5>
                             <h5>{{$training->training_type_name}}</h5>
-                            <h5>{!! substr($training->subject,0,80)!!}</h5>
+                            <div>{!! substr($training->subject,0,80)!!}</div>
                             <span class="time">From Date: {{dateConvertDBtoForm($training->start_date)}} To Date:{{dateConvertDBtoForm($training->end_date)}} </span>
                             <span class="time">Time Duration: {!! date("h:i a", strtotime($training->start_time)) !!}  {!! date("h:i a", strtotime($training->end_time)) !!} </span>
                             </div>
@@ -295,69 +295,74 @@
         @endif
     </div>
     <div class="row">
+    </div>
+    <div class="row">
         @if(count($upcoming_birtday) > 0)
-        <div class="col-md-6">
+        <div class="col-md-12" style="background-color: #fff;">
             <div class="white-box">
                 <h3 class="box-title">@lang('dashboard.upcoming_birthday')</h3>
                 <hr>
-                <div class="leaveApplication">
+                
                     @foreach($upcoming_birtday as $employee_birthdate)
-                    <div class="comment-center p-t-10">
-                        <div class="comment-body">
-                            @if($employee_birthdate->photo !='')
-                            <div class="user-img"> <img src="{!! asset('uploads/employeePhoto/'.$employee_birthdate->photo) !!}" alt="user" class="img-circle"></div>
-                            @else
-                            <div class="user-img"> <img src="{!! asset('admin_assets/img/default.png') !!}" alt="user" class="img-circle"></div>
-                            @endif
-                            <div class="mail-contnet">
+                    <div class="col-md-4 leaveApplication">
+                        <div class="comment-center p-t-10">
+                            <div class="comment-body">
+                                @if($employee_birthdate->photo !='')
+                                <div class="user-img"> <img src="{!! asset('uploads/employeePhoto/'.$employee_birthdate->photo) !!}" alt="user" class="img-circle"></div>
+                                @else
+                                <div class="user-img"> <img src="{!! asset('admin_assets/img/default.png') !!}" alt="user" class="img-circle"></div>
+                                @endif
+                                <div class="mail-contnet">
 
-                                @php
-                                $date_of_birth = $employee_birthdate->date_of_birth;
-                                $separate_date = explode('-',$date_of_birth);
+                                    @php
+                                    $date_of_birth = $employee_birthdate->date_of_birth;
+                                    $separate_date = explode('-',$date_of_birth);
 
-                                $date_current_year = date('Y').'-'.$separate_date[1].'-'.$separate_date[2];
+                                    $date_current_year = date('Y').'-'.$separate_date[1].'-'.$separate_date[2];
 
-                                $create_date = date_create($date_current_year);
-                                @endphp
+                                    $create_date = date_create($date_current_year);
+                                    @endphp
 
-                                <h5>{{ $employee_birthdate->first_name }} {{$employee_birthdate->last_name}}</h5><span class="time">{{ date_format(date_create($employee_birthdate->date_of_birth),"D dS F Y") }}</span>
-                                <br />
+                                    <h5>{{ $employee_birthdate->first_name }} {{$employee_birthdate->last_name}}</h5><span class="time">{{ date_format(date_create($employee_birthdate->date_of_birth),"D dS F Y") }}</span>
+                                    <br />
 
-                                <span class="mail-desc">
-                                    @if($date_current_year == date('Y-m-d'))
-                                    <b>Today is
+                                    <span class="mail-desc">
+                                        @if($date_current_year == date('Y-m-d'))
+                                        <b>Today is
+                                            @if($employee_birthdate->gender == 'Male')
+                                            His @else
+                                            Her
+                                            @endif
+                                            Birtday Wish
+                                            @if($employee_birthdate->gender == 'Male')
+                                            Him
+                                            @else Her
+                                            @endif</b>
+
+                                        @else
+
+                                        Wish
                                         @if($employee_birthdate->gender == 'Male')
-                                        His @else
+                                        Him @else
                                         Her
                                         @endif
-                                        Birtday Wish
-                                        @if($employee_birthdate->gender == 'Male')
-                                        Him
-                                        @else Her
-                                        @endif</b>
-
-                                    @else
-
-                                    Wish
-                                    @if($employee_birthdate->gender == 'Male')
-                                    Him @else
-                                    Her
-                                    @endif
-                                    on {{ date_format($create_date,"D dS F Y") }}
+                                        on {{ date_format($create_date,"D dS F Y") }}
 
 
 
-                                    @endif
-                                </span>
+                                        @endif
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
                     @endforeach
-                </div>
+                
             </div>
         </div>
         @endif
-
+    </div>
+    <div class="row"> 
         @if(count($leaveApplication) > 0)
         <div class="col-md-12">
             <div class="white-box">

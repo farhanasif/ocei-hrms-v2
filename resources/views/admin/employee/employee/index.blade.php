@@ -53,11 +53,11 @@
 							</div>
 							<div class="col-md-3">
 								<div class="form-group">
-									<label for="exampleInput">@lang('employee.department')</label>
-									<select name="department_id" class="form-control department_id  select2" onchange="getData(1)" required>
-										<option value="">--- @lang('employee.select_department') ---</option>
-										@foreach($departmentList as $value)
-											<option value="{{$value->department_id}}" @if($value->department_id == old('department_id')) {{"selected"}} @endif>{{$value->department_name}}</option>
+									<label for="exampleInput">Branch</label>
+									<select name="branch_id" class="form-control branch_id  select2" onchange="getData(1)" required>
+										<option value="">--- Select Branch ---</option>
+										@foreach($branchList as $value)
+											<option value="{{$value->branch_id}}" @if($value->branch_id == old('branch_id')) {{"selected"}} @endif>{{$value->branch_name}}</option>
 										@endforeach
 									</select>
 								</div>
@@ -110,13 +110,13 @@
         });
 
         function getData(page) {
-            var department_id 	= $('.department_id').val();
+            var branch_id 	= $('.branch_id').val();
             var designation_id 	= $('.designation_id').val();
             var role_id 		= $('.role_id').val();
             var employee_name 	= $('.employee_name').val();
 
             $.ajax({
-                url : '?page=' + page+"&department_id="+department_id+"&designation_id="+designation_id+"&role_id="+role_id+"&employee_name="+employee_name,
+                url : '?page=' + page+"&branch_id="+branch_id+"&designation_id="+designation_id+"&role_id="+role_id+"&employee_name="+employee_name,
                 datatype: "html",
             }).done(function (data) {
                 $('.data').html(data);

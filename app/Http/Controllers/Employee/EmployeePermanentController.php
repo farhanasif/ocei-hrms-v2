@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Model\Designation;
 
 use App\Model\Department;
+use App\Model\Branch;
 
 use App\Model\Employee;
 
@@ -22,6 +23,7 @@ class EmployeePermanentController extends Controller
 
     public function index(Request $request){
         $departmentList     = Department::get();
+        $branchList         = Branch::get();
         $designationList    = Designation::get();
         $roleList           = Role::get();
 
@@ -50,6 +52,10 @@ class EmployeePermanentController extends Controller
                 $results->where('designation_id',$request->designation_id);
             }
 
+            if($request->branch_id !=''){
+                $results->where('branch_id',$request->branch_id);
+            }
+
             if($request->employee_name !=''){
                 $results->where(function($query) use ($request) {
                     $query->where('first_name', 'like','%' . $request->employee_name . '%')
@@ -61,7 +67,7 @@ class EmployeePermanentController extends Controller
             return   View('admin.employee.permanent.pagination', compact('results'))->render();
         }
 
-        return view('admin.employee.permanent.index',['results' =>$results,'departmentList' => $departmentList,'designationList'=>$designationList,'roleList'=>$roleList]);
+        return view('admin.employee.permanent.index',['results' =>$results,'departmentList' => $departmentList,'designationList'=>$designationList,'roleList'=>$roleList,'branchList' => $branchList,]);
     }
 
 

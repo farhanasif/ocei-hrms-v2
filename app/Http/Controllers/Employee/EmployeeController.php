@@ -29,7 +29,7 @@ use App\Model\WorkShift;
 use App\Model\PayGrade;
 
 use App\Model\Employee;
-
+use App\Model\Logistic;
 use App\Model\Branch;
 use App\Model\EmployeeLogisticInformation;
 use App\Model\Role;
@@ -53,6 +53,7 @@ class EmployeeController extends Controller
     public function index(Request $request)
     {
         $departmentList     = Department::get();
+        $branchList         = Branch::get();
         $designationList    = Designation::get();
         $roleList           = Role::get();
 
@@ -81,6 +82,10 @@ class EmployeeController extends Controller
                 $results->where('designation_id', $request->designation_id);
             }
 
+            if($request->branch_id != '') {
+                $results->where('branch_id', $request->branch_id);
+            }
+
             if ($request->employee_name != '') {
                 $results->where(function ($query) use ($request) {
                     $query->where('first_name', 'like', '%' . $request->employee_name . '%')
@@ -92,7 +97,7 @@ class EmployeeController extends Controller
             return   View('admin.employee.employee.pagination', ['results' => $results])->render();
         }
 
-        return view('admin.employee.employee.index', ['results' => $results, 'departmentList' => $departmentList, 'designationList' => $designationList, 'roleList' => $roleList]);
+        return view('admin.employee.employee.index', ['results' => $results, 'departmentList' => $departmentList, 'designationList' => $designationList, 'roleList' => $roleList, 'branchList' => $branchList]);
     }
 
 
@@ -103,6 +108,7 @@ class EmployeeController extends Controller
         $departmentList         = Department::get();
         $designationList        = Designation::get();
         $branchList             = Branch::get();
+        $logisticList           = Logistic::get();
         $workShiftList          = WorkShift::get();
         $supervisorList         = Employee::where('status', 1)->get();
         $payGradeList           = PayGrade::all();
@@ -116,6 +122,7 @@ class EmployeeController extends Controller
             'departmentList'        => $departmentList,
             'designationList'       => $designationList,
             'branchList'            => $branchList,
+            'logisticList'          => $logisticList,
             'supervisorList'        => $supervisorList,
             'workShiftList'         => $workShiftList,
             'payGradeList'          => $payGradeList,
@@ -270,7 +277,7 @@ class EmployeeController extends Controller
             'logisticEditModeData'                  => $logisticEditModeData,
             'presentPayGradeSalary'                 => $presentPayGradeSalary,
         ];
-
+        // dd($data);
         return view('admin.employee.employee.editEmployee', $data);
     }
 

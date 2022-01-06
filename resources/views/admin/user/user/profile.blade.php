@@ -30,12 +30,12 @@
     </div>
 
     <div class="row">
-<!--         <div style="float:right; padding-bottom: 20px;padding-right: 15px;">
+        <div style="float:right; padding-bottom: 20px;padding-right: 15px;">
             <a class="btn btn-success" style="color:#fff;text-decoration:none"
                     href="{{ URL('downloadEmployeeProfilePdf/?employee_id=' .  $employeeInfo->employee_id ) }}"><i
                         class="fa fa-download fa-lg" aria-hidden="true"></i>
                     @lang('common.download') PDF</a>
-        </div> -->
+        </div>
         <div class="col-sm-12">
             <div class="panel panel-success">
                 <div class="panel-heading"><i class="mdi mdi-table fa-fw"></i>
@@ -516,7 +516,7 @@
                                                 <div class="col-xs-2 col-sm-2 col-md-3"> Basic Salary
                                                 </div>
                                                 <div class="col-xs-10 col-sm-10 col-md-9">
-                                                    :&nbsp;&nbsp;&nbsp;&nbsp;{{ $present_salary->present_pay_grade_salary }}
+                                                    :&nbsp;&nbsp;&nbsp;&nbsp;{{ $othersInfo->present_increement_salary }}
                                                 </div>
                                             </div>
                                             <div class="item">
@@ -524,7 +524,7 @@
                                                 </div>
                                                 @php
                                                     $totalSalary = 0;
-                                                    $houseRentAmount = ($present_salary->present_pay_grade_salary * $house_rent_from_pay_grade) / 100;
+                                                    $houseRentAmount = ($othersInfo->present_increement_salary * $house_rent_from_pay_grade) / 100;
                                                 @endphp
                                                 @foreach ($totalSalaryWithAllowance as $value)
                                                     @php
@@ -533,8 +533,8 @@
                                                 @endforeach
                                                 <div class="col-xs-10 col-sm-10 col-md-9">
                                                     :&nbsp;&nbsp;&nbsp;&nbsp;
-                                                    @if (isset($present_salary->present_pay_grade_salary))
-                                                        {{ isset($totalSalary) ? $totalSalary + $present_salary->present_pay_grade_salary + $houseRentAmount : null }}
+                                                    @if (isset($othersInfo->present_increement_salary))
+                                                        {{ isset($totalSalary) ? $totalSalary + $othersInfo->present_increement_salary + $houseRentAmount : null }}
                                                     @else
                                                         {{ isset($totalSalary) ? $totalSalary + $othersInfo->basic_salary + $houseRentAmount : null }}
                                                     @endif

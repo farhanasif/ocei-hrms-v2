@@ -152,7 +152,7 @@ class HomeController extends Controller
             $to_month = $to_date_explode[1];
             $concatToDayAndMonth = $to_month . '-' . $to_day;
 
-            $upcoming_birtday =  Employee::orderBy('date_of_birth', 'desc')->whereRaw("DATE_FORMAT(date_of_birth, '%m-%d') >= '" . $concatFormDayAndMonth . "' AND DATE_FORMAT(date_of_birth, '%m-%d') <= '" . $concatToDayAndMonth . "' ")->get();
+            $upcoming_birtday =  Employee::whereRaw("DATE_FORMAT(date_of_birth, '%m-%d') >= '" . $concatFormDayAndMonth . "' AND DATE_FORMAT(date_of_birth, '%m-%d') <= '" . $concatToDayAndMonth . "' ")->get();
 
             $upcoming_training = DB::table('training_info')
                 ->join('employee', 'training_info.employee_id', '=', 'employee.employee_id')
@@ -257,7 +257,7 @@ class HomeController extends Controller
         $to_month = $to_date_explode[1];
         $concatToDayAndMonth = $to_month . '-' . $to_day;
 
-        $upcoming_birtday =  Employee::orderBy('date_of_birth', 'desc')->whereRaw("DATE_FORMAT(date_of_birth, '%m-%d') >= '" . $concatFormDayAndMonth . "' AND DATE_FORMAT(date_of_birth, '%m-%d') <= '" . $concatToDayAndMonth . "' ")->get();
+        $upcoming_birtday =  Employee::whereRaw("DATE_FORMAT(date_of_birth, '%m-%d') >= '" . $concatFormDayAndMonth . "' AND DATE_FORMAT(date_of_birth, '%m-%d') <= '" . $concatToDayAndMonth . "' ")->get();
 
         $upcoming_training = DB::table('training_info')
             ->join('employee', 'training_info.employee_id', '=', 'employee.employee_id')

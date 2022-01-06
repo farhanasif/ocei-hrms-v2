@@ -675,12 +675,12 @@
 
         <div class="col-md-3">
             <div class="form-group">
-                <label for="exampleInput">Logistic Type</label>
+                <label for="exampleInput">@lang('logistic.logistic_type')</label>
                 <select name="logistic_type[]" id="" class="form-control">
-                    <option>----please select----</option>
-                    <option value="Laptop">Laptop</option>
-                    <option value="Mobile">Mobile</option>
-                    <option value="Vehicle">Vehicle</option>
+                <option>@lang('logistic.select_logistic')</option>
+                    @foreach($logisticList as $key => $val)
+                        <option value="{{ $val->logistic_type }}">{{ $val->logistic_type }}</option>
+                    @endforeach
                 </select>
             </div>
         </div>
@@ -912,9 +912,21 @@
 
 @endsection
 @section('page_scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" crossorigin="anonymous"></script>
 <script>
-   
     $(document).ready(function() {
+
+        $('#date_of_joining').on('change',function() {
+            var date_of_birth = $('#date_of_birth').val();
+            var endjobYear = moment(date_of_birth).add(59,'years');
+            var date_of_joining = $('#date_of_joining').val();
+            var retirement_year = endjobYear.diff(date_of_joining,'years');
+            var retirement_date = moment(date_of_joining).add(retirement_year,'years');
+            retirement_date = moment(retirement_date).format('MM/DD/YYYY');
+            $('#date_of_leaving').val(retirement_date);
+        });
+
+
         $('#pay_grade').on("change", function() {
             var pay_grade_id = $('#pay_grade').val();
             var _token =  "<?php echo(csrf_token()); ?>" ;
@@ -1016,7 +1028,7 @@
                 }
             }
         });
-
+     
         $(document).on("click", ".deleteExperience", function() {
             $(this).parents('.experience_row_element').remove();
             var deletedID = $(this).parents('.experience_row_element').find('.employee_experience_id')
