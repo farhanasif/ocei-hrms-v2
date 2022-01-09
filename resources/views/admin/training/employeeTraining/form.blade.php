@@ -88,6 +88,9 @@
 										<label for="exampleInput">@lang('common.from_date')<span class="validateRq">*</span></label>
 										<div class="input-group">
 											<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+<!-- 											<input class="form-control start_date dateField" readonly required
+                                            id="start_date" placeholder="@lang('common.from_date')"
+                                            name="start_date" type="text" value="{{ old('start_date') }}"> -->
 											{!! Form::text('start_date',isset($editModeData) ? dateConvertDBtoForm($editModeData->start_date) : Input::old('start_date'), $attributes = array('class'=>'form-control required dateField','readonly'=>'readonly','id'=>'start_date','placeholder'=>__('common.from_date'))) !!}
 										</div>
 									</div>
@@ -106,7 +109,7 @@
 										<div class="input-group">
 											<span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
 											<div class="bootstrap-timepicker">
-												{!! Form::text('start_time',(isset($editModeData)) ? date("h:i a", strtotime($editModeData->start_time)) :  Input::old('start_time'), $attributes = array('class'=>'form-control timePicker','id'=>'timepicker','placeholder'=>__('Start Time'))) !!}
+												{!! Form::text('start_time',(isset($editModeData)) ? date("h:i a", strtotime($editModeData->start_time)) :  Input::old('start_time'), $attributes = array('class'=>'form-control timePicker start_time','id'=>'start_time','placeholder'=>__('Start Time'))) !!}
 											</div>
 										</div>
 									</div>
@@ -115,7 +118,7 @@
 										<div class="input-group">
 											<span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
 											<div class="bootstrap-timepicker">
-												{!! Form::text('end_time',(isset($editModeData)) ? date("h:i a", strtotime($editModeData->end_time)) :  Input::old('end_time'), $attributes = array('class'=>'form-control timePicker','id'=>'timepicker','placeholder'=>__('End Time'))) !!}
+												{!! Form::text('end_time',(isset($editModeData)) ? date("h:i a", strtotime($editModeData->end_time)) :  Input::old('end_time'), $attributes = array('class'=>'form-control timePicker end_time','id'=>'end_time','placeholder'=>__('End Time'))) !!}
 											</div>
 										</div>
 									</div>
@@ -173,3 +176,51 @@
 	</div>
 @endsection
 
+@section('page_scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
+            var start_date;
+            var start_time;
+            $('#start_date').on('change', function() {
+            	start_date = $('#start_date').val();
+            });
+
+            $('#end_date').on('change',function () {
+            	var end_date = $('#end_date').val();
+            	
+            	start_date = moment(start_date,'D/M/YYYY');
+                end_date = moment(end_date,'D/M/YYYY');
+                // alert(start_date + ' = ' + end_date);
+	            if(start_date != '' && end_date != ''){
+	            	var total_day = end_date.diff(start_date, 'days');
+	            	// var total_day = end_date.diff(start_date,'days');
+	            	$('#training_day').val(total_day+1);
+	            }
+            });
+
+		$('#start_time').timepicker({
+		   useCurrent: false,
+		   format: 'hh:mm:ss',
+		});
+	    $('#end_time').timepicker({
+		   useCurrent: false,
+		   format: 'hh:mm:ss',
+		});
+
+        $('#start_time').on('change', function() {
+            start_time = $('#start_time').val();
+        });
+
+        $('#end_time').on('change', function() {
+            var end_time = $('#end_time').val();
+
+            if(start_time != '' && end_time != ''){
+            	var total_hours = moment.utc(moment(end_time, "HH:mm:ss").diff(moment(start_time, "HH:mm:ss"))).format("hh");
+            	$('#training_hour').val(total_hours);
+            }
+        });
+    });
+    
+</script>
+@endsection

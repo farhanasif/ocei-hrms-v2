@@ -104,11 +104,12 @@ class TrainingReportController extends Controller
 
         $traningInfo = DB::table('training_info')
             ->select('training_info.*', 'training_type.training_type_name as training_type_name', DB::raw("CONCAT(employee.first_name,' ',employee.last_name) as full_name"))
-            ->leftjoin('training_type', 'training_info.training_type_id', '=', 'training_type.training_type_id')
-            ->leftjoin('employee', 'training_info.employee_id', '=', 'employee.employee_id')
-            ->where('training_info.start_date', $from_date)
-            ->orWhere('training_info.end_date', $to_date)->get();
-
+            ->join('training_type', 'training_info.training_type_id', '=', 'training_type.training_type_id')
+            ->join('employee', 'training_info.employee_id', '=', 'employee.employee_id')
+            ->where('training_info.start_date', '>=',$from_date)
+            ->orWhere('training_info.end_date', '<=', $to_date)
+            ->get();
+        // dd($traningInfo, $from_date, $to_date);
 
         $pdf = PDF::loadView('admin.training.report.pdf.allEmployeeTrainingReportPdf', compact('traningInfo', 'from_date', 'to_date', 'totalEmployee'));
         $pdf->setPaper('A4', 'landscape');

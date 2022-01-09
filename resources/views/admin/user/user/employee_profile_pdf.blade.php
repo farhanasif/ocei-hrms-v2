@@ -4,7 +4,7 @@
 	<head>
 		<title>Nis Summary Report</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
+        <link href="{!! asset('admin_assets/css/style.css') !!}" rel="stylesheet">
 	</head>
 	<style>
 		table {
