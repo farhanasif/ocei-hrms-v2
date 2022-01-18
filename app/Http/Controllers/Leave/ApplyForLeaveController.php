@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 use App\Model\LeaveApplication;
 
 use Illuminate\Http\Request;
-
+use App\Model\Employee;
 use App\Model\LeaveType;
 use Validator;
 
@@ -69,6 +69,51 @@ class ApplyForLeaveController extends Controller
     {
         $leave_type_id = $request->leave_type_id;
         $employee_id   = $request->employee_id;
+
+        if($leave_type_id == 7) {
+            $prev_data = DB::table('leave_application')->where('employee_id',$employee_id)->where('status',2)->where('leave_type_id',$leave_type_id)->orderBy('leave_application_id','desc')->first();
+            if($prev_data != null) {
+                $prev_date = strtotime($prev_data->application_from_date);
+                $curr_date = strtotime(date('Y-m-d'));
+                $total_day = ($curr_date - $prev_date)/60/60/24;
+
+                if($total_day < 730){
+                    return 0;
+                }
+            }
+        }else if($leave_type_id == 10) {
+            $prev_data = DB::table('leave_application')
+                            ->select(DB::raw('IFNULL(SUM(leave_application.number_of_day), 0) as number_of_day'))
+                            ->where('employee_id',$employee_id)
+                            ->where('status',2)
+                            ->where('leave_type_id',$leave_type_id)
+                            ->get();
+
+            if($prev_data[0]->number_of_day >= 360){
+                return 0;
+            }else if((360 - $prev_data[0]->number_of_day) < 180){
+                return (360 - $prev_data[0]->number_of_day);
+            }else if((360 - $prev_data[0]->number_of_day) >= 180) {
+                return 180;
+            }
+        }else if($leave_type_id == 5 or $leave_type_id == 6) {
+            $employeeInfo = Employee::where('employee_id',$employee_id)->first();
+            $joiningdate  = $employeeInfo->date_of_joining;
+            $total_days =  $this->leaveRepository->calculateTotalNumberOfLeaveDays($joiningdate, date('Y-m-d'), null);
+            $total_leave = LeaveApplication::select(DB::raw('IFNULL(SUM(leave_application.number_of_day), 0) as number_of_day'))
+                        ->where('employee_id',$employee_id)
+                        ->where('status',2)
+                        ->whereBetween('application_to_date',[$joiningdate,date('Y-m-d')])
+                        ->first();
+            // dd($total_leave);
+            $total_day = $total_days[0] - $total_leave->number_of_day;
+
+            if($leave_type_id == 6) {
+                return $total_day%11 > 5 ? (int)($total_day/11) + 1 : (int)($total_day/11);
+            }elseif($leave_type_id == 5){
+                return $total_day%12 > 5 ? (int)($total_day/12) + 1 : (int)($total_day/12);
+            }
+        }
         if ($leave_type_id != '' && $employee_id != '') {
             return $this->leaveRepository->calculateEmployeeLeaveBalance($leave_type_id, $employee_id);
         }

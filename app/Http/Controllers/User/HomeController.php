@@ -272,9 +272,12 @@ class HomeController extends Controller
                 $value->leave_date_list = unserialize($value->leave_date_list);
                 foreach ($value->leave_date_list as $key2 => $val) {
                     $current_year = date('Y-m');
-                    $leave_name = DB::table('optional_Leave')->select('leave_name')->where('leave_year',$current_year)->where('leave_date',$val)->first();
+                    $leave_name = DB::table('optional_Leave')->select('leave_name')->where('leave_date',$val)->first();
                     
-                    $leave_date_name_list[] = $val.'<b><span style="color: green; font-size: 16px;">( '.$leave_name->leave_name. ' ) </span></b>';
+                    if($leave_name != null) {
+                        $leave_date_name_list[] = $val.'<b><span style="color: green; font-size: 16px;">( '.$leave_name->leave_name. ' ) </span></b>';
+                    }
+                    
                 }
             }
             $value->optional_leave_date_name_list = $leave_date_name_list;

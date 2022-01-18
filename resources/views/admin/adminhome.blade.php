@@ -298,7 +298,7 @@
     </div>
     <div class="row">
         @if(count($upcoming_birtday) > 0)
-        <div class="col-md-12" style="background-color: #fff;">
+        <div class="row" style="background-color: #fff;margin-left: 15px; margin-right: 15px;">
             <div class="white-box">
                 <h3 class="box-title">@lang('dashboard.upcoming_birthday')</h3>
                 <hr>
@@ -362,7 +362,7 @@
         </div>
         @endif
     </div>
-    <div class="row"> 
+    <div class="row" style="margin-top: 14px;"> 
         @if(count($leaveApplication) > 0)
         <div class="col-md-12">
             <div class="white-box">
