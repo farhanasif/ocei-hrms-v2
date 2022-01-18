@@ -16,7 +16,8 @@ use App\Model\Department;
 use App\Model\Employee;
 use App\Model\IpSetting;
 use App\Model\WhiteListedIp;
-
+use Excel;
+use File;
 use Carbon\Carbon;
 use DateTime;
 
@@ -24,7 +25,7 @@ class ManualAttendanceController extends Controller
 {
 
     public function manualAttendance()
-	{
+  {
         $departmentList = Department::get();
         return view('admin.attendance.manualAttendance.index',['departmentList'=>$departmentList]);
     }
@@ -32,7 +33,7 @@ class ManualAttendanceController extends Controller
 
 
     public function filterData(Request $request)
-	{
+  {
         $data           = dateConvertFormtoDB($request->get('date'));
         $department     = $request->get('department_id');
         $departmentList = Department::get();
@@ -55,7 +56,7 @@ class ManualAttendanceController extends Controller
 
 
     public function store(Request $request)
-	{
+  {
         try{
             DB::beginTransaction();
                 $data           = dateConvertFormtoDB($request->get('date'));
@@ -119,6 +120,7 @@ class ManualAttendanceController extends Controller
     {
 
       try{
+        DB::beginTransaction();
          $finger_id = $request->finger_id;
          $ip_check_status = $request->ip_check_status;
          $user_ip = \Request::ip();
@@ -134,17 +136,22 @@ class ManualAttendanceController extends Controller
               $att->save();  
 
               $view_employee_in_out_data = DB::table('view_employee_in_out_data')->where('finger_print_id',$finger_id)->whereDate('in_time', '=', date('Y-m-d'))->first();
-
+              $check_white_listed = WhiteListedIp::where('white_listed_ip','=',$user_ip)->count();
+              if ($check_white_listed < 1)  {
+                 return redirect()->back()->with('error', 'Invalid Ip Address.');
+              }
               if($view_employee_in_out_data == null) {
+                $data = array();
                 $data['employee_attendance_id'] = $att->employee_attendance_id;
                 $data['finger_print_id'] = $finger_id;
                 $data['in_time'] = $att->in_out_time;
                 $data['out_time'] = null;
                 $data['date'] = date('Y-m-d');
                 $data['working_time'] = '00:00:00';
-
+                $data['basic_time'] = '00:00:00';
+                $data['over_time'] = '00:00:00';
                 $current_time = new DateTime();
-                $work_time =  new DateTime('09:00:00');
+                $work_time =  new DateTime('09:30:00 AM');
                 if($current_time > $work_time){
                     $interval = $current_time->diff($work_time);
                     $late = $interval->format('%h').':'.$interval->format('%i').':'.$interval->format('%s');
@@ -152,9 +159,8 @@ class ManualAttendanceController extends Controller
                   }else{
                     $data['late_time'] = "00:00:00";
                   }
-                
-
                 WebAttendance::create($data);
+                DB::commit();
               }
                 // $data['late_time'] = ;
               return redirect()->back()->with('success', 'Attendanced updated.');
@@ -177,9 +183,22 @@ class ManualAttendanceController extends Controller
                 $current_time = new DateTime();
                 $in_time =  new DateTime($view_employee_in_out_data->in_time);
                 $work_hours = $current_time->diff($in_time);
-                $total_work_hours = $work_hours->format('%h').':'.$work_hours->format('%i').':'.$work_hours->format('%s');
+                $total_work_hours = $work_hours->format("%H:%I:%S");
 
-                WebAttendance::where('employee_attendance_id',$view_employee_in_out_data->employee_attendance_id)->update(['out_time' => $current_time,'working_time'=>$total_work_hours]);
+                
+                $finish_time =  new DateTime('05:00:00 PM');
+                if($current_time > $finish_time){
+                    $interval = $current_time->diff($finish_time);
+                    $over_time = $interval->format("%H:%I:%S");
+                  }else{
+                    $over_time = "00:00:00";
+                  }
+
+                $basic_time  = $finish_time->diff($in_time);
+                $basic_time = $basic_time->format("%H:%I:%S");
+                // dd($data['basic_time']);
+                WebAttendance::where('employee_attendance_id',$view_employee_in_out_data->employee_attendance_id)->update(['out_time' => $current_time,'working_time'=>$total_work_hours,'basic_time' => $basic_time, 'over_time' => $over_time]);
+                 DB::commit();
               }
               return redirect()->back()->with('success', 'Attendanced updated.');
            }else{
@@ -188,6 +207,8 @@ class ManualAttendanceController extends Controller
 
          }
        }catch(\Exception $e){
+         DB::rollback();
+           dd($e,'hi');
            return $e;
        }
     }
@@ -254,6 +275,94 @@ class ManualAttendanceController extends Controller
       
     }
     
+    public function uploadFile(Request $request)
+    {
+      if($request->all()) {
+        //dd($request->all());
+        try{
+          DB::beginTransaction();
+          $file = $request->file('upload_file');
+             //validate the xls file
+          $this->validate($request, array(
+           'upload_file'      => 'required'
+          ));
+
+          if($request->file('upload_file')){
+            $extension = File::extension($file->getClientOriginalName());
+            if ($extension == "xlsx" || $extension == "xls" || $extension == "csv") {
+              $path = $file->getRealPath();
+              $data = Excel::load($path)->get();
+             // dd($data['items']);
+              if(!empty($data) && $data->count()){
+                 foreach ($data as $key => $value) {
+                  //dd($value->emp_id);
+                    if($value->emp_id) {
+                      $att = new EmployeeAttendance;
+                      $att->finger_print_id = $value->emp_id;
+                      $att->in_out_time = dateConvertFormtoDB($value->date). ' ' .date("H:i:s", strtotime($value->in));
+                      $att->is_active = 0;
+                      $att->save();
+                      
+                      $data = array();
+                      $data['employee_attendance_id'] = $att->employee_attendance_id;
+                      $data['finger_print_id'] =  $value->emp_id;
+                      $data['in_time'] = $att->in_out_time;
+                      $data['out_time'] = dateConvertFormtoDB($value->date). ' ' .date("H:i:s", strtotime($value->out));
+                      $data['date'] = dateConvertFormtoDB($value->date);
+
+                      $in_time = new DateTime(date("H:i:s", strtotime($value->in)));
+                      $out_time = new DateTime(date("H:i:s", strtotime($value->out)));
+                      $interval = $in_time->diff($out_time);
+                      $data['working_time'] = $interval->format('%h').':'.$interval->format('%i').':'.$interval->format('%s');
+                      $data['late_time'] = date("H:i:s", strtotime($value->late));
+                      $data['basic_time'] = date("H:i:s", strtotime($value->basic));
+                      $data['over_time'] = date("H:i:s", strtotime($value->over));
+
+                      WebAttendance::create($data);
+
+                      $att = new EmployeeAttendance;
+                      $att->finger_print_id = $value->emp_id;
+                      $att->in_out_time = dateConvertFormtoDB($value->date). ' ' .date("H:i:s", strtotime($value->out));
+                      $att->is_active = 0;
+                      $att->save();
+
+                      DB::commit();
+                    }
+                 }
+                 return redirect()->back()->with('success', 'Your uploaded attendance data has successfully imported.');
+              }else {
+                return redirect()->back()->with('error', 'Your uploaded attendance data file are empty.');
+              }
+            }else {
+                return redirect()->back()->with('error', 'File is a '.$extension.' file.!! Please upload a valid xls/csv file..!!');
+                return back();
+            }
+          }else{
+            return redirect()->back()->with('error', 'Sometheing is wrong, your upload file are not found. Please try again!');
+          }
+        }catch(\Exception $e){
+          //dd($e);
+          DB::rollBack();
+          return redirect()->back()->with('error',$e->getMessage());
+        }
+      }
+      return view('admin.attendance.manualAttendance.upload_file_form');
+    }
+
+
+  public function checkUploadedFileProperties($extension, $fileSize)
+  {
+    $valid_extension = array("csv", "xlsx",'xls'); //Only want csv and excel files
+    $maxFileSize = 2097152; // Uploaded file size limit is 2mb
+    if (in_array(strtolower($extension), $valid_extension)) {
+      if ($fileSize <= $maxFileSize) {
+      } else {
+        throw new \Exception('No file was uploaded', Response::HTTP_REQUEST_ENTITY_TOO_LARGE); //413 error
+      }
+    } else {
+      throw new \Exception('Invalid file extension', Response::HTTP_UNSUPPORTED_MEDIA_TYPE); //415 error
+    }
+  }
 
 
 }

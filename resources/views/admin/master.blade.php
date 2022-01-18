@@ -472,7 +472,7 @@ $front_setting = getFrontData();
     <script type="text/javascript" src="{!! asset('admin_assets/plugins/bower_components/jquery-validator/jquery-additional-method.1.15.0.min.js') !!}"></script>
     <!-- Star Ratings -->
     <script src="{!! asset('admin_assets/plugins/bower_components/rateyo/jquery.rateyo.js') !!}"></script>
-
+    <script src="{!! asset('front-assets/js/moment.js') !!}"></script>
 
 
     <script>

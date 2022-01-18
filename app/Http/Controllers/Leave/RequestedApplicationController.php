@@ -26,25 +26,42 @@ class RequestedApplicationController extends Controller
 
 
     public function index(){
-        $hasSupervisorWiseEmployee       = Employee::select('employee_id')->where('supervisor_id',session('logged_session_data.employee_id'))->get()->toArray();
-        if(count($hasSupervisorWiseEmployee) == 0 ){
+        $hasSupervisorWiseEmployee       = Employee::select('employee_id')->get()->toArray();
+
+        $user_data = Employee::select('user.role_id')->join('user','user.user_id','=','employee.user_id')->where('employee.employee_id',session('logged_session_data.employee_id'))->first();
+        // dd($user_data->role_id);
+        if(count($hasSupervisorWiseEmployee) == 0){
             $results = [];
         }else {
-            $results  = LeaveApplication::with(['employee','leaveType'])
-                        ->whereIn('employee_id',array_values($hasSupervisorWiseEmployee))
+
+            if($user_data->role_id == 1 or $user_data->role_id == 9) {
+                    $results  = LeaveApplication::with(['employee','leaveType'])
+                        ->where('employee_id','!=',session('logged_session_data.employee_id'))
                         ->orderBy('status','asc')
                         ->orderBy('leave_application_id','desc')
                         ->get();
+            }else{
+                $results  = LeaveApplication::with(['employee','leaveType'])
+                        ->whereIn('employee_id',array_values($hasSupervisorWiseEmployee))
+                        ->where('employee_id','!=',session('logged_session_data.employee_id'))
+                        ->orderBy('status','asc')
+                        ->orderBy('leave_application_id','desc')
+                        ->get();
+            }
 
+            // dd($results);
             foreach($results as $key => $value) {
                 $leave_date_name_list = [];
                 if($value->leave_date_list){
                     $value->leave_date_list = unserialize($value->leave_date_list);
                     foreach ($value->leave_date_list as $key2 => $val) {
                         $current_year = date('Y-m');
-                        $leave_name = DB::table('optional_Leave')->select('leave_name')->where('leave_year',$current_year)->where('leave_date',$val)->first();
-                        
-                        $leave_date_name_list[] = $val.'<b><span style="color: green;"> : '.$leave_name->leave_name. '</span></b><br />';
+                        $leave_name = DB::table('optional_Leave')->select('leave_name')->where('leave_date',$val)->first();
+                        if ($leave_name != null) {
+                             $leave_date_name_list[] = $val.'<b><span style="color: green;"> : '.$leave_name->leave_name. '</span></b><br />';
+                         }else{
+                            $leave_date_name_list[] = $val;
+                         }
                     }
                 }
                 $value->optional_leave_date_name_list = $leave_date_name_list;

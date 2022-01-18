@@ -210,10 +210,17 @@
 
         $('#start_time').on('change', function() {
             start_time = $('#start_time').val();
+            var end_time = $('#end_time').val();
+
+	            if(start_time != '' && end_time != ''){
+	            	var total_hours = moment.utc(moment(end_time, "HH:mm:ss").diff(moment(start_time, "HH:mm:ss"))).format("hh");
+	            	$('#training_hour').val(total_hours);
+	            }
         });
 
         $('#end_time').on('change', function() {
             var end_time = $('#end_time').val();
+            start_time = $('#start_time').val();
 
             if(start_time != '' && end_time != ''){
             	var total_hours = moment.utc(moment(end_time, "HH:mm:ss").diff(moment(start_time, "HH:mm:ss"))).format("hh");

@@ -199,6 +199,7 @@ class EmployeeController extends Controller
             $parentData = User::create($employeeAccountDataFormat);
 
             $employeeData['user_id'] = $parentData->user_id;
+            $employeeData['work_shift_id'] = 1;
             $childData = Employee::create($employeeData);
 
             $employeeLogisticData  = $this->employeeRepositories->makeLogisticInformationDataFormat($request->all(), $childData->employee_id);
@@ -250,6 +251,7 @@ class EmployeeController extends Controller
         $workShiftList          = WorkShift::get();
         $payGradeList           = PayGrade::all();
         $hourlyPayGradeList     = HourlySalary::all();
+        $logisticList           = Logistic::get();
         $presentPayGradeSalary  = DB::table('present_pay_grade_salary')->where('pay_grade_id',$editModeData->pay_grade_id)->get();
 
         $employeeAccountEditModeData        = User::where('user_id', $editModeData->user_id)->first();
@@ -257,7 +259,7 @@ class EmployeeController extends Controller
         $experienceEditModeData             = EmployeeExperience::where('employee_id', $id)->get();
         $childEditModeData                  = EmployeeChildInformation::where('employee_id', $id)->get();
         $logisticEditModeData               = EmployeeLogisticInformation::where('employee_id', $id)->get();
-        // dd($editModeData);
+        
 
         $data = [
             'userList'              => $userList,
@@ -276,8 +278,9 @@ class EmployeeController extends Controller
             'childEditModeData'                     => $childEditModeData,
             'logisticEditModeData'                  => $logisticEditModeData,
             'presentPayGradeSalary'                 => $presentPayGradeSalary,
+            'logisticList'                          => $logisticList,
         ];
-        // dd($data);
+        // dd($logisticEditModeData);
         return view('admin.employee.employee.editEmployee', $data);
     }
 

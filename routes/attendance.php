@@ -41,7 +41,8 @@ Route::group(['middleware' => ['preventbackbutton','auth']], function(){
     Route::get('setup-employee-attendance',['as' => 'attendance.dashboard' , 'uses' => 'Attendance\ManualAttendanceController@setupDashboardAttendance']);    
 
     Route::post('setup-employee-attendance-post',['as' => 'attendance.dashboard.post' , 'uses' => 'Attendance\ManualAttendanceController@postDashboardAttendance']);
-
+    // upload attendance file
+    Route::any('upload_attendance_file',['as' => 'manualAttendance.uploadFile','uses' => 'Attendance\ManualAttendanceController@uploadFile']);
 
 });
 

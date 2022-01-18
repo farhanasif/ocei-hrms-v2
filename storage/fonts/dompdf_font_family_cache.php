@@ -82,8 +82,10 @@
   ),
   'kalpurush' => array(
     'normal' => $fontDir . '/kalpurush-normal_886b796e30704ba6a1c67ca134940a8d',
+	'useOTL' => 0xFF,   
+    'useKashida' => 75,
   ),
-  'li mak ahmodi unicode' => array(
+  'ahmodi' => array(
     'normal' => $fontDir . '/li-mak-ahmodi-unicode-normal_1c1a2ab410ae34a3b881336a4023678b',
   ),
 ) ?>

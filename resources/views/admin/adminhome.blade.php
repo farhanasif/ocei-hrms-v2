@@ -262,29 +262,155 @@
         </div>
         @endif
 
-        @if(count($upcoming_training) > 0)
+        @if(count($upcoming_birtday) > 0)
         <div class="col-md-6">
+            <div class="white-box">
+                <h3 class="box-title">@lang('dashboard.upcoming_birthday')</h3>
+                <hr>
+                    <div class="noticeBord">
+                    @foreach($upcoming_birtday as $employee_birthdate)
+                    <!-- <div class="col-md-4 leaveApplication"> -->
+                        <div class="comment-center p-t-10">
+                            <div class="comment-body">
+                                @if($employee_birthdate->photo !='')
+                                <div class="user-img"> <img src="{!! asset('uploads/employeePhoto/'.$employee_birthdate->photo) !!}" alt="user" class="img-circle"></div>
+                                @else
+                                <div class="user-img"> <img src="{!! asset('admin_assets/img/default.png') !!}" alt="user" class="img-circle"></div>
+                                @endif
+                                <div class="mail-contnet">
+
+                                    @php
+                                    $date_of_birth = $employee_birthdate->date_of_birth;
+                                    $separate_date = explode('-',$date_of_birth);
+
+                                    $date_current_year = date('Y').'-'.$separate_date[1].'-'.$separate_date[2];
+
+                                    $create_date = date_create($date_current_year);
+                                    @endphp
+
+                                    <h5>{{ $employee_birthdate->first_name }} {{$employee_birthdate->last_name}}</h5><span class="time">{{ date_format(date_create($employee_birthdate->date_of_birth),"D dS F Y") }}</span>
+                                    <br />
+
+                                    <span class="mail-desc">
+                                        @if($date_current_year == date('Y-m-d'))
+                                        <b>Today is
+                                            @if($employee_birthdate->gender == 'Male')
+                                            His @else
+                                            Her
+                                            @endif
+                                            Birtday Wish
+                                            @if($employee_birthdate->gender == 'Male')
+                                            Him
+                                            @else Her
+                                            @endif</b>
+
+                                        @else
+
+                                        Wish
+                                        @if($employee_birthdate->gender == 'Male')
+                                        Him @else
+                                        Her
+                                        @endif
+                                        on {{ date_format($create_date,"D dS F Y") }}
+
+
+
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                  <!--   </div> -->
+                    @endforeach
+                    </div>
+            </div>
+        </div>
+        @endif
+    </div>
+
+    <div class="row" style="margin-top: 14px;"> 
+        @if(count($leaveApplication) > 0)
+        <div class="col-md-12">
+            <div class="white-box">
+                <h3 class="box-title">@lang('dashboard.recent_leave_application')</h3>
+                <hr>
+                <div class="leaveApplication">
+                    @foreach($leaveApplication as $leaveApplication)
+                    <div class="comment-center p-t-10 {{$leaveApplication->leave_application_id}}">
+                        <div class="comment-body">
+                            @if($leaveApplication->employee->photo !='')
+                            <div class="user-img"> <img src="{!! asset('uploads/employeePhoto/'.$leaveApplication->employee->photo) !!}" alt="user" class="img-circle"></div>
+                            @else
+                            <div class="user-img"> <img src="{!! asset('admin_assets/img/default.png') !!}" alt="user" class="img-circle"></div>
+                            @endif
+                            <div class="mail-contnet">
+                                @php
+                                $d=strtotime($leaveApplication->created_at);
+                                @endphp
+                                <h5>{{$leaveApplication->employee->first_name}} {{$leaveApplication->employee->last_name}}</h5><span class="time">{{date(" d M Y h:i: a", $d)}}</span> <span class="label label-rouded label-info">PENDING</span>
+                                <br /><span class="mail-desc" style="max-height: none">
+                                    @lang('leave.leave_type') : {{$leaveApplication->leaveType->leave_type_name}}<br>
+                                    @lang('leave.request_duration') :
+                                    @if($leaveApplication->leave_type_id == 23)
+                                        @foreach($leaveApplication->optional_leave_date_name_list as $l_k => $listDate)
+                                            <input class="form-check-input leave_dt_name" type="checkbox" value="{{$leaveApplication->leave_date_list[$l_k]}}" id="flexCheckDefault_{{$l_k}}'" name="leave_date"/><label class="form-check-label" for="flexCheckDefault" style="padding-left: 2px"></label>{!! $listDate !!}
+                                            @if($l_k == count($leaveApplication->leave_date_list) - 2) 
+                                                and
+                                            @elseif($l_k < count($leaveApplication->leave_date_list) - 2)
+                                                ,
+                                            @endif
+                                        @endforeach
+                                    @else
+                                     {{dateConvertDBtoForm($leaveApplication->application_from_date)}} To {{dateConvertDBtoForm($leaveApplication->application_to_date)}}
+                                    @endif
+                                     <br>
+                                    @lang('leave.number_of_day') : {{$leaveApplication->number_of_day}} <br>
+                                    @lang('leave.purpose') : {{$leaveApplication->purpose}}
+
+                                    @if($leaveApplication->attachment != null)
+                                        <br />
+                                        <a href="{{ asset('/uploads/leaveApplication/'.$leaveApplication->attachment)  }}" target="_blank"><span class="btn btn-rounded btn-success">Attachement</span></a>
+                                    @endif
+
+                                </span>
+
+
+                                <a href="javacript:void(0)" data-status=2 data-leave_application_id="{{$leaveApplication->leave_application_id}}" class="btn remarksForLeave btn btn-rounded btn-success btn-outline m-r-5"><i class="ti-check text-success m-r-5"></i>@lang('common.approve')</a>
+                                <a href="javacript:void(0)" data-status=3 data-leave_application_id="{{$leaveApplication->leave_application_id}}" class="btn-rounded remarksForLeave btn btn-danger btn-outline"><i class="ti-close text-danger m-r-5"></i>@lang('common.reject')</a> </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        @endif
+    </div>
+
+    <div class="row">
+        @if(count($upcoming_training) > 0)
+        <div class="col-md-12">
             <div class="white-box">
                 <h3 class="box-title">Upcoming Training</h3>
                 <hr>
                 <div class="noticeBord">
                     @foreach($upcoming_training as $training)
 
-                    <div class="comment-center p-t-10">
-                        <div class="comment-body">
-                            
-                            @if($training->photo !='')
-                            <div class="user-img"> <img src="{!! asset('uploads/employeePhoto/'.$training->photo) !!}" alt="user" class="img-circle"></div>
-                            @else
-                            <div class="user-img"> <img src="{!! asset('admin_assets/img/default.png') !!}" alt="user" class="img-circle"></div>
-                            @endif
+                    <div class="col-md-6 leaveApplication">
+                        <div class="comment-center p-t-10">
+                            <div class="comment-body">
+                                @if($training->photo !='')
+                                <div class="user-img"> <img src="{!! asset('uploads/employeePhoto/'.$training->photo) !!}" alt="user" class="img-circle"></div>
+                                @else
+                                <div class="user-img"> <img src="{!! asset('admin_assets/img/default.png') !!}" alt="user" class="img-circle"></div>
+                                @endif
 
-                            <div class="mail-contnet">
-                            <h5>{{ $training->first_name }} {{$training->last_name}}</h5>
-                            <h5>{{$training->training_type_name}}</h5>
-                            <div>{!! substr($training->subject,0,80)!!}</div>
-                            <span class="time">From Date: {{dateConvertDBtoForm($training->start_date)}} To Date:{{dateConvertDBtoForm($training->end_date)}} </span>
-                            <span class="time">Time Duration: {!! date("h:i a", strtotime($training->start_time)) !!}  {!! date("h:i a", strtotime($training->end_time)) !!} </span>
+                                <div class="mail-contnet">
+                                <h5>{{ $training->first_name }} {{$training->last_name}}</h5>
+                                <h5>{{$training->training_type_name}}</h5>
+                                <div>{!! substr($training->subject,0,40)!!}</div>
+                                <span class="time">From Date: {{dateConvertDBtoForm($training->start_date)}} To Date:{{dateConvertDBtoForm($training->end_date)}} </span>
+                                <span class="time">Time Duration: {!! date("h:i a", strtotime($training->start_time)) !!}  {!! date("h:i a", strtotime($training->end_time)) !!} </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -294,11 +420,10 @@
         </div>
         @endif
     </div>
-    <div class="row">
-    </div>
-    <div class="row">
+
+<!--     <div class="row">
         @if(count($upcoming_birtday) > 0)
-        <div class="col-md-12" style="background-color: #fff;">
+        <div class="row" style="background-color: #fff;margin-left: 15px; margin-right: 15px;">
             <div class="white-box">
                 <h3 class="box-title">@lang('dashboard.upcoming_birthday')</h3>
                 <hr>
@@ -361,57 +486,8 @@
             </div>
         </div>
         @endif
-    </div>
-    <div class="row"> 
-        @if(count($leaveApplication) > 0)
-        <div class="col-md-12">
-            <div class="white-box">
-                <h3 class="box-title">@lang('dashboard.recent_leave_application')</h3>
-                <hr>
-                <div class="leaveApplication">
-                    @foreach($leaveApplication as $leaveApplication)
-                    <div class="comment-center p-t-10 {{$leaveApplication->leave_application_id}}">
-                        <div class="comment-body">
-                            @if($leaveApplication->employee->photo !='')
-                            <div class="user-img"> <img src="{!! asset('uploads/employeePhoto/'.$leaveApplication->employee->photo) !!}" alt="user" class="img-circle"></div>
-                            @else
-                            <div class="user-img"> <img src="{!! asset('admin_assets/img/default.png') !!}" alt="user" class="img-circle"></div>
-                            @endif
-                            <div class="mail-contnet">
-                                @php
-                                $d=strtotime($leaveApplication->created_at);
-                                @endphp
-                                <h5>{{$leaveApplication->employee->first_name}} {{$leaveApplication->employee->last_name}}</h5><span class="time">{{date(" d M Y h:i: a", $d)}}</span> <span class="label label-rouded label-info">PENDING</span>
-                                <br /><span class="mail-desc" style="max-height: none">
-                                    @lang('leave.leave_type') : {{$leaveApplication->leaveType->leave_type_name}}<br>
-                                    @lang('leave.request_duration') :
-                                    @if($leaveApplication->leave_type_id == 23)
-                                        @foreach($leaveApplication->optional_leave_date_name_list as $l_k => $listDate)
-                                            <input class="form-check-input leave_dt_name" type="checkbox" value="{{$leaveApplication->leave_date_list[$l_k]}}" id="flexCheckDefault_{{$l_k}}'" name="leave_date"/><label class="form-check-label" for="flexCheckDefault" style="padding-left: 2px"></label>{!! $listDate !!}
-                                            @if($l_k == count($leaveApplication->leave_date_list) - 2) 
-                                                and
-                                            @elseif($l_k < count($leaveApplication->leave_date_list) - 2)
-                                                ,
-                                            @endif
-                                        @endforeach
-                                    @else
-                                     {{dateConvertDBtoForm($leaveApplication->application_from_date)}} To {{dateConvertDBtoForm($leaveApplication->application_to_date)}}
-                                    @endif
-                                     <br>
-                                    @lang('leave.number_of_day') : {{$leaveApplication->number_of_day}} <br>
-                                    @lang('leave.purpose') : {{$leaveApplication->purpose}}
-                                </span>
+    </div> -->
 
-                                <a href="javacript:void(0)" data-status=2 data-leave_application_id="{{$leaveApplication->leave_application_id}}" class="btn remarksForLeave btn btn-rounded btn-success btn-outline m-r-5"><i class="ti-check text-success m-r-5"></i>@lang('common.approve')</a>
-                                <a href="javacript:void(0)" data-status=3 data-leave_application_id="{{$leaveApplication->leave_application_id}}" class="btn-rounded remarksForLeave btn btn-danger btn-outline"><i class="ti-close text-danger m-r-5"></i>@lang('common.reject')</a> </div>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-        @endif
-    </div>
 </div>
 
 @endsection

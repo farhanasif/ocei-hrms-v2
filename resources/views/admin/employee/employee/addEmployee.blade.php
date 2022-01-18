@@ -785,24 +785,7 @@
 <div class="row_element1" style="display: none;">
     <input name="educationQualification_cid[]" type="hidden">
     <div class="row">
-        <div class="col-md-3">
-            <div class="form-group">
-                <label for="exampleInput">@lang('employee.institute')<span class="validateRq">*</span></label>
-                <select name="institute[]" class="form-control institute">
-                    <option value="">--- @lang('common.please_select') ---</option>
-                    <option value="Board">@lang('employee.board')</option>
-                    <option value="University">@lang('employee.university')</option>
-                </select>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="form-group">
-                <label for="exampleInput">@lang('employee.board') / @lang('employee.university')<span
-                        class="validateRq">*</span></label>
-                <input type="text" name="board_university[]" class="form-control board_university"
-                    id="board_university" placeholder="@lang('employee.board') / @lang('employee.university')">
-            </div>
-        </div>
+
         <div class="col-md-3">
             <div class="form-group">
                 <label for="exampleInput">@lang('employee.degree')<span class="validateRq">*</span></label>
@@ -810,6 +793,34 @@
                     placeholder="Example: B.Sc. Engr.(Bachelor of Science in Engineering)">
             </div>
         </div>
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="exampleInput">@lang('employee.institute') / @lang('employee.university')<span class="validateRq">*</span></label>
+                    <input type="text" name="institute[]" class="form-control institute"
+                    id="institute" placeholder="@lang('employee.institute') / @lang('employee.university')">
+<!--                 <select name="institute[]" class="form-control institute">
+                    <option value="">--- @lang('common.please_select') ---</option>
+                    <option value="Board">@lang('employee.board')</option>
+                    <option value="University">@lang('employee.university')</option>
+                </select> -->
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="exampleInput">@lang('employee.board')<span
+                        class="validateRq">*</span></label>
+                <input type="text" name="board_university[]" class="form-control board_university"
+                    id="board_university" placeholder="@lang('employee.board')">
+            </div>
+        </div>
+<!--         <div class="col-md-3">
+            <div class="form-group">
+                <label for="exampleInput">@lang('employee.degree')<span class="validateRq">*</span></label>
+                <input type="text" name="degree[]" class="form-control degree required" id="degree"
+                    placeholder="Example: B.Sc. Engr.(Bachelor of Science in Engineering)">
+            </div>
+        </div> -->
         <div class="col-md-3">
             <label for="exampleInput">@lang('employee.passing_year')<span class="validateRq">*</span></label>
             <div class="input-group">
@@ -822,7 +833,7 @@
     <div class="row">
         <div class="col-md-3">
             <div class="form-group">
-                <label for="exampleInput">@lang('employee.result')</label>
+                <label for="exampleInput">@lang('employee.result') (Class)</label>
                 <select name="result[]" class="form-control result">
                     <option value="">--- @lang('common.please_select') ---</option>
                     <option value="First class">First class</option>
@@ -833,7 +844,7 @@
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label for="exampleInput">@lang('employee.gpa') / @lang('employee.cgpa')/Class</label>
+                <label for="exampleInput">Result (@lang('employee.gpa') / @lang('employee.cgpa') )</label>
                 <input type="text" name="cgpa[]" class="form-control cgpa" id="cgpa" placeholder="Example: 5.00,4.63">
             </div>
         </div>
@@ -912,12 +923,13 @@
 
 @endsection
 @section('page_scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" crossorigin="anonymous"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" crossorigin="anonymous"></script> -->
 <script>
     $(document).ready(function() {
 
         $('#date_of_joining').on('change',function() {
             var date_of_birth = $('#date_of_birth').val();
+            date_of_birth = moment(date_of_birth, "DD/MM/YYYY", "Asia/Dhaka");
             var endjobYear = moment(date_of_birth).add(59,'years');
             var date_of_joining = $('#date_of_joining').val();
             var retirement_year = endjobYear.diff(date_of_joining,'years');

@@ -20,5 +20,6 @@ return [
     'start_date' => 'Start Date',
     'end_date' => 'End Date',
     'comment' => 'Comment',
+    'weekly_holiday_name' => 'Weekly Holiday Name',
 
 ];

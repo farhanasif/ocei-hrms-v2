@@ -10,7 +10,7 @@ use App\Model\EarnLeaveRule;
 use App\Model\LeaveType;
 
 use App\Model\Employee;
-
+use DateTime;
 
 class LeaveRepository
 {
@@ -116,4 +116,48 @@ class LeaveRepository
         return   round($totalNumberOfDays - $ifExpenseLeave->number_of_day);
     }
 
+    public function totalServiceDay($joiningDate, $currDate)
+    {
+        $curr_date = new DateTime($currDate);
+        $join_date = new DateTime($joiningDate);
+        $interval = $curr_date->diff($join_date);
+        $total_service_day = $interval->format("%a");
+        return $total_service_day;
+    }
+
+   public function totalLeave($employee_id, $joiningdate, $curr_date, $leave_date_Array)
+   {
+        $totalLeaveDay = LeaveApplication::select(DB::raw('IFNULL(SUM(leave_application.number_of_day), 0) as number_of_day'))
+                        ->where('employee_id',$employee_id)
+                        ->where('status',2)
+                        ->whereIn('leave_type_id',$leave_date_Array)
+                        ->whereBetween('application_to_date',[$joiningdate,$curr_date])
+                        ->first();
+        return $totalLeaveDay->number_of_day;
+   }
+
+   public function earnLeave($total_day, $employee_id, $joiningdate, $curr_date)
+   {
+        $full_leave_use =  $this->totalLeave($employee_id, $joiningdate, $curr_date, [11]);
+        $half_leave_use = 0;
+           if($full_leave_use > 180){
+
+                $full_leave_use = 180;
+                $half_leave_use = ($full_leave_use - 180) * 2;
+           }
+
+        $full_leave_use +=  $this->totalLeave($employee_id, $joiningdate, $curr_date, [19,20]);
+
+        return ($this->fullEarnleave($total_day) - $full_leave_use) + (($this->halfEarnleave($total_day) - $half_leave_use )/2);
+   }
+
+   public function fullEarnleave($total_day)
+   {
+        return $total_day%11 > 5 ? (int)($total_day/11) + 1 : (int)($total_day/11);
+   }
+
+   public function halfEarnleave($total_day)
+   {
+        return $total_day%12 > 5 ? (int)($total_day/12) + 1 : (int)($total_day/12);
+   }
 }

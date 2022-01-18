@@ -28,7 +28,7 @@ class PerformanceReportController extends Controller
         $employeeList = Employee::where('status', 1)->get();
         $performanceCategory = PerformanceCategory::all();
         $payGrade = PayGrade::all();
-
+        // dd($request->all());
         $results = '';
         if ($_POST) {
 

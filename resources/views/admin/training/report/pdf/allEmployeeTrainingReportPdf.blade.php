@@ -71,7 +71,7 @@
 						@foreach($traningInfo as $value)
 
 						@php
-							$trainingHour += $value->training_hour;
+							$trainingHour += $value->training_day * $value->training_hour;
 						@endphp
 						<tr>
 							<td>{{++$sl}}</td>
@@ -95,7 +95,7 @@
 							</td>
 							<td>
 								@if (isset($value->training_hour) && !empty($value->training_hour))
-								{{$value->training_hour}} Hour
+								{{$value->training_day * $value->training_hour}} Hour
 							@endif
 							</td>
 							<td>
@@ -121,8 +121,8 @@
 			{{ date('F Y',strtotime($from_date)) }} To {{ date('F Y',strtotime($to_date)) }}
 			<br>
 			<div style="width: 40%">
-				<p>Total Employee = {{ $totalEmployee }} person * {{ $trainingHour }} hour = {{ $totalEmployee * $trainingHour }} hour</p>
-				<p>Training Hour = {{ $trainingHour }} Hour</p>
+				<p>Per Employee Traning Time =  {{ $trainingHour }} hour / {{ $totalEmployee }} person = {{  number_format($trainingHour / $totalEmployee , 2) }} Hours</p>
+				<p>Total Training Hour = {{ $trainingHour }} Hours</p>
 				{{-- <p>Training = </p> --}}
 			</div>
 

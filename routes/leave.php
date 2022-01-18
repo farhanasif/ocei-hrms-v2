@@ -18,6 +18,17 @@ Route::group(['middleware' => ['preventbackbutton','auth']], function(){
         Route::get('/{publicHoliday}/edit',['as'=>'publicHoliday.edit','uses'=>'Leave\PublicHolidayController@edit']);
         Route::put('/{publicHoliday}',['as' => 'publicHoliday.update', 'uses'=>'Leave\PublicHolidayController@update']);
         Route::delete('/{publicHoliday}/delete',['as'=>'publicHoliday.delete','uses'=>'Leave\PublicHolidayController@destroy']);
+
+        Route::get('/holidayCalendar',['as' => 'publicHoliday.holidayCalendarCreate', 'uses'=>'Leave\PublicHolidayController@holidayCalendar']);
+    });
+
+    Route::group(['prefix' => 'holidayCalendar'], function () {
+        Route::get('/',['as' => 'holidayCalendar.index', 'uses'=>'Leave\HolidayCalendarController@index']);
+        Route::get('/create',['as' => 'holidayCalendar.create', 'uses'=>'Leave\HolidayCalendarController@create']);
+        Route::post('/store',['as' => 'holidayCalendar.store', 'uses'=>'Leave\HolidayCalendarController@store']);
+        Route::get('/{holidayCalendar}/edit',['as'=>'holidayCalendar.edit','uses'=>'Leave\HolidayCalendarController@edit']);
+        Route::put('/{holidayCalendar}',['as' => 'holidayCalendar.update', 'uses'=>'Leave\HolidayCalendarController@update']);
+        Route::delete('/{holidayCalendar}/delete',['as'=>'holidayCalendar.delete','uses'=>'Leave\HolidayCalendarController@destroy']);
     });
 
     Route::group(['prefix' => 'weeklyHoliday'], function () {
@@ -46,6 +57,8 @@ Route::group(['middleware' => ['preventbackbutton','auth']], function(){
         Route::post('applyForTotalNumberOfDays','Leave\ApplyForLeaveController@applyForTotalNumberOfDays');
         Route::get('/{applyForLeave}',['as'=>'applyForLeave.show','uses'=>'Leave\ApplyForLeaveController\applyForTotalNumberOfDays@show']);
         Route::any('religion_wise_leave_list/{religion_name}','Leave\ApplyForLeaveController@religionWiseLeave');
+
+        Route::get('/getHolidayCalendar/{id}','Leave\ApplyForLeaveController@getHolidayCalendar');
     });
 
     Route::group(['prefix' => 'earnLeaveConfigure'], function () {

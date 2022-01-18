@@ -41,7 +41,12 @@
                 <div class="panel-heading"><i class="mdi mdi-table fa-fw"></i>@yield('title')</div>
                 <div class="panel-wrapper collapse in" aria-expanded="true">
                     <div class="panel-body">
-
+                        @if(session()->has('error'))
+                            <div class="alert alert-danger alert-dismissable">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                <i class="glyphicon glyphicon-remove"></i>&nbsp;<strong>{{ session()->get('error') }}</strong>
+                            </div>
+                        @endif
                        <form action="{{ route('employeeTrainingReport.dateFilterTrainingReport') }}" method="get">
 						  
 						<div class="row">
@@ -49,14 +54,14 @@
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input class="form-control  from_date dateField" readonly id="from_date"
-                                        placeholder="From Date" name="from_date" type="text" value="">
+                                        placeholder="From Date" name="from_date" type="text" value="" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                     <input class="form-control  to_date dateField" readonly id="to_date"
-                                        placeholder="To Date" name="to_date" type="text" value="">
+                                        placeholder="To Date" name="to_date" type="text" value="" required>
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -146,13 +151,13 @@
                                                             {{ $value['training_day'] }} Day <br>
                                                         @endif
                                                         @if (isset($value['training_hour']) && !empty($value['training_hour']))
-                                                            {{ $value['training_hour'] }} Hour
+                                                            {{ $value['training_day'] * $value['training_hour'] }} Hour
                                                         @endif
                                                     </td>
                                                     <td>
                                                         @php
                                                             if ($value['action'] == 'Yes') {
-                                                                echo "<b style='color: green'><i class='cr-icon glyphicon glyphicon-ok'></i></b>";
+                                                                echo "<b style='color: green'><i class='cr-icon glyphicon glyphicon-ok'></i> Done</b>";
                                                             } else {
                                                                 echo '--';
                                                             }

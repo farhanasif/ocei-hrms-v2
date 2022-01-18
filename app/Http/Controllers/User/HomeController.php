@@ -72,6 +72,7 @@ class HomeController extends Controller
 
     public function index()
     {
+        
         $ip_setting = IpSetting::orderBy('id', 'desc')->first();
         $ip_attendance_status = 0;
         $ip_check_status = 0;
@@ -91,10 +92,17 @@ class HomeController extends Controller
             $ip_check_status = $ip_setting->ip_status;
         }
 
-        if (session('logged_session_data.role_id') != 1) {
+        if (session('logged_session_data.role_id') != 1 and session('logged_session_data.role_id') != 10) {
 
-            $attendanceData = $this->attendanceRepository->getEmployeeMonthlyAttendance(date("Y-m-01"), date("Y-m-d"), session('logged_session_data.employee_id'));
-
+            // $attendanceData = $this->attendanceRepository->getEmployeeMonthlyAttendance(date("Y-m-01"), date("Y-m-d"), session('logged_session_data.employee_id'));
+            $attendanceData  = DB::table('employee_attendance')
+                    ->addSelect('employee_attendance.*','employee.first_name','employee.last_name','employee.photo','veiod.in_time','veiod.out_time','veiod.late_time','veiod.working_time')
+                    ->join('employee', 'employee.finger_id','=','employee_attendance.finger_print_id')
+                    ->join('view_employee_in_out_data as veiod','veiod.employee_attendance_id','=','employee_attendance.employee_attendance_id')
+                    ->where('employee_attendance.finger_print_id', '=', $login_employee[0]->finger_id)
+                    ->whereDate('employee_attendance.in_out_time', '=', date('Y-m-d'))
+                    ->get();
+            // dd($attendanceData);
             $employeePerformance =  $this->employeePerformance->select('employee_performance.*', DB::raw('AVG(employee_performance_details.rating) as rating'))
                 ->with(['employee' => function ($d) {
                     $d->with('department');
@@ -159,6 +167,8 @@ class HomeController extends Controller
                 ->join('training_type', 'training_info.training_type_id', '=', 'training_type.training_type_id')
                 ->select('training_info.*', 'employee.first_name', 'employee.last_name', 'employee.photo', 'training_type.training_type_name as training_type_name')
                 ->where('training_info.status', 0)
+                ->where('training_info.employee_id',session('logged_session_data.employee_id'))
+                ->orderBy('training_info.start_date','asc')
                 ->get();
 
             $data = [
@@ -181,13 +191,14 @@ class HomeController extends Controller
             return view('admin.generalUserHome', $data);
         }
 
-        $hasSupervisorWiseEmployee = $this->employee->select('employee_id')->where('supervisor_id', session('logged_session_data.employee_id'))->get()->toArray();
+        $hasSupervisorWiseEmployee = $this->employee->select('employee_id')->get()->toArray();
         if (count($hasSupervisorWiseEmployee) == 0) {
             $leaveApplication = [];
         } else {
             $leaveApplication  = $this->leaveApplication->with(['employee', 'leaveType'])
                 ->whereIn('employee_id', array_values($hasSupervisorWiseEmployee))
                 ->where('status', 1)
+                ->where('employee_id','!=',session('logged_session_data.employee_id'))
                 ->orderBy('status', 'asc')
                 ->orderBy('leave_application_id', 'desc')
                 ->get();
@@ -264,6 +275,7 @@ class HomeController extends Controller
             ->join('training_type', 'training_info.training_type_id', '=', 'training_type.training_type_id')
             ->select('training_info.*', 'employee.first_name', 'employee.last_name', 'employee.photo', 'training_type.training_type_name as training_type_name')
             ->where('training_info.status', 0)
+            ->orderBy('training_info.start_date','asc')
             ->get();
 
         foreach ($leaveApplication as $key => $value) {
@@ -272,9 +284,12 @@ class HomeController extends Controller
                 $value->leave_date_list = unserialize($value->leave_date_list);
                 foreach ($value->leave_date_list as $key2 => $val) {
                     $current_year = date('Y-m');
-                    $leave_name = DB::table('optional_Leave')->select('leave_name')->where('leave_year',$current_year)->where('leave_date',$val)->first();
+                    $leave_name = DB::table('optional_Leave')->select('leave_name')->where('leave_date',$val)->first();
                     
-                    $leave_date_name_list[] = $val.'<b><span style="color: green; font-size: 16px;">( '.$leave_name->leave_name. ' ) </span></b>';
+                    if($leave_name != null) {
+                        $leave_date_name_list[] = $val.'<b><span style="color: green; font-size: 16px;">( '.$leave_name->leave_name. ' ) </span></b>';
+                    }
+                    
                 }
             }
             $value->optional_leave_date_name_list = $leave_date_name_list;
@@ -300,7 +315,6 @@ class HomeController extends Controller
 
         ];
 
-        // dd($leaveApplication);
         return view('admin.adminhome', $data);
     }
 
@@ -393,24 +407,25 @@ class HomeController extends Controller
 
     public function employeeProfilePdfDownload(Request $request)
     {
-        $data['employeeInfo']           = Employee::where('employee.employee_id', session('logged_session_data.employee_id'))->first();
-        $data['employeeExperience']     = EmployeeExperience::where('employee_id', session('logged_session_data.employee_id'))->get();
-        $data['employeeEducation']      = EmployeeEducationQualification::where('employee_id', session('logged_session_data.employee_id'))->get();
-        $data['employeeChildData']      = EmployeeChildInformation::where('employee_id', session('logged_session_data.employee_id'))->get();
-        $data['employeeLogisticData']   = EmployeeLogisticInformation::where('employee_id', session('logged_session_data.employee_id'))->get();
+
+        $data['employeeInfo']           = Employee::where('employee.employee_id', $request->employee_id)->first();
+        $data['employeeExperience']     = EmployeeExperience::where('employee_id', $request->employee_id)->get();
+        $data['employeeEducation']      = EmployeeEducationQualification::where('employee_id', $request->employee_id)->get();
+        $data['employeeChildData']      = EmployeeChildInformation::where('employee_id', $request->employee_id)->get();
+        $data['employeeLogisticData']   = EmployeeLogisticInformation::where('employee_id', $request->employee_id)->get();
 
         $data['othersInfo'] = DB::table('employee')
             ->select('employee.*', 'department.department_name as department_name', 'designation.designation_name as designation_name', 'pay_grade.*')
             ->leftjoin('department', 'employee.department_id', '=', 'department.department_id')
             ->leftjoin('designation', 'employee.designation_id', '=', 'designation.designation_id')
             ->leftjoin('pay_grade', 'employee.pay_grade_id', '=', 'pay_grade.pay_grade_id')
-            ->where('employee.employee_id', session('logged_session_data.employee_id'))
+            ->where('employee.employee_id', $request->employee_id)
             ->first();
 
         $data['traningInfo'] = DB::table('training_info')
             ->select('training_info.*', 'training_type.training_type_name as training_type_name')
             ->leftjoin('training_type', 'training_info.training_type_id', '=', 'training_type.training_type_id')
-            ->where('training_info.employee_id', session('logged_session_data.employee_id'))
+            ->where('training_info.employee_id', $request->employee_id)
             ->get();
 
         $data['criteriaDataFormat'] = EmployeePerformance::select(
@@ -433,12 +448,12 @@ class HomeController extends Controller
             ->join('performance_criteria', 'performance_criteria.performance_criteria_id', '=', 'employee_performance_details.performance_criteria_id')
             ->join('performance_category', 'performance_category.performance_category_id', '=', 'performance_criteria.performance_category_id')
             ->join('department', 'department.department_id', '=', 'employee.department_id')
-            ->where('employee.employee_id', session('logged_session_data.employee_id'))
+            ->where('employee.employee_id', $request->employee_id)
             ->where('performance_criteria.performance_category_id',3)
             ->get()->toArray();
 
-        $data['employeeAward'] = DB::table('employee_award')->where('employee_id', session('logged_session_data.employee_id'))->first();
-        $data['promotionInfo'] = DB::table('promotion')->where('employee_id', session('logged_session_data.employee_id'))->first();
+        $data['employeeAward'] = DB::table('employee_award')->where('employee_id', $request->employee_id)->first();
+        $data['promotionInfo'] = DB::table('promotion')->where('employee_id', $request->employee_id)->first();
 
         $pay_grade_id_from_employee = $data['employeeInfo']->pay_grade_id;
 
@@ -450,10 +465,10 @@ class HomeController extends Controller
             ->where('pay_grade_to_allowance.pay_grade_id', $pay_grade_id_from_employee)
             ->get();
         
-        $pdf = PDF::loadView('admin.user.user.employee_profile_pdf', $data);
+        $pdf = PDF::setOptions(['defaultFont' => 'nikosh'])->loadView('admin.user.user.employee_profile_pdf', $data);
 
         $pdf->setPaper('A4', 'landscape');
-        $pageName = ".employee-profile.pdf";
+        $pageName = $data['employeeInfo']->first_name.' '.$data['employeeInfo']->last_name."profile.pdf";
         return $pdf->download($pageName);
     }
 }

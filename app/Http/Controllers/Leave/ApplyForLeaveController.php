@@ -17,9 +17,10 @@ use Illuminate\Support\Facades\DB;
 use App\Model\LeaveApplication;
 
 use Illuminate\Http\Request;
-
+use App\Model\Employee;
 use App\Model\LeaveType;
 use Validator;
+use DateTime;
 
 class ApplyForLeaveController extends Controller
 {
@@ -54,8 +55,10 @@ class ApplyForLeaveController extends Controller
     {
         $leaveTypeList      = $this->commonRepository->leaveTypeList();
         $getEmployeeInfo    = $this->commonRepository->getEmployeeInfo(Auth::user()->user_id);
+        $getUserInfo    = $this->commonRepository->getUserInfo(Auth::user()->user_id);
         $religionList = [''=>' <>----  Select Religion  ----<> ','Islam'=>'Islam','Hinduism'=>'Hinduism','Buddhism'=>'Buddhism','Christianity'=>'Christianity','Others'=>'Others'];
-        return view('admin.leave.applyForLeave.leave_application_form', ['leaveTypeList' => $leaveTypeList, 'getEmployeeInfo' => $getEmployeeInfo,'religionList'=>$religionList]);
+        $getAllEmployeeList = $this->commonRepository->employeeList();
+        return view('admin.leave.applyForLeave.leave_application_form', ['leaveTypeList' => $leaveTypeList, 'getEmployeeInfo' => $getEmployeeInfo,'religionList'=>$religionList,'getUserInfo' => $getUserInfo,'getAllEmployeeList' => $getAllEmployeeList]);
     }
 
 
@@ -69,6 +72,65 @@ class ApplyForLeaveController extends Controller
     {
         $leave_type_id = $request->leave_type_id;
         $employee_id   = $request->employee_id;
+
+        if($leave_type_id == 7) {
+            $prev_data = DB::table('leave_application')->where('employee_id',$employee_id)->where('status',2)->where('leave_type_id',$leave_type_id)->orderBy('leave_application_id','desc')->first();
+            if($prev_data != null) {
+                $prev_date = strtotime($prev_data->application_from_date);
+                $curr_date = strtotime(date('Y-m-d'));
+                $total_day = ($curr_date - $prev_date)/60/60/24;
+
+                if($total_day < 730){
+                    return 0;
+                }
+            }
+        }else if($leave_type_id == 10) {
+            $prev_data = DB::table('leave_application')
+                            ->select(DB::raw('IFNULL(SUM(leave_application.number_of_day), 0) as number_of_day'))
+                            ->where('employee_id',$employee_id)
+                            ->where('status',2)
+                            ->where('leave_type_id',$leave_type_id)
+                            ->get();
+
+            if($prev_data[0]->number_of_day >= 360){
+                return 0;
+            }else if((360 - $prev_data[0]->number_of_day) < 180){
+                return (360 - $prev_data[0]->number_of_day);
+            }else if((360 - $prev_data[0]->number_of_day) >= 180) {
+                return 180;
+            }
+        }else if($leave_type_id == 5 or $leave_type_id == 6) {
+            $employeeInfo = Employee::where('employee_id',$employee_id)->first();
+            $joiningdate  = $employeeInfo->date_of_joining;
+            $curr_date = date('Y-m-d');
+
+            // calculate total service days
+            $total_days =  $this->leaveRepository->totalServiceDay($joiningdate, date('Y-m-d'));
+
+            // calculate total leave days
+            $total_leave = $this->leaveRepository->totalLeave($employee_id, $joiningdate, date('Y-m-d'), $leave_date_Array = [5,6,10,12,13]);
+
+            $total_day = $total_days - $total_leave;
+
+            if($leave_type_id == 6) {
+                $leave_use = $this->leaveRepository->totalLeave($employee_id, $joiningdate, date('Y-m-d'), $leave_date_Array = [11]);
+                if($leave_use > 180){
+                    $leave_use = 180;
+                }
+
+                $leave_use += $this->leaveRepository->totalLeave($employee_id, $joiningdate, date('Y-m-d'), $leave_date_Array = [19, 20]);
+                return ($this->leaveRepository->fullEarnleave($total_day)) - $leave_use;
+            }elseif($leave_type_id == 5){
+                $leave_use = $this->leaveRepository->totalLeave($employee_id, $joiningdate, date('Y-m-d'), $leave_date_Array = [11]);
+                if($leave_use > 180){
+                    $leave_use = ($leave_use - 180) * 2;
+                }else {
+                    $leave_use = 0;
+                }
+
+                return ($this->leaveRepository->halfEarnleave($total_day)) - $leave_use;
+            }
+        }
         if ($leave_type_id != '' && $employee_id != '') {
             return $this->leaveRepository->calculateEmployeeLeaveBalance($leave_type_id, $employee_id);
         }
@@ -89,6 +151,30 @@ class ApplyForLeaveController extends Controller
     public function store(ApplyForLeaveRequest $request)
     {
         $input = $request->all();
+        // dd($input);
+        $employee_data = DB::table('employee')->where('employee_id',session('logged_session_data.employee_id'))->first();
+
+        // calculate total service year 
+        $curr_date = new DateTime(date('Y-m-d'));
+        $join_date = new DateTime($employee_data->date_of_joining);
+        $interval = $curr_date->diff($join_date);
+        $total_service_year = $interval->y;
+
+
+        $total_days =  $this->leaveRepository->totalServiceDay($employee_data->date_of_joining, date('Y-m-d'));
+
+        // calculate total leave days
+        $total_leave = $this->leaveRepository->totalLeave(session('logged_session_data.employee_id'), $employee_data->date_of_joining, date('Y-m-d'), [5,6,10,12,13]);
+
+        $total_day = $total_days - $total_leave;
+
+        $prev = LeaveApplication::where('leave_type_id',$request->leave_type_id)->where('status',1)->where('employee_id', session('logged_session_data.employee_id'))->first();
+
+        if($request->leave_type_id != 19 && $request->leave_type_id != 20) {
+            if($prev) {
+                return redirect('applyForLeave')->with('error', 'Sorry! Your previous leave application are pending now. Please wait for previous application action.');
+            }
+        }
 
         if($request->leave_type_id == 23){
             $inputs = Validator::make($request->all(),[
@@ -115,6 +201,18 @@ class ApplyForLeaveController extends Controller
         }
 
         $inputs->validate();
+
+        if($request->leave_type_id == 16 || $request->leave_type_id == 8 || $request->leave_type_id == 15 || ($request->leave_type_id == 9 && $input['number_of_day'] > 21) || ($request->leave_type_id == 14 && $input['number_of_day'] > 90)) {
+            $inputs = Validator::make($request->all(),[
+                'attachment' => 'required',
+            ],[
+                'attachment' => 'The Medical Report is highly required for this leave apply.'
+            ]);
+
+            $inputs->validate();
+        }
+
+        
         
 
         $input['application_from_date'] = dateConvertFormtoDB($request->application_from_date);
@@ -131,8 +229,40 @@ class ApplyForLeaveController extends Controller
         }else if($request->leave_type_id != 23 && $input['application_from_date'] == null && $input['application_to_date']) {
             return redirect('applyForLeave')->with('error', 'Application From date and To date are empty!.');
         }
+
+        if($request->leave_type_id == 11) {
+            if($total_service_year < 25) {
+                return redirect('applyForLeave')->with('error', 'Sorry! You are not allow to apply this leave, becuase your service year '.$total_service_year.'. Minimum 25 service years to require for applying this leave.');
+            }
+
+            $earnDay =  $this->leaveRepository->earnLeave($total_day,session('logged_session_data.employee_id'), $employee_data->date_of_joining, date('Y-m-d'));
+
+            if($earnDay < $input['number_of_day']) {
+                return redirect('applyForLeave')->with('error', 'Sorry! You are not allow to apply this leave, becuase your service year your request number of leave day overflow your earned leave days.');
+            }
+        }
         
-        // dd($input);
+
+        if($request->leave_type_id == 14) {
+            if($employee_data->permanent_status != 1) {
+                return redirect('applyForLeave')->with('error', 'Sorry! You are not allow to apply this leave, becuase you are not a permanent employer.');
+            }
+        }
+
+       // dd($total_service_year);
+        if($request->leave_type_id == 13) {
+            if($total_service_year < 5 || ($total_service_year >= 25 && $total_service_year <= 28)) {
+                return redirect('applyForLeave')->with('error', 'Sorry! You are not allow to apply Study leave. Service year must be grater than 5 years and less than 25 years or grater than 28 years');
+            }
+        }
+        
+        $input['apply_by'] = $input['employee_id'];
+
+        if($input['leave_type_id'] == 19 || $input['leave_type_id'] == 20) {
+            $input['employee_id'] = $input['for_employee_id'];
+        }
+
+        
 
         // For Leave Application Attachment
         $attachment = $request->file('attachment');
@@ -157,5 +287,12 @@ class ApplyForLeaveController extends Controller
         } else {
             return redirect('applyForLeave')->with('error', 'Something error found !, Please try again.');
         }
+    }
+
+    public function getHolidayCalendar($id)
+    {
+        $data = DB::table('holiday_file')->where('leave_id',$id)->orderBy('id','desc')->first();
+        $data = url('').'/uploads/calendarImg/'.$data->image;
+        return response()->json(['code'=>200,'data'=>$data]);
     }
 }

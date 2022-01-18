@@ -38,7 +38,7 @@
 									dd($employeeId);
 								@endphp --}}
 								<h4 class="text-right">
-									<a class="btn btn-success" style="color: #fff" href="{{ route('employeePerformance.details.downloadPdf',$employeeId) }}"><i class="fa fa-download fa-lg" aria-hidden="true"></i> @lang('common.download') PDF</a>
+									<a class="btn btn-success" style="color: #fff" href="{{ route('employeePerformance.details.downloadPdf',$performance_id) }}"><i class="fa fa-download fa-lg" aria-hidden="true"></i> @lang('common.download') PDF</a>
 								</h4>
 								<br>
 								

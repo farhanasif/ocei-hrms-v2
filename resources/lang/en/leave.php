@@ -44,4 +44,5 @@ return [
     'request_date' => 'Request Date',
     'current_balance' => 'Current Balance',
     'leave_consume' => 'Leave Consume',
+    'holiday_calendar'=> 'Holiday Calendar Upload',
 ];

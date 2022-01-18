@@ -61,7 +61,7 @@
 												<td>
 													@if(isset($value->leaveType->leave_type_name)) {!! $value->leaveType->leave_type_name !!} @endif
 												</td>
-												<td>
+												<td style="text-align: justify-all;">
 												    @if($value->leave_date_list)
 												    	@foreach($value->leave_date_list as $l_k => $listDate)
 												    		{!! dateConvertDBtoForm($listDate) !!}
@@ -69,6 +69,9 @@
 												    		 and
 												    		@elseif($l_k < count($value->leave_date_list) - 2)
 												    			,
+												    		@endif
+												    		@if( ($l_k+1) %2 == 0)
+												    		   <br />
 												    		@endif
 												    	@endforeach
 												    @else
@@ -80,14 +83,18 @@
 
 												{{-- <td>{!! $value->number_of_day !!}</td> --}}
 												<td>
-													@if(isset($value->approveBy->first_name))
-														{!! $value->approveBy->first_name !!} {!! $value->approveBy->last_name !!}
-														<br/><span class="text-muted">@lang('leave.approve_date') : {!! dateConvertDBtoForm($value->approve_date) !!}</span>
-													@endif
-													<hr>
-													@if(isset($value->rejectBy->first_name))
-														{!! $value->rejectBy->first_name !!} {!! $value->rejectBy->last_name !!}
-														<br/><span class="text-muted">@lang('common.reject_date') : {!! dateConvertDBtoForm($value->reject_date) !!}</span>
+												    @if($value->reject_date or $value->approve_date)
+														@if(isset($value->approveBy->first_name))
+															{!! $value->approveBy->first_name !!} {!! $value->approveBy->last_name !!}
+															<br/><span class="text-muted">@lang('leave.approve_date') : {!! dateConvertDBtoForm($value->approve_date) !!}</span>
+														@endif
+														<hr>
+														@if(isset($value->rejectBy->first_name))
+															{!! $value->rejectBy->first_name !!} {!! $value->rejectBy->last_name !!}
+															<br/><span class="text-muted">@lang('common.reject_date') : {!! dateConvertDBtoForm($value->reject_date) !!}</span>
+														@endif
+													@else
+													   Waiting for Office Approval Or Reject
 													@endif
 												</td>
 												{{-- <td>
@@ -110,7 +117,7 @@
 												<td>
 													@if ($value->attachment != '' && file_exists('uploads/leaveApplication/' . $value->attachment))
 													<a class="btn btn-success" style="color: white"
-														target="_blank" href="{!! asset('uploads/leaveApplication/' . $value->attachment) !!}">View
+														target="_blank" href="{!! asset('uploads/leaveApplication/' . $value->attachment) !!}">
 														Attachment</a>
 													@else
 														<a href="javascript:void(0)"> Empty </a>

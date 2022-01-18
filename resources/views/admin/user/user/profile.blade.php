@@ -54,7 +54,7 @@
                                         </p>
                                         <p> <b>Department :</b> {{ $othersInfo->department_name }}</p>
                                         <p> <b>Designation :</b> {{ $othersInfo->designation_name }}</p>
-                                        <p> <b>@lang('employee.phone') :</b> {{ $employeeInfo->phone }}</p>
+                                        <p> <b>@lang('employee.phone') :</b> 0{{ $employeeInfo->phone }}</p>
                                         <p><b>@lang('employee.email') :</b> {{ $employeeInfo->email }}</p>
                                         <p>
                                         </p>
@@ -271,12 +271,12 @@
                                                         <table id="example1" class="table table-bordered table-hover">
                                                             <thead class="education_lable">
                                                                 <tr>
-                                                                    <th>@lang('employee.institute')</th>
                                                                     <th>@lang('employee.degree')</th>
-                                                                    <th>@lang('employee.board') /
+                                                                    <th>@lang('employee.institute')/
                                                                         @lang('employee.university')</th>
-                                                                    <th>@lang('employee.result')</th>
-                                                                    <th>@lang('employee.gpa') / @lang('employee.cgpa')
+                                                                    <th>@lang('employee.board') </th>
+                                                                    <th>@lang('employee.result') ( Class )</th>
+                                                                    <th>Result (@lang('employee.gpa') / @lang('employee.cgpa') )
                                                                     </th>
                                                                     <th>@lang('employee.passing_year')</th>
                                                                 </tr>
@@ -285,8 +285,8 @@
                                                                 @if (count($employeeEducation) > 0)
                                                                     @foreach ($employeeEducation as $education)
                                                                         <tr>
-                                                                            <td>{{ $education->institute }}</td>
                                                                             <td>{{ $education->degree }}</td>
+                                                                            <td>{{ $education->institute }}</td>
                                                                             <td>{{ $education->board_university }}
                                                                             </td>
                                                                             <td>{{ $education->result }}</td>

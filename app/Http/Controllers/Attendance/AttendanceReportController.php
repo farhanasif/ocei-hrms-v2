@@ -52,6 +52,7 @@ class AttendanceReportController extends Controller
         if($_POST) {
             $results = $this->attendanceRepository->getEmployeeMonthlyAttendance(dateConvertFormtoDB($request->from_date), dateConvertFormtoDB($request->to_date),$request->employee_id);
         }
+        //dd($results);
         return view('admin.attendance.report.monthlyAttendance',['results' => $results,'employeeList' => $employeeList,'from_date'=>$request->from_date,'to_date'=>$request->to_date,'employee_id'=>$request->employee_id]);
     }
 

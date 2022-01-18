@@ -68,7 +68,9 @@ class TrainingReportController extends Controller
                 $temp['training_hour']      = '';
                 $temp['certificate']        = '';
             }
-            $arrayFormat[] = $temp;
+            if($temp['action'] != 'No'){
+                $arrayFormat[] = $temp;
+            }
         }
 
         return $arrayFormat;
@@ -99,6 +101,10 @@ class TrainingReportController extends Controller
     {
         $from_date = dateConvertFormtoDB($request->from_date);
         $to_date = dateConvertFormtoDB($request->to_date);
+        
+        if($from_date == null or $to_date == null){
+            return redirect()->back()->with('error','Requested date is empty.');
+        }
 
         $totalEmployee = DB::table('employee')->count();
 
@@ -107,17 +113,17 @@ class TrainingReportController extends Controller
             ->join('training_type', 'training_info.training_type_id', '=', 'training_type.training_type_id')
             ->join('employee', 'training_info.employee_id', '=', 'employee.employee_id')
             ->where('training_info.start_date', '>=',$from_date)
-            ->orWhere('training_info.end_date', '<=', $to_date)
+            ->Where('training_info.end_date', '<=', $to_date)
             ->get();
         // dd($traningInfo, $from_date, $to_date);
 
-        $pdf = PDF::loadView('admin.training.report.pdf.allEmployeeTrainingReportPdf', compact('traningInfo', 'from_date', 'to_date', 'totalEmployee'));
-        $pdf->setPaper('A4', 'landscape');
-        $pageName = "all-employee-training-report.pdf";
+        // $pdf = PDF::loadView('admin.training.report.pdf.allEmployeeTrainingReportPdf', compact('traningInfo', 'from_date', 'to_date', 'totalEmployee'));
+        // $pdf->setPaper('A4', 'landscape');
+        // $pageName = "all-employee-training-report.pdf";
         // return $pdf->download($pageName);
-        return $pdf->stream($pageName);
+        //return $pdf->stream($pageName);
 
         // dd($traningInfo);
-        // return view('admin.training.report.pdf.allEmployeeTrainingReportPdf', compact('traningInfo', 'from_date', 'to_date', 'totalEmployee'));
+        return view('admin.training.report.pdf.allEmployeeTrainingReportPdf', compact('traningInfo', 'from_date', 'to_date', 'totalEmployee'));
     }
 }

@@ -44,7 +44,8 @@
                                         <th>@lang('leave.number_of_day')</th>
                                         <th style="width: 300px;word-wrap: break-word;">@lang('leave.purpose')</th>
                                         <th>@lang('common.status')</th>
-                                        <th>@lang('common.action')</th>
+                                        <th>Attachment</th>
+                                        <th>View</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -84,7 +85,15 @@
                                                         <span class="label label-danger">@lang('common.rejected')</span>
                                                     </td>
                                                 @endif
-
+                                                <td>
+                                                    @if ($value->attachment != '' && file_exists('uploads/leaveApplication/' . $value->attachment))
+                                                    <a class="btn btn-success" style="color: white"
+                                                        target="_blank" href="{!! asset('uploads/leaveApplication/' . $value->attachment) !!}">
+                                                        Attachment</a>
+                                                    @else
+                                                        <a href="javascript:void(0)"> Empty </a>
+                                                    @endif
+                                                </td>
                                                 <td>
                                                     <!-- @if($value->status == 1) -->
                                                         <a href="{!! route('requestedApplication.viewDetails',$value->leave_application_id ) !!}" title="View leave details!" class="btn btn-success btn-md btnColor">

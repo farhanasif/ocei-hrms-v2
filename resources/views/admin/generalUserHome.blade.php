@@ -142,88 +142,89 @@
                 <hr class="m-t-10" />
             </div>
         </div>
-
-        <div class="col-md-6 col-sm-12 col-lg-6">
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-lg-12 col-sm-12">
             <div class="panel">
-                <div class="panel-heading" style="text-transform: uppercase">{{date('F Y')}}, Attendance </div>
+                <div class="panel-heading"> @lang('dashboard.today_attendance') </div>
                 <div class="table-responsive">
                     <table class="table table-hover manage-u-table">
                         <thead>
-                        <tr>
-                            <th  class="text-center"> # </th>
-                            <th> @lang('common.date') </th>
-                            <th> @lang('dashboard.in_time') </th>
-                            <th> @lang('dashboard.out_time')</th>
-                            <th> @lang('dashboard.late') </th>
-                            <th> @lang('common.status') </th>
-                        </tr>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th>@lang('dashboard.photo')</th>
+                                <th>@lang('common.name')</th>
+                                <th>@lang('dashboard.in_time')</th>
+                                <th>@lang('dashboard.out_time')</th>
+                                <th>@lang('dashboard.late')</th>
+                                <th>Total Working</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        @if(count($attendanceData) > 0)
-                            {{$dailyAttendanceSl =null }}
-                            @foreach($attendanceData as  $dailyAttendance)
-                                <tr>
-                                    <td class="text-center">{{ ++$dailyAttendanceSl }}</td>
+                            @if(count($attendanceData) > 0)
+                            {{$dailyAttendanceSl = null }}
+                            @foreach($attendanceData as $dailyAttendance)
+                            <tr>
+                                <td class="text-center">{{ ++$dailyAttendanceSl }}</td>
+                                <td>
+                                    @if($dailyAttendance->photo != '')
+                                    <img style=" width: 70px; " src="{!! asset('uploads/employeePhoto/'.$dailyAttendance->photo) !!}" alt="user-img" class="img-circle">
+                                    @else
+                                    <img style=" width: 70px; " src="{!! asset('admin_assets/img/default.png') !!}" alt="user-img" class="img-circle">
+                                    @endif
+                                </td>
+                                <td>{{$dailyAttendance->first_name}}
+                                    <br /><span class="text-muted">{{$dailyAttendance->last_name}}</span>
+                                </td>
+                                <td>{{$dailyAttendance->in_time}} </td>
+                                <td>
+                                    <?php
+                                    if ($dailyAttendance->out_time != '') {
+                                        echo $dailyAttendance->out_time;
+                                    } else {
+                                        echo "--";
+                                    }
+                                    ?>
+                                </td>
 
+                                <td>
+                                    <?php
+                                        if (date('H:i', strtotime($dailyAttendance->late_time)) != '00:00:00') {
+                                            echo "<b style='color: red;'>" . date('H:i', strtotime($dailyAttendance->late_time)) . "</b>";
+                                        } else {
+                                            echo "<b style='color: green'><i class='cr-icon glyphicon glyphicon-ok'></i></b>";
+                                        }
+                                    ?>
 
-                                    <td>{{$dailyAttendance['date']}} </td>
-                                    <td>
-                                        @if($dailyAttendance['in_time'] !='')
-                                            {{ date('h:i a', strtotime($dailyAttendance['in_time']))}}
-                                        @else
-                                            {{  "--"}}
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @php
-                                            if($dailyAttendance['out_time'] !=''){
-                                               echo date('h:i a', strtotime($dailyAttendance['out_time']));
-                                            }else{
-                                                echo "--";
+                                </td>
+                                <td>
+                                    <?php
+                                        if($dailyAttendance->out_time != null){
+                                            if (date('H:i', strtotime($dailyAttendance->working_time)) < '09:00:00') {
+                                                echo "<b style='color: red;'>" . date('H:i', strtotime($dailyAttendance->working_time)) . "</b>";
+                                            } else {
+                                                echo "<b style='color: green'><i class='cr-icon glyphicon glyphicon-ok'></i>" . date('H:i', strtotime($dailyAttendance->working_time)) ."</b>";
                                             }
-                                       @endphp
-                                    </td>
+                                        }else{
+                                            echo "--:--:--";
+                                        }
+                                    ?>
+                                </td>
 
-                                    <td>
-                                         @php
-                                            if($dailyAttendance['totalLateTime'] !=''){
-                                                if (date('H:i', strtotime($dailyAttendance['totalLateTime'])) != '00:00') {
-                                                    echo "<b style='color: red;'>".date('H:i', strtotime($dailyAttendance['totalLateTime']))."</b>";
-                                                }else{
-                                                    echo "<b style='color: green'><i class='cr-icon glyphicon glyphicon-ok'></i></b>";
-                                                }
-                                            }else{
-                                                echo "--";
-                                            }
-                                         @endphp
-                                    </td>
-                                    <td>
-                                        @php
-                                            if($dailyAttendance['action'] =='Absence'){
-                                                echo "<span class='label label-danger'>Absence</span>";
-                                            }elseif($dailyAttendance['action'] =='Leave'){
-                                                echo "<span class='label label-info'>Leave</span></p>";
-                                            }else{
-                                                echo "<span class='label label-success'>Present</span>";
-                                            }
-                                        @endphp
-                                    </td>
-
-                                </tr>
+                            </tr>
                             @endforeach
-                        @else
+                            @else
                             <tr>
                                 <td colspan="8">@lang('common.no_data_available')</td>
                             </tr>
-                        @endif
-
+                            @endif
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-    </div>
 
+    </div>
     <div class="row">
         @if(count($leaveApplication) > 0)
             <div class="col-md-12 col-lg-6 col-sm-12">
@@ -260,164 +261,199 @@
                 </div>
             </div>
         @endif
-       @if(count($notice) > 0)
-        <div class="col-md-12 col-lg-6 col-sm-12">
-            <div class="white-box">
-                <h3 class="box-title">@lang('common.notice_board')</h3>
-                <hr>
-                <div class="noticeBord">
-                    @foreach($notice as $row)
-                        @php
-                            $noticeDate=strtotime($row->publish_date);
-                        @endphp
-                        <div class="comment-center p-t-10">
-                            <div class="comment-body">
-                                <div class="user-img"> <i style="font-size: 31px" class="icon-folder-alt text-danger"></i></div>
-                                <div class="mail-contnet">
-                                    <h5>{{ substr($row->title,0,70)}}..</h5><span class="time">Published Date: {{date(" d M Y ", $noticeDate)}}</span>
-                                    <br/>
-                                    <span class="mail-desc">
-                                        @lang('notice.published_by'): {{$row->createdBy->first_name}} {{$row->createdBy->last_name}}<br>
-                                        @lang('notice.description'): {!!  substr($row->description,0,80)!!}..
-                                    </span>
-                                    <a href="{{url('notice/'.$row->notice_id)}}" class="btn m-r-5 btn-rounded btn-outline btn-danger">@lang('common.read_more')</a>
+
+        @if(count($notice) > 0)
+            <div class="col-md-12 col-lg-6 col-sm-12">
+                <div class="white-box">
+                    <h3 class="box-title">@lang('common.notice_board')</h3>
+                    <hr>
+                    <div class="noticeBord">
+                        @foreach($notice as $row)
+                            @php
+                                $noticeDate=strtotime($row->publish_date);
+                            @endphp
+                            <div class="comment-center p-t-10">
+                                <div class="comment-body">
+                                    <div class="user-img"> <i style="font-size: 31px" class="icon-folder-alt text-danger"></i></div>
+                                    <div class="mail-contnet">
+                                        <h5>{{ substr($row->title,0,70)}}..</h5><span class="time">Published Date: {{date(" d M Y ", $noticeDate)}}</span>
+                                        <br/>
+                                        <span class="mail-desc">
+                                            @lang('notice.published_by'): {{$row->createdBy->first_name}} {{$row->createdBy->last_name}}<br>
+                                            @lang('notice.description'): {!!  substr($row->description,0,80)!!}..
+                                        </span>
+                                        <a href="{{url('notice/'.$row->notice_id)}}" class="btn m-r-5 btn-rounded btn-outline btn-danger">@lang('common.read_more')</a>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        @if(count($upcoming_training) > 0)
+            <div class="col-md-6">
+                <div class="white-box">
+                    <h3 class="box-title">Upcoming Training</h3>
+                    <hr>
+                    <div class="noticeBord">
+                        @foreach($upcoming_training as $training)
+
+                        <div class="col-md-12 leaveApplication">
+                            <div class="comment-center p-t-10">
+                                <div class="comment-body">
+                                    @if($training->photo !='')
+                                    <div class="user-img"> <img src="{!! asset('uploads/employeePhoto/'.$training->photo) !!}" alt="user" class="img-circle"></div>
+                                    @else
+                                    <div class="user-img"> <img src="{!! asset('admin_assets/img/default.png') !!}" alt="user" class="img-circle"></div>
+                                    @endif
+
+                                    <div class="mail-contnet">
+                                    <h5>{{ $training->first_name }} {{$training->last_name}}</h5>
+                                    <h5>{{$training->training_type_name}}</h5>
+                                    <div>{!! substr($training->subject,0,40)!!}</div>
+                                    <span class="time">From Date: {{dateConvertDBtoForm($training->start_date)}} To Date:{{dateConvertDBtoForm($training->end_date)}} </span>
+                                    <span class="time">Time Duration: {!! date("h:i a", strtotime($training->start_time)) !!}  {!! date("h:i a", strtotime($training->end_time)) !!} </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    @endforeach
+                        @endforeach
+                    </div>
                 </div>
             </div>
-        </div>
-      @endif
+        @endif
 
-    @if(count($warning) > 0)
-        <div class="col-md-12 col-lg-6 col-sm-12">
-            <div class="white-box">
-                <h3 class="box-title">@lang('warning.warning')</h3>
-                <hr>
-                <div class="warning">
-                    @foreach($warning as $row)
-                        @php
-                            $warning_date = strtotime($row->warning_date);
-                        @endphp
-                        <div class="comment-center p-t-10">
-                            <div class="comment-body">
-                                <div class="user-img"> <i style="font-size: 31px" class="fa fa-exclamation-triangle text-danger"></i></div>
-                                <div class="mail-contnet">
-                                    <h5>{{ substr($row->subject,0,70)}}..</h5><span class="time">Warning Date: {{date(" d M Y ", $warning_date)}}</span>
-                                    <br/><span class="mail-desc">
-                                @lang('warning.waring_by'): {{$row->warningBy->first_name}} {{$row->warningBy->last_name}}<br>
-                                @lang('warning.description'): {!!  substr($row->description,0,80)!!}..
-                        </span>
-                                    <a href="{{url('warning/'.$row->warning_id)}}" class="btn m-r-5 btn-rounded btn-outline btn-danger">@lang('common.read_more')</a> </div>
+        @if(count($warning) > 0)
+            <div class="col-md-12 col-lg-6 col-sm-12">
+                <div class="white-box">
+                    <h3 class="box-title">@lang('warning.warning')</h3>
+                    <hr>
+                    <div class="warning">
+                        @foreach($warning as $row)
+                            @php
+                                $warning_date = strtotime($row->warning_date);
+                            @endphp
+                            <div class="comment-center p-t-10">
+                                <div class="comment-body">
+                                    <div class="user-img"> <i style="font-size: 31px" class="fa fa-exclamation-triangle text-danger"></i></div>
+                                    <div class="mail-contnet">
+                                        <h5>{{ substr($row->subject,0,70)}}..</h5><span class="time">Warning Date: {{date(" d M Y ", $warning_date)}}</span>
+                                        <br/><span class="mail-desc">
+                                    @lang('warning.waring_by'): {{$row->warningBy->first_name}} {{$row->warningBy->last_name}}<br>
+                                    @lang('warning.description'): {!!  substr($row->description,0,80)!!}..
+                            </span>
+                                        <a href="{{url('warning/'.$row->warning_id)}}" class="btn m-r-5 btn-rounded btn-outline btn-danger">@lang('common.read_more')</a> </div>
+                                </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    </div>
                 </div>
             </div>
-        </div>
-    @endif
+        @endif
 
-    @if($terminationData)
-        <div class="col-md-12 col-lg-6 col-sm-12">
-            <div class="white-box">
-                <h3 class="box-title">@lang('menu.termination')</h3>
-                <hr>
-                <div class="terminationData">
+        @if($terminationData)
+            <div class="col-md-12 col-lg-6 col-sm-12">
+                <div class="white-box">
+                    <h3 class="box-title">@lang('menu.termination')</h3>
+                    <hr>
+                    <div class="terminationData">
 
-                        @php
-                            $notice_date = strtotime($terminationData->notice_date);
-                            $termination_date = strtotime($terminationData->termination_date);
-                        @endphp
-                        <div class="comment-center p-t-10">
-                            <div class="comment-body">
-                                <div class="user-img"> <i style="font-size: 31px" class="fa fa-exclamation-triangle text-danger"></i></div>
-                                <div class="mail-contnet">
-                                    <h5>
-                                        {{ substr($terminationData->subject,0,70)}}..</h5>
-                                        <span class="time">Notice Date: {{date(" d M Y ", $notice_date)}}</span>
-                                    <br>
-                                        <span class="time">Termination Date: {{date(" d M Y ", $termination_date)}}</span>
-                                    <br/><span class="mail-desc">
-                                            @lang('termination.terminated_by'): {{$terminationData->terminateBy->first_name}} {{$terminationData->terminateBy->last_name}}<br>
-                                            @lang('terminate.description'): {!!  substr($terminationData->description,0,80)!!}..
-                                        </span>
-                                    <a href="{{url('termination/'.$terminationData->termination_id)}}" class="btn m-r-5 btn-rounded btn-outline btn-danger">Read More</a> </div>
+                            @php
+                                $notice_date = strtotime($terminationData->notice_date);
+                                $termination_date = strtotime($terminationData->termination_date);
+                            @endphp
+                            <div class="comment-center p-t-10">
+                                <div class="comment-body">
+                                    <div class="user-img"> <i style="font-size: 31px" class="fa fa-exclamation-triangle text-danger"></i></div>
+                                    <div class="mail-contnet">
+                                        <h5>
+                                            {{ substr($terminationData->subject,0,70)}}..</h5>
+                                            <span class="time">Notice Date: {{date(" d M Y ", $notice_date)}}</span>
+                                        <br>
+                                            <span class="time">Termination Date: {{date(" d M Y ", $termination_date)}}</span>
+                                        <br/><span class="mail-desc">
+                                                @lang('termination.terminated_by'): {{$terminationData->terminateBy->first_name}} {{$terminationData->terminateBy->last_name}}<br>
+                                                @lang('terminate.description'): {!!  substr($terminationData->description,0,80)!!}..
+                                            </span>
+                                        <a href="{{url('termination/'.$terminationData->termination_id)}}" class="btn m-r-5 btn-rounded btn-outline btn-danger">Read More</a> </div>
+                                </div>
                             </div>
-                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    @endif
+        @endif
+
+
 
     </div>
 
     <div class="row">
-        <!-- up comming birthday  -->
-     <div class="row">
-          @if(count($upcoming_birtday) > 0)
-            <div class="col-md-6 col-lg-6 col-sm-12">
-                <div class="white-box">
-                    <h3 class="box-title">@lang('dashboard.upcoming_birthday')</h3>
-                    <hr>
-                    <div class="leaveApplication">
+        @if(count($upcoming_birtday) > 0)
+        <div class="row" style="background-color: #fff;margin-left: 15px; margin-right: 15px;">
+            <div class="white-box">
+                <h3 class="box-title">@lang('dashboard.upcoming_birthday')</h3>
+                <hr>
+                
                     @foreach($upcoming_birtday as $employee_birthdate)
-                    <div class="comment-center p-t-10">
-                        <div class="comment-body">
-                            @if($employee_birthdate->photo !='')
+                    <div class="col-md-4 leaveApplication">
+                        <div class="comment-center p-t-10">
+                            <div class="comment-body">
+                                @if($employee_birthdate->photo !='')
                                 <div class="user-img"> <img src="{!! asset('uploads/employeePhoto/'.$employee_birthdate->photo) !!}" alt="user" class="img-circle"></div>
-                            @else
+                                @else
                                 <div class="user-img"> <img src="{!! asset('admin_assets/img/default.png') !!}" alt="user" class="img-circle"></div>
-                            @endif
-                            <div class="mail-contnet" > 
+                                @endif
+                                <div class="mail-contnet">
 
-                                @php 
-                                   $date_of_birth = $employee_birthdate->date_of_birth;
-                                   $separate_date = explode('-',$date_of_birth);
+                                    @php
+                                    $date_of_birth = $employee_birthdate->date_of_birth;
+                                    $separate_date = explode('-',$date_of_birth);
 
-                                   $date_current_year = date('Y').'-'.$separate_date[1].'-'.$separate_date[2];
+                                    $date_current_year = date('Y').'-'.$separate_date[1].'-'.$separate_date[2];
 
-                                   $create_date = date_create($date_current_year);
-                                @endphp
-                             
-                                <h5>{{ $employee_birthdate->first_name }} {{$employee_birthdate->last_name}}</h5><span class="time">{{ date_format(date_create($employee_birthdate->date_of_birth),"D dS F Y") }}</span> 
-                                <br/>
+                                    $create_date = date_create($date_current_year);
+                                    @endphp
 
-                                <span class="mail-desc">
-                                    @if($date_current_year == date('Y-m-d'))
-                                      <b>Today is 
-                                       @if($employee_birthdate->gender == 'Male')
-                                        His @else 
-                                        Her 
-                                        @endif 
-                                        Birtday Wish 
-                                     @if($employee_birthdate->gender == 'Male')
-                                          Him 
-                                      @else Her 
-                                      @endif</b>
+                                    <h5>{{ $employee_birthdate->first_name }} {{$employee_birthdate->last_name}}</h5><span class="time">{{ date_format(date_create($employee_birthdate->date_of_birth),"D dS F Y") }}</span>
+                                    <br />
 
-                                    @else 
-                                     
-                                       Wish 
-                                       @if($employee_birthdate->gender == 'Male')
-                                        Him @else 
-                                        Her 
+                                    <span class="mail-desc">
+                                        @if($date_current_year == date('Y-m-d'))
+                                        <b>Today is
+                                            @if($employee_birthdate->gender == 'Male')
+                                            His @else
+                                            Her
+                                            @endif
+                                            Birtday Wish
+                                            @if($employee_birthdate->gender == 'Male')
+                                            Him
+                                            @else Her
+                                            @endif</b>
+
+                                        @else
+
+                                        Wish
+                                        @if($employee_birthdate->gender == 'Male')
+                                        Him @else
+                                        Her
                                         @endif
-                                        on {{ date_format($create_date,"D dS F Y") }} 
-                                        
+                                        on {{ date_format($create_date,"D dS F Y") }}
 
 
-                                    @endif
-                                </span>
+
+                                        @endif
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
                     @endforeach
-                    </div>
-                </div>
+                
             </div>
-        @endif 
-     </div>
+        </div>
+        @endif
     </div>
     
 

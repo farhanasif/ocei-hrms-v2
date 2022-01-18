@@ -63,15 +63,16 @@
 												<td>{!! dateConvertDBtoForm($value->start_date) !!}</td>
 												<td>{!! dateConvertDBtoForm($value->end_date) !!}</td>
 												<td>
-													{!! date("h:i a", strtotime($value->start_time)) !!} To
-													{!! date("h:i a", strtotime($value->end_time)) !!}
+													{!! date("h:i A", strtotime($value->start_time)) !!} To
+
+													{!! date("h:i A", strtotime($value->end_time)) !!}
 												</td>
 												<td>
 													@if (isset($value->training_day))
 														{{$value->training_day}} Day <br>
 													@endif
 													@if (isset($value->training_hour))
-														{{$value->training_hour}} Hour
+														{{ $value->training_day * $value->training_hour}} Hour
 													@endif
 												</td>
 												<td>

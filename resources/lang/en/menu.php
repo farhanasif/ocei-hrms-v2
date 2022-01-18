@@ -79,4 +79,6 @@ return [
     'present_pay_grade_salary' => 'Present Pay Grade Salary',
     'optional_leave_setup' => 'Optional Leave Setup',
     'ip_setting' => 'IP Setting',
+    'upload_attendance_file' => 'Upload Attendance File',
+    'holiday_calendar_'=> 'Calendar Upload',
 ];

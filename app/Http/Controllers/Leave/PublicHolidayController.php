@@ -101,4 +101,71 @@ class PublicHolidayController extends Controller
         }
     }
 	
+    public function holidayCalendarcreate()
+    {
+        $data = DB::table('holiday_file')->get();
+        return view('admin.leave.publicHoliday.holidayCalendarFile', ['data'=>$data]);
+    }
+    
+    public function holidayCalendarStore(PublicHolidayRequest $request){
+        $input              = $request->all();
+        try{
+            HolidayDetails::create($input);
+            $bug = 0;
+        }
+        catch(\Exception $e){
+            $bug = $e->errorInfo[1];
+        }
+
+        if($bug==0){
+            return redirect('publicHoliday')->with('success', 'Public holiday successfully saved.');
+        }else {
+            return redirect('publicHoliday')->with('error', 'Something Error Found !, Please try again.');
+        }
+    }
+
+
+    public function holidayCalendarEdit($id){
+        $editModeData   = HolidayDetails::findOrFail($id);
+        return view('admin.leave.publicHoliday.form',['editModeData' => $editModeData,'holidayList'=>$holidayList]);
+    }
+
+
+    public function holidayCalendarUpdate(PublicHolidayRequest $request,$id) {
+        $holidayDetails     = HolidayDetails::findOrFail($id);
+        $input              = $request->all();
+        try{
+            $holidayDetails->update($input);
+            $bug = 0;
+        }
+        catch(\Exception $e){
+            $bug = $e->errorInfo[1];
+        }
+
+        if($bug==0){
+            return redirect()->back()->with('success', 'Public holiday successfully updated. ');
+        }else {
+            return redirect()->back()->with('error', 'Something Error Found !, Please try again.');
+        }
+    }
+
+
+    public function holidayCalendarDestroy($id){
+        try{
+            $holidayDetails = HolidayDetails::findOrFail($id);
+            $holidayDetails->delete();
+            $bug = 0;
+        }
+        catch(\Exception $e){
+            $bug = $e->errorInfo[1];
+        }
+
+        if($bug==0){
+            echo "success";
+        }elseif ($bug == 1451) {
+            echo 'hasForeignKey';
+        } else {
+            echo 'error';
+        }
+    }
 }

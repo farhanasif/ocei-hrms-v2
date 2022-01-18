@@ -44,6 +44,7 @@ class ReportController extends Controller
                         ->orderBy('leave_application_id','DESC')
                         ->get();
         }
+        // dd($results);
         return view('admin.leave.report.employeeLeaveReport',['results'=>$results,'employeeList'=>$employeeList,'employee_id'=>$request->employee_id,'from_date'=>$request->from_date,'to_date'=>$request->to_date   ]);
     }
 

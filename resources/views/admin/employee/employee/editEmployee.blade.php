@@ -580,31 +580,6 @@
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label for="exampleInput">@lang('employee.institute')<span
-                                                                class="validateRq">*</span></label>
-                                                        <select name="institute[]" class="form-control institute">
-                                                            <option value="">--- @lang('common.please_select') ---
-                                                            </option>
-                                                            <option value="Board" @if ($educationQualificationValue->institute == 'Board') {{ 'selected' }} @endif>
-                                                                @lang('employee.board')</option>
-                                                            <option value="University" @if ($educationQualificationValue->institute == 'University') {{ 'selected' }} @endif>
-                                                                @lang('employee.university')</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label for="exampleInput">@lang('employee.board') /
-                                                            @lang('employee.university')<span
-                                                                class="validateRq">*</span></label>
-                                                        <input type="text" name="board_university[]"
-                                                            class="form-control board_university" id="board_university"
-                                                            placeholder="@lang('employee.board') / @lang('employee.university')"
-                                                            value="{{ $educationQualificationValue->board_university }}">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
                                                         <label for="exampleInput">@lang('employee.degree')<span
                                                                 class="validateRq">*</span></label>
                                                         <input type="text" name="degree[]"
@@ -613,6 +588,34 @@
                                                             value="{{ $educationQualificationValue->degree }}">
                                                     </div>
                                                 </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="exampleInput">@lang('employee.institute')  /
+                                                            @lang('employee.university')<span
+                                                                class="validateRq">*</span></label>
+                                                                <input type="text" name="institute[]" class="form-control institute"
+                    id="institute" placeholder="@lang('employee.institute') / @lang('employee.university')" value="{{ $educationQualificationValue->institute }}">
+                                                 <!--        <select name="institute[]" class="form-control institute">
+                                                            <option value="">--- @lang('common.please_select') ---
+                                                            </option>
+                                                            <option value="Board" @if ($educationQualificationValue->institute == 'Board') {{ 'selected' }} @endif>
+                                                                @lang('employee.board')</option>
+                                                            <option value="University" @if ($educationQualificationValue->institute == 'University') {{ 'selected' }} @endif>
+                                                                @lang('employee.university')</option>
+                                                        </select> -->
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="exampleInput">@lang('employee.board')<span
+                                                                class="validateRq">*</span></label>
+                                                        <input type="text" name="board_university[]"
+                                                            class="form-control board_university" id="board_university"
+                                                            placeholder="@lang('employee.board')"
+                                                            value="{{ $educationQualificationValue->board_university }}">
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-md-3">
                                                     <label for="exampleInput">@lang('employee.passing_year')<span
                                                             class="validateRq">*</span></label>
@@ -629,7 +632,7 @@
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label for="exampleInput">@lang('employee.result')</label>
+                                                        <label for="exampleInput">@lang('employee.result') ( Class )</label>
                                                         <select name="result[]" class="form-control result">
                                                             <option value="">--- @lang('common.please_select') ---
                                                             </option>
@@ -644,8 +647,8 @@
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label for="exampleInput">@lang('employee.gpa') /
-                                                            @lang('employee.cgpa')</label>
+                                                        <label for="exampleInput">Result ( @lang('employee.gpa') /
+                                                            @lang('employee.cgpa') )</label>
                                                         <input type="text" name="cgpa[]" class="form-control cgpa"
                                                             id="cgpa" placeholder="Example: 5.00,4.63"
                                                             value="{{ $educationQualificationValue->cgpa }}">
@@ -783,7 +786,7 @@
                             @if (isset($editModeData) && count($childEditModeData) > 0)
                                 @foreach ($childEditModeData as $childValue)
                                     <!-- Start Child append div -->
-                                    <div class="row_element3" style="display: none;">
+                                    <div class="row_element3">
                                         <input name="childInformation_cid[]" type="hidden"
                                             value="{{ $childValue->employee_education_qualification_id }}">
                                         <div class="row">
@@ -863,7 +866,7 @@
                             @if (isset($editModeData) && count($logisticEditModeData) > 0)
                                 @foreach ($logisticEditModeData as $logisticValue)
                                     <!-- Start Child append div -->
-                                    <div class="row_element4" style="display: none;">
+                                    <div class="row_element4">
                                         <input name="logisticInformation_cid[]" type="hidden"
                                             value="{{ $logisticValue->employee_logistic_id }}">
                                         <div class="row">
@@ -872,15 +875,9 @@
                                                     <label for="exampleInput">Logistic Type</label>
                                                     <select name="logistic_type[]" id="" class="form-control">
                                                         <option>----please select----</option>
-                                                        <option
-                                                            {{ $logisticValue->logistic_type == 'Laptop' ? 'selected' : '' }}
-                                                            value="Laptop">Laptop</option>
-                                                        <option
-                                                            {{ $logisticValue->logistic_type == 'Mobile' ? 'selected' : '' }}
-                                                            value="Mobile">Mobile</option>
-                                                        <option
-                                                            {{ $logisticValue->logistic_type == 'Vehicle' ? 'selected' : '' }}
-                                                            value="Vehicle">Vehicle</option>
+                                                        @foreach($logisticList as $key => $val)
+                                                            <option {{ $logisticValue->logistic_type == $val->logistic_type ? 'selected' : '' }} value="{{ $val->logistic_type }}">{{ $val->logistic_type }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -990,12 +987,12 @@
 
         <div class="col-md-3">
             <div class="form-group">
-                <label for="exampleInput">Logistic Type</label>
+                <label for="exampleInput">@lang('logistic.logistic_type')</label>
                 <select name="logistic_type[]" id="" class="form-control">
-                    <option>----please select----</option>
-                    <option value="Laptop">Laptop</option>
-                    <option value="Mobile">Mobile</option>
-                    <option value="Vehicle">Vehicle</option>
+                <option>@lang('logistic.select_logistic')</option>
+                    @foreach($logisticList as $key => $val)
+                        <option value="{{ $val->logistic_type }}">{{ $val->logistic_type }}</option>
+                    @endforeach
                 </select>
             </div>
         </div>
@@ -1065,16 +1062,31 @@
                     id="child_date_of_birth" placeholder="Date Of Birth">
             </div>
         </div>
-        <div class="col-md-3">
+<!--         <div class="col-md-3">
             <div class="form-group">
-                <label for="exampleInput">NID (if any)<span class="validateRq">*</span></label>
+                <label for="exampleInput">NID (if any)</label>
                 <input type="number" name="child_nid_number[]" class="form-control child_nid_number"
                     id="child_nid_number" placeholder="NID (if any)">
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label for="exampleInput">Birth Certificate Number<span class="validateRq">*</span></label>
+                <label for="exampleInput">Birth Certificate Number</label>
+                <input type="number" name="birth_certificate_number[]" class="form-control birth_certificate_number"
+                    id="birth_certificate_number" placeholder="Birth Certificate Number">
+            </div>
+        </div> -->
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="exampleInput">NID (if any)</label>
+                <input type="number" name="child_nid_number[]" class="form-control child_nid_number"
+                    id="child_nid_number" placeholder="NID (if any)">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="exampleInput">Birth Certificate Number</label>
                 <input type="number" name="birth_certificate_number[]" class="form-control birth_certificate_number"
                     id="birth_certificate_number" placeholder="Birth Certificate Number">
             </div>
@@ -1097,24 +1109,7 @@
 <div class="row_element1" style="display: none;">
     <input name="educationQualification_cid[]" type="hidden">
     <div class="row">
-        <div class="col-md-3">
-            <div class="form-group">
-                <label for="exampleInput">@lang('employee.institute')<span class="validateRq">*</span></label>
-                <select name="institute[]" class="form-control institute">
-                    <option value="">--- @lang('common.please_select') ---</option>
-                    <option value="Board">@lang('employee.board')</option>
-                    <option value="University">@lang('employee.university')</option>
-                </select>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="form-group">
-                <label for="exampleInput">@lang('employee.board') / @lang('employee.university')<span
-                        class="validateRq">*</span></label>
-                <input type="text" name="board_university[]" class="form-control board_university"
-                    id="board_university" placeholder="@lang('employee.board') / @lang('employee.university')">
-            </div>
-        </div>
+
         <div class="col-md-3">
             <div class="form-group">
                 <label for="exampleInput">@lang('employee.degree')<span class="validateRq">*</span></label>
@@ -1122,6 +1117,28 @@
                     placeholder="Example: B.Sc. Engr.(Bachelor of Science in Engineering)">
             </div>
         </div>
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="exampleInput">@lang('employee.institute') / @lang('employee.university')<span class="validateRq">*</span></label>
+                <input type="text" name="institute[]" class="form-control institute"
+                    id="institute" placeholder="@lang('employee.institute') / @lang('employee.university')">
+<!--                 <select name="institute[]" class="form-control institute">
+                    <option value="">--- @lang('common.please_select') ---</option>
+                    <option value="Board">@lang('employee.board')</option>
+                    <option value="University">@lang('employee.university')</option>
+                </select> -->
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="exampleInput">@lang('employee.board')<span
+                        class="validateRq">*</span></label>
+                <input type="text" name="board_university[]" class="form-control board_university"
+                    id="board_university" placeholder="@lang('employee.board') ">
+            </div>
+        </div>
+
         <div class="col-md-3">
             <label for="exampleInput">@lang('employee.passing_year')<span class="validateRq">*</span></label>
             <div class="input-group">
@@ -1134,7 +1151,7 @@
     <div class="row">
         <div class="col-md-3">
             <div class="form-group">
-                <label for="exampleInput">@lang('employee.result')</label>
+                <label for="exampleInput">@lang('employee.result') (Class)</label>
                 <select name="result[]" class="form-control result">
                     <option value="">--- @lang('common.please_select') ---</option>
                     <option value="First class">First class</option>
@@ -1145,7 +1162,7 @@
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label for="exampleInput">@lang('employee.gpa') / @lang('employee.cgpa')</label>
+                <label for="exampleInput">Result ( @lang('employee.gpa') / @lang('employee.cgpa') )</label>
                 <input type="text" name="cgpa[]" class="form-control cgpa" id="cgpa" placeholder="Example: 5.00,4.63">
             </div>
         </div>
@@ -1224,8 +1241,35 @@
 
 @endsection
 @section('page_scripts')
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" crossorigin="anonymous"></script> -->
 <script>
     $(document).ready(function() {
+
+        // $('#date_of_joining').on('change',function() {
+        //     var date_of_birth = $('#date_of_birth').val();
+        //     // date_of_birth = moment(date_of_birth).format('L');
+        //    date_of_birth = moment(date_of_birth, "DD/MM/YYYY", "Asia/Dhaka");
+        //     var endjobYear = moment(date_of_birth).add(59,'years');
+        //     // console.log(date_of_birth);
+        //     var date_of_joining = $('#date_of_joining').val();
+        //     var retirement_year = endjobYear.diff(date_of_joining,'years');
+        //     var retirement_date = moment(date_of_joining).add(retirement_year,'years');
+        //     retirement_date = moment(retirement_date).format('MM/DD/YYYY');
+        //     // console.log(retirement_date + ' = ' + date_of_joining + ' = ' + endjobYear + ' = ' + date_of_birth);
+        //     $('#date_of_leaving').val(retirement_date);
+        // });
+
+        $('#date_of_birth').on('change',function() {
+            var date_of_birth = $('#date_of_birth').val();
+            date_of_birth = moment(date_of_birth, "DD/MM/YYYY", "Asia/Dhaka");
+            var endjobYear = moment(date_of_birth).add(59,'years');
+            var date_of_joining = $('#date_of_joining').val();
+            var retirement_year = endjobYear.diff(date_of_joining,'years');
+            var retirement_date = moment(date_of_joining).add(retirement_year,'years');
+            retirement_date = moment(retirement_date).format('MM/DD/YYYY');
+            $('#date_of_leaving').val(retirement_date);
+        });
+
         $('#pay_grade').on("change", function() {
             var pay_grade_id = $('#pay_grade').val();
             var _token =  "<?php echo(csrf_token()); ?>" ;

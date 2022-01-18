@@ -51,7 +51,8 @@ class EmployeeTrainingController extends Controller
         $input['updated_by'] = Auth::user()->user_id;
         $input['start_date'] = dateConvertFormtoDB($request->start_date);
         $input['end_date'] = dateConvertFormtoDB($request->end_date);
-
+        $input['start_time']  = date("H:i:s", strtotime($request->start_time));
+        $input['end_time']   = date("H:i:s", strtotime($request->end_time));
         $photo = $request->file('certificate');
 
         if($photo){

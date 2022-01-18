@@ -32,6 +32,8 @@ class AttendanceRepository
 
     public function getEmployeeMonthlyAttendance($from_date, $to_date,$employee_id){
         $monthlyAttendanceData  = DB::select("CALL `SP_monthlyAttendance`('".$employee_id."','".$from_date."','".$to_date."')");
+        // dd($monthlyAttendanceData);
+       // dd(DB::select("CALL `SP_monthlyAttendance`()");
         $workingDates           = $this->number_of_working_days_date($from_date, $to_date);
         $employeeLeaveRecords   = $this->getEmployeeLeaveRecord($from_date, $to_date,$employee_id);
 

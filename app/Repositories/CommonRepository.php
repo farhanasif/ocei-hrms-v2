@@ -13,7 +13,7 @@ use App\Model\WorkShift;
 use App\Model\PayGrade;
 
 use App\Model\Employee;
-
+use App\User;
 use App\Model\Role;
 
 
@@ -142,6 +142,9 @@ class CommonRepository
         return  Employee::where('user_id',$id)->first();
     }
 
+    public function getUserInfo($id){
+        return  User::where('user_id',$id)->first();
+    }
 
     public function getEmployeeDetails($id){
         return  Employee::where('employee_id',$id)->first();

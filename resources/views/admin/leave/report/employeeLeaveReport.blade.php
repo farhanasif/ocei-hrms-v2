@@ -108,7 +108,16 @@
                                                 <td>{{++$sl}}</td>
                                                 <td>@if($value->leaveType->leave_type_name) {{$value->leaveType->leave_type_name}} @endif</td>
                                                 <td>{{dateConvertDBtoForm($value->application_date)}}</td>
-                                                <td>{{dateConvertDBtoForm($value->application_from_date)}} <b>to</b> {{dateConvertDBtoForm($value->application_to_date)}}</td>
+                                                <td>
+                                                @if($value->leave_date_list)
+                                                   <?php $optional_leave = unserialize($value->leave_date_list);?>
+                                                	@foreach($optional_leave  as $key_v => $val)
+                                                		{{dateConvertDBtoForm($val)}}
+                                                	@endforeach
+                                                @else
+                                                	{{dateConvertDBtoForm($value->application_from_date)}} <b>to</b> {{dateConvertDBtoForm($value->application_to_date)}}
+                                                @endif
+                                                </td>
                                                 <td>@if($value->approveBy->first_name) {{$value->approveBy->first_name}} {{$value->approveBy->last_name}} @endif</td>
                                                 <td>{{dateConvertDBtoForm($value->approve_date)}}</td>
                                                 <td width="300px;word-wrap: break-word">{{$value->purpose}}</td>

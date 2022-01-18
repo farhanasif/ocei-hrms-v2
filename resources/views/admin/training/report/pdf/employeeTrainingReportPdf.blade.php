@@ -91,13 +91,13 @@
 									{{$value['training_day']}} Day <br>
 								@endif
 								@if (isset($value['training_hour']) && !empty($value['training_hour']))
-									{{$value['training_hour']}} Hour
+									{{$value['training_day'] * $value['training_hour']}} Hour
 								@endif
 							</td>
 							<td>
 							@php
 								if($value['action'] == "Yes"){
-									echo "<b style='color: green'><i class='cr-icon glyphicon glyphicon-ok'></i></b>";
+									echo "<b style='color: green'><i class='cr-icon glyphicon glyphicon-ok'></i>Done</b>";
 								}else{
 									echo "--";
 								}

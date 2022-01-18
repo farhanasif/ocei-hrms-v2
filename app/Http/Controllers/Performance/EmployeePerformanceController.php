@@ -337,6 +337,8 @@ class EmployeePerformanceController extends Controller
 
     public function show($id)
     {
+
+
         $criteria           = EmployeePerformance::select(
             'employee_performance.employee_id',
             'employee_performance.month',
@@ -357,8 +359,9 @@ class EmployeePerformanceController extends Controller
             ->join('performance_criteria', 'performance_criteria.performance_criteria_id', '=', 'employee_performance_details.performance_criteria_id')
             ->join('performance_category', 'performance_category.performance_category_id', '=', 'performance_criteria.performance_category_id')
             ->join('department', 'department.department_id', '=', 'employee.department_id')
-            ->where('employee_performance.employee_performance_id', $id)
-            ->get()->toArray();
+            ->where('employee_performance.employee_performance_id',$id)
+            // ->groupBy('performance_category.performance_category_name')
+            ->get();
 
         $employeeId = $criteria[0]['employee_id'];
 
@@ -367,24 +370,22 @@ class EmployeePerformanceController extends Controller
             $criteriaDataFormat[$value['performance_category_name']][] = $value;
         }
         // dd($criteriaDataFormat);
-        return view('admin.performance.employeePerformance.employeePerformanceDetails', ['criteriaDataFormat' => $criteriaDataFormat, 'employeeId' => $employeeId]);
+        return view('admin.performance.employeePerformance.employeePerformanceDetails', ['criteriaDataFormat' => $criteriaDataFormat, 'employeeId' => $employeeId, 'performance_id' => $id]);
     }
 
-    public function performanceDetailsPDfDownload($employee_id)
+    public function performanceDetailsPDfDownload($id)
     {
-        $criteriaDataFormat = EmployeePerformance::select(
+
+        $criteria           = EmployeePerformance::select(
             'employee_performance.employee_id',
             'employee_performance.month',
             'employee_performance.employee_performance_id',
             'employee_performance_details.performance_criteria_id',
             'employee_performance_details.rating',
             'employee_performance_details.judgement',
-            'designation.designation_name',
             'employee_performance_details.comments',
             'employee.first_name',
             'employee.last_name',
-            'employee.date_of_joining',
-            'employee.date_of_birth',
             'performance_criteria.performance_criteria_name',
             'performance_criteria.performance_category_id',
             'performance_category.performance_category_name',
@@ -395,16 +396,17 @@ class EmployeePerformanceController extends Controller
             ->join('performance_criteria', 'performance_criteria.performance_criteria_id', '=', 'employee_performance_details.performance_criteria_id')
             ->join('performance_category', 'performance_category.performance_category_id', '=', 'performance_criteria.performance_category_id')
             ->join('department', 'department.department_id', '=', 'employee.department_id')
-            ->join('designation', 'designation.designation_id', '=', 'employee.designation_id')
-            ->where('employee.employee_id', $employee_id)
-            ->get()->toArray();
+            ->where('employee_performance.employee_performance_id',$id)
+            // ->groupBy('performance_category.performance_category_name')
+            ->get();
 
-        // $pdf = PDF::loadView('admin.performance.report.pdf.performanceDetailsPdfDownload', ['criteriaDataFormat' => $criteriaDataFormat]);
-        // $pdf->setPaper('A4', 'landscape');
-        // $pageName = ".employee-performance-details.pdf";
-        // return $pdf->download($pageName);
+        // dd($criteria);
+        $pdf = PDF::loadView('admin.performance.report.pdf.performanceDetailsPdfDownload', ['criteriaDataFormat' => $criteria]);
+        $pdf->setPaper('A4', 'landscape');
+        $pageName = ".employee-performance-details.pdf";
+        return $pdf->download($pageName);
 
-        return view('admin.performance.report.pdf.nisPerformanceReport', ['criteriaDataFormat' => $criteriaDataFormat]);
+        // return view('admin.performance.report.pdf.nisPerformanceReport', ['criteriaDataFormat' => $criteria]);
     }
 
 

@@ -93,6 +93,8 @@
                         <div class="form-body">
                             <div class="row">
                                 {!! Form::hidden('employee_id', isset($getEmployeeInfo) ? $getEmployeeInfo->employee_id : '', $attributes = ['class' => 'employee_id']) !!}
+                                {!! Form::hidden('role_id', isset($getUserInfo) ? $getUserInfo->role_id : '', $attributes = ['class' => 'role_id']) !!}
+
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="exampleInput">@lang('common.employee_name')<span
@@ -100,6 +102,7 @@
                                         {!! Form::text('', isset($getEmployeeInfo) ? $getEmployeeInfo->first_name . ' ' . $getEmployeeInfo->last_name : '', $attributes = ['class' => 'form-control', 'readonly' => 'readonly']) !!}
                                     </div>
                                 </div>
+
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="exampleInput">@lang('leave.leave_type')<span
@@ -107,13 +110,25 @@
                                         {{ Form::select('leave_type_id', $leaveTypeList, Input::old('leave_type_id'), ['class' => 'form-control leave_type_id select2 required']) }}
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4" id="curr_bal">
                                     <div class="form-group">
                                         <label for="exampleInput">@lang('leave.current_balance')<span
                                                 class="validateRq">*</span></label>
                                         {!! Form::text('', '', $attributes = ['class' => 'form-control current_balance', 'readonly' => 'readonly', 'placeholder' => __('leave.current_balance')]) !!}
                                     </div>
                                 </div>
+
+                                <div class="col-md-4" id="auth_leave_provide">
+                                    <div class="form-group">
+                                        <label for="exampleInput">Author Provide @lang('common.employee_name')<span
+                                                class="validateRq">*</span></label>
+                                        {{ Form::select('for_employee_id', $getAllEmployeeList, Input::old('employee_id'), ['class' => 'form-control employee_id select2 required']) }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="calendar">
+                                
                             </div>
                             <div class="row" id="optionalLeaveType_no">
                                 <div class="col-md-4">
@@ -149,7 +164,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row" id="attact_purpose">
                                 <div class="col-md-4"  id="religionWiseLeave">
                                     <div class="form-group">
                                         <label for="exampleInput">Religion Name<span
@@ -157,10 +172,20 @@
                                         {{ Form::select('religion_name', $religionList, Input::old('religion_name'), ['class' => 'form-control religion_name select2 required']) }}
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <label for="exampleInput">Attachment</label>
+                                <div class="col-md-4" id="attachment_doc2">
+                                    <label for="exampleInput">Attachment<span
+                                                class="validateRq">*</span><br /><span style="color: gray; opacity: 0.8; font-size: 12px;">The Medical Report document is highly required for this leave apply</span></label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="	fa fa-picture-o"></i></span>
+                                        <input class="form-control attachment" id="attachment" name="attachment"
+                                            type="file">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4" id="attachment_doc1">
+                                    <label for="exampleInput">Attachment</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="  fa fa-picture-o"></i></span>
                                         <input class="form-control attachment" id="attachment" name="attachment"
                                             type="file">
                                     </div>
@@ -193,6 +218,7 @@
         </div>
     </div>
 </div>
+
 @endsection
 @section('page_scripts')
 <script>
@@ -201,28 +227,58 @@
         $('#optionalLeaveList').hide();
         $('#optionalLeaveType_no').show();
         $('#casual_leave_cause').hide();
-        var leave_type_id = '';
-        $(document).on("focus", ".application_from_date", function() {
-            $(this).datepicker({
-                format: 'dd/mm/yyyy',
-                todayHighlight: true,
-                clearBtn: true,
-                startDate: new Date(),
-            }).on('changeDate', function(e) {
-                $(this).datepicker('hide');
-            });
-        });
+        $('#attachment_doc2').hide();
+        $('#auth_leave_provide').hide();
 
-        $(document).on("focus", ".application_to_date", function() {
-            $(this).datepicker({
-                format: 'dd/mm/yyyy',
-                todayHighlight: true,
-                clearBtn: true,
-                startDate: new Date(),
-            }).on('changeDate', function(e) {
-                $(this).datepicker('hide');
+        var leave_type_id = '';
+        var role_id = $('.role_id ').val();
+        
+        if(role_id == 1 || role_id == 10){
+            $(document).on("focus", ".application_from_date", function() {
+                $(this).datepicker({
+                    format: 'dd/mm/yyyy',
+                    todayHighlight: true,
+                    clearBtn: true,
+                    // startDate: new Date(),
+                }).on('changeDate', function(e) {
+                    $(this).datepicker('hide');
+                });
             });
-        });
+
+            $(document).on("focus", ".application_to_date", function() {
+                $(this).datepicker({
+                    format: 'dd/mm/yyyy',
+                    todayHighlight: true,
+                    clearBtn: true,
+                    // startDate: new Date(),
+                }).on('changeDate', function(e) {
+                    $(this).datepicker('hide');
+                });
+            });
+        }else{
+            $(document).on("focus", ".application_from_date", function() {
+                $(this).datepicker({
+                    format: 'dd/mm/yyyy',
+                    todayHighlight: true,
+                    clearBtn: true,
+                    // startDate: new Date(),
+                }).on('changeDate', function(e) {
+                    $(this).datepicker('hide');
+                });
+            });
+
+            $(document).on("focus", ".application_to_date", function() {
+                $(this).datepicker({
+                    format: 'dd/mm/yyyy',
+                    todayHighlight: true,
+                    clearBtn: true,
+                    // startDate: new Date(),
+                }).on('changeDate', function(e) {
+                    $(this).datepicker('hide');
+                });
+            });
+        }
+
 
         $(document).on("change", ".application_from_date,.application_to_date  ", function() {
 
@@ -260,7 +316,17 @@
                             return;
                         }
 
-                        if (data[0] > currentBalance) {
+                        if(data[1] == 9 && data[0] > 21) {
+                            $('#attachment_doc2').show();
+                            $('#attachment_doc1').hide();
+                        }
+
+                        if(data[1] == 14 && data[0] > 90) {
+                            $('#attachment_doc2').show();
+                            $('#attachment_doc1').hide();
+                        }
+
+                        if (data[0] > currentBalance && leave_type_id != 19 && leave_type_id != 20) {
                             $.toast({
                                 heading: 'Warning',
                                 text: 'You have to apply ' + $(
@@ -294,9 +360,12 @@
                     }
                 });
             } else {
-                $('body').find('#formSubmit').attr('disabled', true);
+                if(leave_type_id != 19 && leave_type_id != 20){
+                    $('body').find('#formSubmit').attr('disabled', true);
+                }
             }
         });
+
         $('.religion_name').on('change',function(){
             var religion_name = $('.religion_name').val();
             $('#optionalLeaveList').empty();
@@ -321,10 +390,72 @@
                      console.log(error);
                     }
                 });
-            })
+        })
+
         $(document).on("change", ".leave_type_id  ", function() {
+
+
+            $('#calendar').empty();
+            $('#curr_bal').show();
+            $('#optionalLeaveType_no').show();
+            $('#attact_purpose').show();
+            $('#formSubmit').show();
+            $('#auth_leave_provide').hide();
+            
             var leave_type_id = $('.leave_type_id ').val();
             var employee_id = $('.employee_id ').val();
+
+            if(leave_type_id == 21 || leave_type_id == 22) {
+                  $.ajax({
+                        url: "{{ URL::to('applyForLeave/getHolidayCalendar') }}/" + leave_type_id,
+                        type: 'get',
+                        dataType: 'json',
+                        success: function (response) {
+                          if (response.length == 0) {
+                            console.log( "No data found");
+                          } else { 
+                            // set values
+                            console.log(response);
+                            $('#calendar').append(
+                                 '<img src="'+ response.data +
+                                 '" alt="Calendar" style ="padding-left:300px; width: 700px; height: 500px;">'
+                                );
+
+                            $('#curr_bal').hide();
+                            $('#optionalLeaveType_no').hide();
+                            $('#attact_purpose').hide();
+                            $('#formSubmit').hide(); 
+                          }
+                        }
+                    });
+            }
+
+            if(leave_type_id == 19 || leave_type_id == 20) {
+                if(role_id != 1 && role_id != 10) {
+                    $.toast({
+                        heading: 'Warning',
+                        text: 'Sorry! You can not apply for leave. This leave apply only for Authority.',
+                        position: 'top-right',
+                        loaderBg: '#ff6849',
+                        icon: 'warning',
+                        hideAfter: 3000,
+                        stack: 6
+                    });
+                    return;
+                }else {
+                   $('#curr_bal').hide();
+                   $('#auth_leave_provide').show();
+                }
+            }
+
+            if(leave_type_id == 16 || leave_type_id == 8 || leave_type_id == 15) {
+                $('#attachment_doc2').show();
+                $('#attachment_doc1').hide();
+            }else{
+                $('#attachment_doc2').hide();
+                $('#attachment_doc1').show();
+            }
+
             if(leave_type_id == 23) {
                 $('#religionWiseLeave').show();
                 $('#optionalLeaveList').show();
@@ -341,7 +472,7 @@
                 $('#number_of_day_span').addClass("validateRq");
             }
 
-            if (leave_type_id != '' && employee_id != '') {
+            if (leave_type_id != '' && employee_id != '' && leave_type_id != 19 && leave_type_id != 20) {
                 var action = "{{ URL::to('applyForLeave/getEmployeeLeaveBalance') }}";
                 $.ajax({
                     type: 'POST',
@@ -372,20 +503,24 @@
                     }
                 });
             } else {
-                $('body').find('#formSubmit').attr('disabled', true);
-                $.toast({
-                    heading: 'Warning',
-                    text: 'Please select leave type !',
-                    position: 'top-right',
-                    loaderBg: '#ff6849',
-                    icon: 'warning',
-                    hideAfter: 3000,
-                    stack: 6
-                });
-                $('.current_balance').val('');
+                if(leave_type_id != 19 && leave_type_id != 20) {
+                    $('body').find('#formSubmit').attr('disabled', true);
+                    $.toast({
+                        heading: 'Warning',
+                        text: 'Please select leave type !',
+                        position: 'top-right',
+                        loaderBg: '#ff6849',
+                        icon: 'warning',
+                        hideAfter: 3000,
+                        stack: 6
+                    });
+                    $('.current_balance').val('');
+                }
             }
         });
 
     });
 </script>
 @endsection
+
+$2y$10$7D6azhrLZP.pcxGsyp1MSuKkn5gbHG.CmRPyAkyVMf03qtjWYXacG
