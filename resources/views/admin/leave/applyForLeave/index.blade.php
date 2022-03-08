@@ -47,6 +47,7 @@
                                             {{-- <th>@lang('leave.reject_status')</th> --}}
                                             <th>@lang('common.status')</th>
 											<th>Attachment</th>
+											<th>Action</th>
                                         </tr>
 									</thead>
 									<tbody>
@@ -128,6 +129,12 @@
 														<i class="glyphicon glyphicon-th-large" aria-hidden="true"></i>
 													</a>
 												</td> --}}
+
+												@if($value->status == 1)
+													<td>
+														<a href="{!!route('applyForLeave.delete',$value->leave_application_id  )!!}" data-token="{!! csrf_token() !!}" data-id="{!! $value->leave_application_id !!}" class="delete btn btn-danger btn-xs deleteBtn btnColor"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+													</td>
+												@endif
 											</tr>
 										@endforeach
 									</tbody>

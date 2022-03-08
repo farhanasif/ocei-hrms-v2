@@ -58,10 +58,10 @@
                                                 
 												<td> <a href="{{ asset('/uploads/calendarImg/'.$value->image) }}" target="_blank"><img src="{{ asset('/uploads/calendarImg/'.$value->image) }}" alt="calendar"></a></td>
 												<td style="width: 100px;">
-													<a href="{!! route('publicHoliday.edit',$value->id ) !!}"  class="btn btn-success btn-xs btnColor">
+													<a href="{!! route('holidayCalendar.edit',$value->id ) !!}"  class="btn btn-success btn-xs btnColor">
 														<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
 													</a>
-													<a href="{!!route('publicHoliday.delete',$value->id  )!!}" data-token="{!! csrf_token() !!}" data-id="{!! $value->id !!}" class="delete btn btn-danger btn-xs deleteBtn btnColor"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+													<a href="{!!route('holidayCalendar.delete',$value->id  )!!}" data-token="{!! csrf_token() !!}" data-id="{!! $value->id !!}" class="delete btn btn-danger btn-xs deleteBtn btnColor"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
 												</td>
 											</tr>
 										@endforeach

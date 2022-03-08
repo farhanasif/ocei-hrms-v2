@@ -360,7 +360,7 @@
                                     <div class="form-group">
                                         <label for="exampleInput">NID</label>
                                         <input class="form-control nid" id="nid" placeholder="NID" name="nid"
-                                            type="number" value="{{ old('nid') }}">
+                                            type="number" value="{{ $editModeData->nid }}">
                                     </div>
                                 </div>
                             </div>

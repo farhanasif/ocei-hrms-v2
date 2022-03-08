@@ -37,7 +37,7 @@ class HolidayCalendarController extends Controller
 
 
     public function create(){
-        $holidayList = DB::table('holiday_file')->get();
+        $holidayList = DB::table('holiday_file')->first();
         return view('admin.leave.holidayCalendar.form',['holidayList' => $holidayList]);
     }
 
@@ -85,9 +85,13 @@ class HolidayCalendarController extends Controller
 
 
     public function edit($id){
-        $holidayList    = $this->commonRepository->holidayList();
-        $editModeData   = HolidayCalendar::findOrFail($id);
-        return view('admin.leave.publicHoliday.form',['editModeData' => $editModeData,'holidayList'=>$holidayList]);
+
+        $editModeData   = DB::table('holiday_file')
+                      ->select('holiday_file.*','leave_type.leave_type_name')
+                      ->join('leave_type','leave_type.leave_type_id','holiday_file.leave_id')
+                      ->where('id',$id)
+                      ->first();
+        return view('admin.leave.holidayCalendar.form',['editModeData' => $editModeData, 'holidayList' => $editModeData]);
     }
 
 

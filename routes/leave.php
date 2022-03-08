@@ -55,10 +55,12 @@ Route::group(['middleware' => ['preventbackbutton','auth']], function(){
         Route::post('/store',['as' => 'applyForLeave.store', 'uses'=>'Leave\ApplyForLeaveController@store']);
         Route::post('getEmployeeLeaveBalance','Leave\ApplyForLeaveController@getEmployeeLeaveBalance');
         Route::post('applyForTotalNumberOfDays','Leave\ApplyForLeaveController@applyForTotalNumberOfDays');
-        Route::get('/{applyForLeave}',['as'=>'applyForLeave.show','uses'=>'Leave\ApplyForLeaveController\applyForTotalNumberOfDays@show']);
+        Route::get('/{applyForLeave}',['as'=>'applyForLeave.show','uses'=>'Leave\ApplyForLeaveController@show']);
         Route::any('religion_wise_leave_list/{religion_name}','Leave\ApplyForLeaveController@religionWiseLeave');
-
+        Route::delete('/{applyForLeave}/delete',['as'=>'applyForLeave.delete','uses'=>'Leave\ApplyForLeaveController@destroy']);
+        
         Route::get('/getHolidayCalendar/{id}','Leave\ApplyForLeaveController@getHolidayCalendar');
+
     });
 
     Route::group(['prefix' => 'earnLeaveConfigure'], function () {

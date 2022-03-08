@@ -56,7 +56,7 @@
                 </td>
                 <td>
 					<span class="font-medium">
-						{{	$value->phone}}
+						0{{	$value->phone}}
 					</span>
                     <br/><span class="text-muted">
 						@if($value->email!='')@lang('employee.email') :{!! $value->email !!}@endif

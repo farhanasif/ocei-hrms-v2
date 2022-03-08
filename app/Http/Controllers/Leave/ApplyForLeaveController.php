@@ -72,7 +72,7 @@ class ApplyForLeaveController extends Controller
     {
         $leave_type_id = $request->leave_type_id;
         $employee_id   = $request->employee_id;
-
+        
         if($leave_type_id == 7) {
             $prev_data = DB::table('leave_application')->where('employee_id',$employee_id)->where('status',2)->where('leave_type_id',$leave_type_id)->orderBy('leave_application_id','desc')->first();
             if($prev_data != null) {
@@ -99,7 +99,7 @@ class ApplyForLeaveController extends Controller
             }else if((360 - $prev_data[0]->number_of_day) >= 180) {
                 return 180;
             }
-        }else if($leave_type_id == 5 or $leave_type_id == 6) {
+        }else if($leave_type_id == 5 or $leave_type_id == 6 or $leave_type_id == 1) {
             $employeeInfo = Employee::where('employee_id',$employee_id)->first();
             $joiningdate  = $employeeInfo->date_of_joining;
             $curr_date = date('Y-m-d');
@@ -129,6 +129,9 @@ class ApplyForLeaveController extends Controller
                 }
 
                 return ($this->leaveRepository->halfEarnleave($total_day)) - $leave_use;
+            }else{
+                $earnLeave = $this->leaveRepository->earnLeave($total_day,$employee_id, $joiningdate, $curr_date);
+                return $earnLeave;
             }
         }
         if ($leave_type_id != '' && $employee_id != '') {
@@ -294,5 +297,25 @@ class ApplyForLeaveController extends Controller
         $data = DB::table('holiday_file')->where('leave_id',$id)->orderBy('id','desc')->first();
         $data = url('').'/uploads/calendarImg/'.$data->image;
         return response()->json(['code'=>200,'data'=>$data]);
+    }
+
+
+    public function destroy($id){
+        try{
+            $leaveDetails = LeaveApplication::findOrFail($id);
+            $leaveDetails->delete();
+            $bug = 0;
+        }
+        catch(\Exception $e){
+            $bug = $e->errorInfo[1];
+        }
+
+        if($bug==0){
+            echo "success";
+        }elseif ($bug == 1451) {
+            echo 'hasForeignKey';
+        } else {
+            echo 'error';
+        }
     }
 }

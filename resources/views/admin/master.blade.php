@@ -566,6 +566,7 @@ $front_setting = getFrontData();
                                                 $('.' + id).fadeOut();
                                             }
                                         });
+                                    location.reload();
                                 } else {
                                     swal({
                                         title: "Error!",

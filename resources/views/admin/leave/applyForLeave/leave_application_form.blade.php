@@ -405,6 +405,12 @@
             var leave_type_id = $('.leave_type_id ').val();
             var employee_id = $('.employee_id ').val();
 
+            if(leave_type_id == 1) {
+                $('#optionalLeaveType_no').hide();
+                $('#attact_purpose').hide();
+                $('#formSubmit').hide(); 
+            }
+
             if(leave_type_id == 21 || leave_type_id == 22) {
                   $.ajax({
                         url: "{{ URL::to('applyForLeave/getHolidayCalendar') }}/" + leave_type_id,
@@ -466,7 +472,9 @@
             }else{
                 $('#religionWiseLeave').hide();
                 $('#optionalLeaveList').hide();
-                $('#optionalLeaveType_no').show();
+                if(leave_type_id != 1) {
+                    $('#optionalLeaveType_no').show();
+                }
                 $('#from_date_span').addClass("validateRq");
                 $('#to_date_span').addClass("validateRq");
                 $('#number_of_day_span').addClass("validateRq");
@@ -522,5 +530,3 @@
     });
 </script>
 @endsection
-
-$2y$10$7D6azhrLZP.pcxGsyp1MSuKkn5gbHG.CmRPyAkyVMf03qtjWYXacG
